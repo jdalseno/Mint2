@@ -1,0 +1,5 @@
+Import('*')
+
+src_mint = Glob('*/*.cpp')
+
+Export(['env', 'src_mint'])

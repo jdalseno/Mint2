@@ -1,0 +1,5 @@
+Import('*')
+
+src_mojito = Glob('*/*.cpp')
+
+Export(['env', 'src_mojito'])
