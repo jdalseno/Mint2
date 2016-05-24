@@ -1,38 +1,51 @@
 #ifndef GAUSS_FCT_HH
 #define GAUSS_FCT_HH
-// author: Jonas Rademacker (Jonas.Rademacker@bristol.ac.uk)
-// status:  Mon 9 Feb 2009 19:17:57 GMT
 
+namespace MINT
+{
+  class GaussFct
+  {
+   public:
+    GaussFct();
 
-namespace MINT{
-class GaussFct{
- protected:
-  double _x;
-  double _height;
-  double _mean, _sigma;
-  double _sqrt2pi;
+    GaussFct( const double& x_in, const double& h,
+	      const double& m, const double& s );
 
- public:
-  double x() const;
-  double height() const;
-  double mean() const;
-  double sigma() const;
-  
-  void set_x(double x_in);
-  void set_height(double h);
-  void set_mean(double m);
-  void set_sigma(double s);
-  
-  double getVal() const;
-  double getIntegral() const;
-  //  double RealVal(){ return getVal(); }
+    double x() const
+    { return _x; }
 
-  GaussFct(double x_in, double h, double m, double s);
+    double height() const
+    { return _height; }
 
-  GaussFct();
+    double mean() const
+    { return _mean; }
 
-};
-} // namespace MINT
+    double sigma() const
+    { return _sigma; }
 
-#endif
-//
+    void set_x( const double& x_in )
+    { _x = x_in; }
+
+    void set_height( const double& h )
+    { _height=h; }
+
+    void set_mean( const double& m )
+    { _mean = m; }
+
+    void set_sigma( const double& s )
+    { _sigma = s; }
+
+    double getVal() const;
+
+    double getIntegral() const
+    { return height()*_sqrt2pi*sigma(); }
+
+   protected:
+    double _x;
+    double _height;
+    double _mean, _sigma;
+    double _sqrt2pi;
+  };
+} //namespace MINT
+
+#endif //GAUSS_FCT_HH

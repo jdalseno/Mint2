@@ -1,36 +1,45 @@
 #ifndef IMINIMISABLE_HH
 #define IMINIMISABLE_HH
-// author: Jonas Rademacker (Jonas.Rademacker@bristol.ac.uk)
-// status:  Mon 9 Feb 2009 19:17:55 GMT
+
 #include <iostream>
 #include "Mint/MinuitParameterSet.h"
-namespace MINT{
-class IMinimisable{
- public:
-  virtual MinuitParameterSet* getParSet() = 0;
 
-  virtual void beginFit()=0;
-  virtual void parametersChanged()=0;
-  virtual void endFit()=0;
+namespace MINT
+{
+  class IMinimisable
+  {
+   public:
+    virtual ~IMinimisable()
+    {}
 
-  virtual double getVal()=0;
-  virtual double getNewVal()=0;
+    virtual MinuitParameterSet* getParSet() = 0;
 
-  // we should make the following three abstract (=0)
-  // and move their default definition to Minimisable.
+    virtual void beginFit()=0;
 
-  virtual void Gradient(Double_t* grad){        
-        std::cout << "Gradient of pdf is not implemented. Please implement me or set useAnalyticGradient to 0 in your options file. I'll crash now. " << std::endl;
-        throw "crash";
-	(void)grad;
-  }
-  virtual bool useAnalyticGradient() {return false;}
-  virtual void setUseAnalyticGradient(bool useAnalyticGradient)
-  { (void)useAnalyticGradient; }
-  
-  virtual ~IMinimisable(){}
-};
-}//namespace MINT
+    virtual void parametersChanged()=0;
 
-#endif
-//
+    virtual void endFit()=0;
+
+    virtual double getVal()=0;
+
+    virtual double getNewVal()=0;
+
+    // we should make the following three abstract (=0)
+    // and move their default definition to Minimisable.
+    //move to vector argument
+    virtual void Gradient( Double_t* grad )
+    {
+      std::cout << "Gradient of pdf is not implemented. Please implement me or set useAnalyticGradient to 0 in your options file. I'll crash now. " << std::endl;
+      throw "crash";
+      (void)grad;
+    }
+
+    virtual bool useAnalyticGradient()
+    { return false; }
+
+    virtual void setUseAnalyticGradient( const bool& useAnalyticGradient )
+    { (void)useAnalyticGradient; }
+  };
+} //namespace MINT
+
+#endif //IMINIMISABLE_HH
