@@ -13,7 +13,6 @@
 
 namespace MINT
 {
-
   enum OWNERSHIP{CALLER_PASSES_OWNERSHIP, CALLER_KEEPS_OWNERSHIP};
 
   template <typename Key, typename Val>
@@ -89,17 +88,15 @@ namespace MINT
   bool A_is_in_B( const std::string& a, const std::string& b );
 
   // need to move these to Dalitz Fitter
-  //flagged for replacement with variadic templates
-  int LeviCita( const int& a, const int& b );
+  template<typename... INTS>
+  int LeviCita( const INTS&... ints )
+  {
+    const std::vector<int> v({ints...});
 
-  int LeviCita( const int& a, const int& b, const int& c );
+    return MINT::LeviCita(v);
+  }
 
-  int LeviCita( const int& a, const int& b, const int& c, const int& d );
-
-  int LeviCita( const int& a, const int& b, const int& c,
-		const int& d, const int& e );
-
-  int LeviCita(const std::vector<int>& v);
+  int LeviCita( const std::vector<int>& v );
 } //namespace MINT
 
 std::ostream& operator<<( std::ostream& os, const TLorentzVector& v );

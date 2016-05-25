@@ -39,50 +39,6 @@ bool MINT::A_is_in_B( const std::string& a, const std::string& b )
   return pos < b.size();
 }
 
-// need to move thise to Dalitz fitter:
-int MINT::LeviCita( const int& a, const int& b )
-{
-  std::vector<int> v(2);
-  v[0]=a;
-  v[1]=b;
-
-  return MINT::LeviCita(v);
-}
-
-int MINT::LeviCita( const int& a, const int& b, const int& c )
-{
-  std::vector<int> v(3);
-  v[0]=a;
-  v[1]=b;
-  v[2]=c;
-
-  return MINT::LeviCita(v);
-}
-
-int MINT::LeviCita( const int& a, const int& b, const int& c, const int& d )
-{
-  std::vector<int> v(4);
-  v[0]=a;
-  v[1]=b;
-  v[2]=c;
-  v[3]=d;
-
-  return MINT::LeviCita(v);
-}
-
-int MINT::LeviCita( const int& a, const int& b, const int& c,
-		    const int& d, const int& e )
-{
-  std::vector<int> v(5);
-  v[0]=a;
-  v[1]=b;
-  v[2]=c;
-  v[3]=d;
-  v[4]=e;
-
-  return MINT::LeviCita(v);
-}
-
 int MINT::LeviCita( const std::vector<int>& v )
 {
   if(v.size() <=1) return 1;
