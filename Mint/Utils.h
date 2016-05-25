@@ -80,8 +80,6 @@ namespace MINT
     return ing;
   }
 
-  std::string stringtime( const double& dt );
-
   bool A_is_in_B( const std::string& a, const std::string& b );
 
   // need to move these to Dalitz Fitter

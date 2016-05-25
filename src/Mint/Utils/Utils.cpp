@@ -4,24 +4,6 @@
 
 using namespace MINT;
 
-std::string MINT::stringtime( const double& ddt )
-{
-  int dt = (int) ddt;
-  std::string str;
-  int sec = 1;
-  int min = sec*60;
-  int h   = min*60;
-  if( dt >= h )
-    str += MINT::anythingToString( (int) (dt/h) ) + " h ";
-
-  if( dt >= min )
-    str += MINT::anythingToString( (int) (dt%h)/min ) + " min ";
-
-  str += MINT::anythingToString(dt%min) + " s";
-
-  return str;
-}
-
 bool MINT::A_is_in_B( const std::string& a, const std::string& b )
 {
   unsigned int pos = b.find(a);
