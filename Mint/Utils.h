@@ -82,9 +82,6 @@ namespace MINT
 
   std::string stringtime( const double& dt );
 
-  //flagged for modification with internal C++ functions
-  int nearestInt(double f);
-
   bool A_is_in_B( const std::string& a, const std::string& b );
 
   // need to move these to Dalitz Fitter

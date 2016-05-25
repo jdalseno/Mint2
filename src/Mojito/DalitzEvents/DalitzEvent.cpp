@@ -968,7 +968,7 @@ bool DalitzEvent::fromNtuple(TNtupleD* ntp){
   _p.resize(nParticles);
   for(int i=0; i< nParticles && counter < maxCounter; i++){
     if(dbThis) cout << "filling " << i << " th particle: " << endl;
-    _pat[i] = nearestInt(array[counter++]);
+    _pat[i] = round(array[counter++]);
     _p[i].SetE(array[counter++]);
     _p[i].SetX(array[counter++]);
     _p[i].SetY(array[counter++]);
@@ -1085,7 +1085,7 @@ bool DalitzEvent::fromParasTreeOld(TTree* ntp){
       ((TBranch*) (*branchArray)[counter++])->GetListOfLeaves();
     leafVal = ((TLeaf*) (*leafArray)[0])->GetValue();
     if(dbThis) cout << " leaf[ " << counter-1 << "] " << leafVal << endl;
-    _pat[i] = nearestInt(leafVal);
+    _pat[i] = round(leafVal);
 
     if(forcePDGMassForFinalState && i > 0){
       double m=_pat[i].mass();

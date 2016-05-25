@@ -22,16 +22,6 @@ std::string MINT::stringtime( const double& ddt )
   return str;
 }
 
-int MINT::nearestInt( double f )
-{
-  if(f >= 0)
-    return ((int)(f+0.5));
-
-  f *= -1;
-
-  return -((int)(f+0.5));
-}
-
 bool MINT::A_is_in_B( const std::string& a, const std::string& b )
 {
   unsigned int pos = b.find(a);
