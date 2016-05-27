@@ -4,8 +4,6 @@
 #include <vector>
 #include <iostream>
 
-#include "TMinuit.h"
-
 #include "Mint/IMinuitParameter.h"
 
 class TNtupleD;

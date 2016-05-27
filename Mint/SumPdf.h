@@ -99,16 +99,11 @@ namespace MINT
     virtual void Gradient( EVENT_TYPE& evt, Double_t* grad,
 			   MINT::MinuitParameterSet* mps )
     {
-      std::vector<double> grad_1(mps->size());
-      std::vector<double> grad_2(mps->size());
+      std::vector<double> grad_1(mps->size(), 0.0);
+      std::vector<double> grad_2(mps->size(), 0.0);
 
-      for( unsigned int j=0; j<mps->size(); ++j){
-	grad_1[j]= 0.;   
-	grad_2[j]= 0.;
-      }
-
-      _pdf_1.Gradient(evt, &grad_1[0], mps);
-      _pdf_2.Gradient(evt, &grad_2[0], mps);
+      _pdf_1.Gradient(evt, grad_1, mps);
+      _pdf_2.Gradient(evt, grad_2, mps);
 
       for( unsigned int j=0; j<mps->size(); ++j )
 	grad[j]= _f1 * grad_1[j] + (1.0 - _f1) * grad_2[j];   

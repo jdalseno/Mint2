@@ -391,12 +391,13 @@ bool DalitzBox::estimateHeightMinuit(){
   Minimiser mini(&fcn);
   //  mini.Command("Set Strategy 2");
   mini.prepFit();
-  mini.Command("Simplex 10000000");
-  mini.Command("MIGRAD");
+  mini.CallSimplex();
+  mini.CallImprove(1);
+  mini.endOfFit();
 
   double safetyMargin = 0;
 
-  _height = -(mini.getFCNVal() * (1.0 + safetyMargin));
+  _height = -(mini.theFunction()->getVal() * (1.0 + safetyMargin));
 
   if(_height <= 0.0) _height = -1.0;
   cout << " setting height to " << _height << endl;

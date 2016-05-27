@@ -44,7 +44,7 @@ namespace MINT
 
     bool addConstraints();
 
-    virtual void Gradient( Double_t* grad );
+    virtual std::vector<double> Gradient( const std::vector<double>& par );
 
     virtual bool useAnalyticGradient();
 

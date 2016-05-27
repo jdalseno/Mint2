@@ -3,6 +3,15 @@
 #include "TFile.h"
 #include "TGraph.h"
 
+#include "Minuit2/MinimumSeed.h"
+#include "Minuit2/MinimumState.h"
+#include "Minuit2/MnMigrad.h"
+#include "Minuit2/MnMinos.h"
+#include "Minuit2/MnPrint.h"
+#include "Minuit2/MnScan.h"
+#include "Minuit2/MnSimplex.h"
+#include "Minuit2/MnUserTransformation.h"
+
 #include "Mint/IMinuitParameter.h"
 #include "Mint/Minimiser.h"
 
@@ -11,32 +20,30 @@ using namespace MINT;
 
 Minimiser* Minimiser::getDefaultMinimiser()
 {
-  if(0 == _defaultMinimiser)
+  if( 0 == _defaultMinimiser )
     _defaultMinimiser = new Minimiser;
 
   return _defaultMinimiser;
 }
 
 Minimiser::Minimiser( IMinimisable* fitFunction )
-  : TMinuit(0)
-  , _useAnalyticGradient(false)
-  , _theFunction(fitFunction)
-  , _maxCalls(_defaultMaxCalls)
-  , _printLevel(3)
-  , ierflg(0)
+  : _theFunction(fitFunction)
+  , _min(ROOT::Minuit2::MinimumSeed(ROOT::Minuit2::MinimumState(0),
+    				    ROOT::Minuit2::MnUserTransformation()),
+	 1.0)
 {
   if( 0 != theFunction() )
-    init();
+    Init();
 }
 
 bool Minimiser::attachFunction( IMinimisable* fcn )
 {
-  if( 0==fcn )
+  if( 0 == fcn )
     return false;
 
   _theFunction = fcn;
 
-  return init();
+  return Init();
 }
 
 unsigned int Minimiser::nPars() const
@@ -47,7 +54,7 @@ unsigned int Minimiser::nPars() const
   return _parSet->size();
 }
 
-IMinuitParameter* Minimiser::getParPtr( unsigned int i )
+IMinuitParameter* Minimiser::getParPtr( const unsigned int& i )
 {
   if( 0 == _parSet )
     return 0;
@@ -58,7 +65,7 @@ IMinuitParameter* Minimiser::getParPtr( unsigned int i )
   return _parSet->getParPtr(i);
 }
 
-const IMinuitParameter* Minimiser::getParPtr( unsigned int i ) const
+const IMinuitParameter* Minimiser::getParPtr( const unsigned int& i ) const
 {
   if( 0 == _parSet )
     return 0;
@@ -88,27 +95,6 @@ bool Minimiser::fcnOK() const
   return true;
 }
 
-double Minimiser::getFCNVal()
-{
-  if( !this->OK() ){
-    cout << "ERROR IN Minimiser::getFCNVal()"
-	 << " I'm not OK!!" << endl;
-    return -9999.0;
-  }
-
-  return theFunction()->getVal();
-}
-
-void Minimiser::FCNGradient( Double_t* grad )
-{
-  if( !this->OK() ){
-    cout << "ERROR IN Minimiser::FCNGradient()"
-	 << " I'm not OK!!" << endl;
-  }
-
-  return theFunction()->Gradient(grad);
-}
-
 bool Minimiser::initialiseVariables()
 {
   bool dbThis = false;
@@ -122,7 +108,7 @@ bool Minimiser::initialiseVariables()
     cout << "\n\t(declaring them to MINUIT)" << endl;
   }
 
-  //remove hidden MinuitParameter
+  //remove hidden MinuitParameter, let's see if this is still needed
   for( unsigned int i=0; i < nPars(); i++ ){
     if( getParPtr(i)->hidden() ){
       if(dbThis)
@@ -133,28 +119,19 @@ bool Minimiser::initialiseVariables()
     }
   }
 
-  //temporarilyQuiet();
-  for( unsigned int i=0; i<nPars(); ++i){
-    int ierflag=0;
-    //if(! getParPtr(i)->hidden()){        //hidden MinuitParamter already removed
+  for( unsigned int i=0; i<nPars(); ++i ){
+    int ierflag = 0;
 
     if(dbThis)
       cout << i << ")" << getParPtr(i)->name() << endl;
 
     double step = getParPtr(i)->stepInit();
     if( getParPtr(i)->iFixInit() )
-      step=0;
+      step = 0.0;
 
-    this->mnparm( i,
-		  getParPtr(i)->name().c_str(),
-		  getParPtr(i)->meanInit(),
-		  step,
-		  getParPtr(i)->minInit(),
-		  getParPtr(i)->maxInit(),
-		  ierflag);
-      //if(getParPtr(i)->iFixInit()) FixParameter(i);
-    //}
-    //getParPtr(i)->associate(this, i);
+    _mn_param.Add( getParPtr(i)->name(), getParPtr(i)->meanInit(), step,
+		   getParPtr(i)->minInit(), getParPtr(i)->maxInit() );
+
     success &= ! ierflag;
   }
 
@@ -170,145 +147,118 @@ bool Minimiser::initialiseVariables()
     cout << "Minimiser::initialiseVariables():"
 	 << " all done - returning " << success << endl;
 
-  //resetPrintLevel();
   return success;
 }
 
-bool Minimiser::setPrintLevel( int level )
+bool Minimiser::CallSimplex()
 {
-  if(level >=0 )
-    _printLevel=level;
-
-  arglist[0] = _printLevel;
-  TMinuit::mnexcm("SET PRINTOUT", arglist , 1, ierflg);
-
-  return ( !ierflg );
-}
-
-bool Minimiser::temporarilyQuiet()
-{
-  arglist[0] = -1;
-  TMinuit::mnexcm("SET PRINTOUT", arglist , 1, ierflg);
-  return ( !ierflg );
-}
-
-bool Minimiser::SetSomeMinuitOptions()
-{
-  bool success = true;
-  success &= setPrintLevel();
-  arglist[0] = 1.;
-  TMinuit::mnexcm("SET ERR", arglist , 1, ierflg);
-  success &= (! ierflg);
-  arglist[0] = 1;
-  TMinuit::mnexcm("SET STRATEGY", arglist , 1, ierflg);
-  success &= (! ierflg);
-  if(_useAnalyticGradient)
-    TMinuit::mnexcm("SET GRADIENT", arglist , 1, ierflg);
+  //Strategy 2
+  ROOT::Minuit2::MnSimplex simplex( *_fcn, _mn_param, 2 );
+  _min = simplex();
+  _cov = _min.UserCovariance();
+  if( _useAnalyticGradient )
+    static_cast<MintFcn*>(_fcn)->SetBestMin(_min.Fval());
   else
-    TMinuit::mnexcm("SET NOGRADIENT", arglist , 1, ierflg);
+    static_cast<MintFcnGrad*>(_fcn)->SetBestMin(_min.Fval());
 
-  return success;
+  return _min.IsValid();
 }
 
 bool Minimiser::CallMigrad()
 {
-  bool dbThis=true;
-  bool success=true;
-  arglist[0] = _maxCalls; arglist[1] = 1.e-2;
-  if(dbThis)
-    cout << "calling MIGRAD" << endl;
+  //Strategy 2
+  ROOT::Minuit2::MnMigrad migrad( *_fcn, _mn_param, 2 );
+  _min = migrad();
+  _cov = _min.UserCovariance();
+  if( _useAnalyticGradient )
+    static_cast<MintFcn*>(_fcn)->SetBestMin(_min.Fval());
+  else
+    static_cast<MintFcnGrad*>(_fcn)->SetBestMin(_min.Fval());
 
-  TMinuit::mnexcm("MIGRAD", arglist ,2,ierflg);
-  if(dbThis)
-    cout << "did that. How did I do? ierflg=" << ierflg << endl;
-
-  success &= (! ierflg);
-
-  return success;
+  return _min.IsValid();
 }
 
-bool Minimiser::CallMinos()
+bool Minimiser::CallImprove( const unsigned int& searches )
 {
-  bool dbThis=false;
-  bool success=true;
-  arglist[0] = _maxCalls; arglist[1] = 1.e-2;
-  if(dbThis)
-    cout << "calling MINOS" << endl;
+  //Strategy 2
+  ROOT::Minuit2::MnMigrad migrad( *_fcn, _min.UserParameters().Params(), _cov, 2 );
+  for( unsigned int i=0; i<searches; ++i ){
+    _min = migrad();
+    _cov = _min.UserCovariance();
+    if( _useAnalyticGradient )
+      static_cast<MintFcn*>(_fcn)->SetBestMin(_min.Fval());
+    else
+      static_cast<MintFcnGrad*>(_fcn)->SetBestMin(_min.Fval());
 
-  TMinuit::mnexcm("MINOS", arglist ,2,ierflg);
-  if(dbThis)
-    cout << "did that. How did I do? ierflg=" << ierflg << endl;
+    if( _min.IsValid() )
+      break;
+  }
 
-  success &= (! ierflg);
+  std::cout << _min << std::endl;
 
-  return success;
+  return _min.IsValid();
 }
 
-bool Minimiser::CallSeek( int maxCalls, int devs )
+bool Minimiser::CallMinos( const unsigned int& par_id )
 {
-  bool dbThis=true;
-  bool success=true;
-  bool useAnalyticGradient = _useAnalyticGradient;
-  _useAnalyticGradient = false;
-  arglist[0] = maxCalls; arglist[1] = devs; 
-  if(dbThis)
-    cout << "calling SEEK" << endl;
+  if( _min.IsValid() ){
+    ROOT::Minuit2::MnMinos minos( *_fcn, _min, 2 );
+    std::pair<double,double> minos_err = minos(par_id);
+    std::cout << getParPtr(par_id)->name() << " = "
+	      << _min.UserParameters().Params()[par_id]  
+	      << " " << minos_err.first << " +" << minos_err.second << std::endl;      
+  }else{
+    std::cout << "ERROR: Minos cannot be called on an invalid minimum" << std::endl;
+    exit(1);
+  }
 
-  TMinuit::mnexcm("SEEK", arglist ,2,ierflg);
-  if(dbThis)
-    cout << "did that. How did I do? ierflg=" << ierflg << endl;
-
-  success &= (! ierflg);
-  _useAnalyticGradient = useAnalyticGradient;
-
-  return success;
+  return true;
 }
 
-bool Minimiser::CallSimplex( int maxCalls, double tolerance )
+bool Minimiser::CallScan( const unsigned int& par_id,
+			  const double& low, const double& high )
 {
-  bool dbThis=true;
-  bool success=true;
-  bool useAnalyticGradient = _useAnalyticGradient;
-  _useAnalyticGradient = false;
-  arglist[0] = maxCalls; arglist[1] = tolerance;
-  if(dbThis)
-    cout << "calling SIMPLEX" << endl;
+  IMinuitParameter* p = getParPtr(par_id);
+  if( 0 == p )
+    return 0;
 
-  TMinuit::mnexcm("SIMPLEX", arglist ,2,ierflg);
-  if(dbThis)
-    cout << "did that. How did I do? ierflg=" << ierflg << endl;
+  const unsigned int points = 100;
 
-  success &= (! ierflg);
-  _useAnalyticGradient = useAnalyticGradient;
+  std::vector<std::pair<double,double>> scan_points;
+  if( _min.IsValid() ){
+    ROOT::Minuit2::MnScan scan(*_fcn, _min.UserParameters().Params(), _cov);
+    scan_points = scan.Scan(points, low, high);
+  }else{
+    ROOT::Minuit2::MnScan scan(*_fcn, _mn_param, _cov);
+    scan_points = scan.Scan(points, low, high);
+  }
 
-  return success;
-}
+  std::vector<double> scan_x, scan_y;
+  for( auto it = std::make_move_iterator(scan_points.begin()),
+         end = std::make_move_iterator(scan_points.end()); it != end; ++it ){
+    scan_x.push_back(std::move(it->first));
+    scan_y.push_back(std::move(it->second));
+  }
 
-bool Minimiser::CallImprove( int maxCalls, int searches )
-{
-  bool dbThis=true;
-  bool success=true;
-  bool useAnalyticGradient = _useAnalyticGradient;
-  _useAnalyticGradient = false;
-  arglist[0] = maxCalls; arglist[1] = searches;
-  if(dbThis)
-    cout << "calling IMPROVE" << endl;
+  TGraph* const graph = new TGraph(points, scan_x.data(), scan_y.data());
 
-  TMinuit::mnexcm("IMPROVE", arglist ,2,ierflg);
-  if(dbThis)
-    cout << "did that. How did I do? ierflg=" << ierflg << endl;
+  const std::string fname = "scan_" + p->name() + ".root";
 
-  success &= (! ierflg);
-  _useAnalyticGradient = useAnalyticGradient;
+  TFile fscan(fname.c_str(), "RECREATE");
+  fscan.cd();
+  graph->Write();
+  fscan.Close();
 
-  return success;
+  delete graph;
+
+  return true;
 }
 
 bool Minimiser::prepFit()
 {
   bool dbThis=false;
   bool success=true;
-  success &= SetSomeMinuitOptions();
+
   theFunction()->beginFit();
   success &= this->initialiseVariables();
   if(dbThis)
@@ -332,126 +282,28 @@ bool Minimiser::doFit()
   if(dbThis)
     cout << "... called MIGRAD" << success << endl;
 
-  scanMarked();
-  if(dbThis)
-    cout << "... scanned" << success << endl;
-
   success &= this->endOfFit();
+  if(dbThis)
+    cout << "... called endOfFit" << success << endl;
+
+  std::cout << _min << std::endl;
 
   return success;
 }
 
-bool Minimiser::doMinosFit()
+bool Minimiser::endOfFit()
 {
-  bool dbThis=false;
-  bool success = true;
-  success &= prepFit();
-  success &= CallMinos();
-  if(dbThis)
-    cout << "called MINOS" << endl;
-
-  scanMarked();
-  success &= this->endOfFit();
-
-  return success;
-}
-
-bool Minimiser::doSeekFit( int maxCalls, int devs )
-{
-  bool dbThis=false;
-  bool success = true;
-  success &= prepFit();
-  success &= CallSeek(maxCalls, devs);
-  if(dbThis)
-    cout << "called SEEK" << endl;
-
-  //scanMarked();
-  success &= this->endOfFit();
-
-  return success;
-}
-
-bool Minimiser::doSimplexFit( int maxCalls, double tolerance )
-{
-  bool dbThis=false;
-  bool success = true;
-  success &= prepFit();
-  success &= CallSimplex(maxCalls, tolerance);
-  if(dbThis)
-    cout << "called SIMPLEX" << endl;
-
-  //scanMarked();
-  success &= this->endOfFit();
-
-  return success;
-}
-
-bool Minimiser::scanMarked()
-{
-  bool sc=true;
-  if( 0 == nPars() )
+  if( !parsOK() )
     return false;
 
-  for( unsigned int i=0; i<nPars(); ++i){
-    IMinuitParameter* p = getParPtr(i);
-    if( 0 == p || (!p->scan()) )
-      continue;
+  setParametersToResult();
+  theFunction()->endFit();
 
-    sc &= (bool) scan(i, p->scanMin(), p->scanMax());
-  }
-
-  return sc;
+  return true;
 }
 
-bool Minimiser::scanAll()
-{
-  bool sc=true;
-  if( 0 == nPars() )
-    return false;
-
-  for( unsigned int i=0; i<nPars(); ++i){
-    IMinuitParameter* p = getParPtr(i);
-
-    if( 0 == p )
-      continue;
-
-    sc &= (bool) scan(i, p->scanMin(), p->scanMax());
-  }
-
-  return sc;
-}
-
-TGraph* Minimiser::scan( int i, double from, double to )
-{
-  // note that the index i is the one in the parameter list
-  // which goes from 0 to n-1 (i.e. C-style).
-  // This corresponds to Minuit's parameter number i+1.
-  // (so if you want Minuit's fit parameter 1, pass it 1-1=0)
-  IMinuitParameter* p = getParPtr(i);
-  if(0 == p)
-    return 0;
-
-  double points = 100;
-  string fname = "scan_" + p->name() + ".root";
-
-  Double_t arglist[10] = {0};
-  Int_t ierflg=0;
-
-  arglist[0]=i+1; arglist[1]=points; arglist[2]=from; arglist[3]=to;
-  this->mnexcm("SCAN", arglist, 4, ierflg);
-  TGraph *gr = (TGraph*) this->GetPlot();
-  if(0 == gr)
-    cout << " didn't get plot " << endl;
-  else{
-    TFile fscan(fname.c_str(), "RECREATE");
-    fscan.cd();
-    gr->Write();
-    fscan.Close();
-  }
-
-  return gr;
-}
-
+/*
+//might be useful for minos as well
 TGraph* Minimiser::scan( IMinuitParameter& fp, double from, double to )
 {
   if( fp.parSet() != this->parSet() ){
@@ -466,9 +318,9 @@ TGraph* Minimiser::scan( IMinuitParameter& fp, double from, double to )
   }
 
   return scan(fp.parSetIndex(), from, to);
-}
+  }*/
 
-void Minimiser::printResultVsInput(std::ostream& os) const
+void Minimiser::printResultVsInput( std::ostream& os ) const
 {
   if( 0 == _parSet )
     return;
@@ -476,63 +328,21 @@ void Minimiser::printResultVsInput(std::ostream& os) const
   _parSet->printResultVsInput(os);
 }
 
-TMatrixTSym<double> Minimiser::covMatrix()
-{
-  unsigned int internalPars = fNpar;
-
-  std::vector<std::vector<double>>
-    m1(internalPars, std::vector<double>(internalPars));
-  for( unsigned int i=0; i<internalPars; ++i)
-    for( unsigned int j=0; j<internalPars; ++j)
-      m1[i][j]=0.0;
-
-  this->mnemat(&m1[0][0], internalPars);
-  TMatrixTSym<double> matrix(internalPars);
-  for( unsigned int i=0; i<internalPars; ++i)
-    for( unsigned int j=i; j<internalPars; ++j )
-      matrix(i,j) = matrix(j,i) = m1[i][j];
-
-  return matrix;
-}
-
-TMatrixTSym<double> Minimiser::covMatrixFull() {
-  unsigned int internalPars = fNpar;
-
-  std::vector<std::vector<double>>
-    m1(internalPars, std::vector<double>(internalPars));
-  for( unsigned int i=0; i<internalPars; ++i)
-    for( unsigned int j=0; j<internalPars; ++j)
-      m1[i][j]=0.0;
-
-  this->mnemat(&m1[0][0], internalPars);
-  TMatrixTSym<double> matrix(nPars());
-  for( unsigned int i=0; i<internalPars; ++i )
-    for( unsigned int j=i; j<internalPars; ++j){
-      int ex_i = fNexofi[i] -1;
-      int ex_j = fNexofi[j] -1;
-      matrix(ex_i,ex_j) = matrix(ex_j,ex_i) = m1[i][j];
-    }
-
-  return matrix;
-}
-
 Minimiser* Minimiser::_defaultMinimiser=0;
 
-int Minimiser::_defaultMaxCalls=100000; // 100k (a lot!)
-
-bool Minimiser::init()
+bool Minimiser::Init()
 {
   bool dbThis = true;
   if(dbThis)
     cout << "Minimiser::init(): you called me" << endl;
 
-  if(0 == theFunction()){
-    std::cout << "ERROR IN Minimiser::init():"
+  if( 0 == theFunction() ){
+    std::cout << "ERROR: Minimiser::Init():"
 	      << " the function-ptr is empty."
 	      << " I won't do anything for now."
 	      << std::endl;
 
-    return false;
+    exit(1);
   }
 
   if(dbThis)
@@ -541,66 +351,28 @@ bool Minimiser::init()
   theFunction()->beginFit();
 
   _parSet = theFunction()->getParSet();
-  if(0 == _parSet){
+  if( 0 == _parSet ){
     std::cout << "ERROR IN Minimiser::init():"
 	      << " theFunction()->getParSet() returned empty pointer"
 	      << " I won't do anything for now."
 	      << std::endl;
 
-    return false;
+    exit(1);
   }
-
-  MakeSpace(nPars());
-
-  if(dbThis)
-    cout << "... made space, now initialising variables" << endl;
 
   initialiseVariables();
   if(dbThis)
     cout << " initialised variables." << endl;
 
-  _useAnalyticGradient = theFunction()->useAnalyticGradient();  
-    
   if(dbThis)
-    cout << "Minimiser::init(): returning true" << endl;
+    cout << "Minimiser::Init(): returning true" << endl;
 
-  return true;
-}
 
-bool Minimiser::MakeSpace( int needSpace )
-{
-  //return true;
-
-  this->DeleteArrays();
-  this->BuildArrays(needSpace + 2); // +2 for good luck
-  TMinInit();
-  return true;
-}
-
-void Minimiser::TMinInit()
-{
-  fStatus       = 0;
-  fEmpty        = 0;
-  fObjectFit    = 0;
-  fMethodCall   = 0;
-  fPlot         = 0;
-  fGraphicsMode = kTRUE;
-  SetMaxIterations();
-  mninit(5,6,7);
-}
-
-bool Minimiser::updateFitParameters( Double_t* par )
-{
-  if( !parsOK() )
-    return false;
-
-  for( unsigned int i=0; i<nPars(); ++i){
-    //if(! getParPtr(i)->hidden()){
-    getParPtr(i)->setCurrentFitVal(par[i]);
-    //}
-  }
-
-  theFunction()->parametersChanged();
+  _useAnalyticGradient = theFunction()->useAnalyticGradient();  
+  if( _useAnalyticGradient )
+    _fcn = new MintFcnGrad(theFunction());
+  else
+    _fcn = new MintFcn(theFunction());
 
   return true;
 }
@@ -610,56 +382,36 @@ bool Minimiser::setParametersToResult()
   if( !parsOK() )
     return false;
 
-  Double_t mean, err, errN, errP;
-  Double_t gcc;
-  for( unsigned int i=0; i<nPars(); ++i){
-    //if(! getParPtr(i)->hidden()){
-    this->mnerrs(i, errP, errN, err, gcc);
-    this->GetParameter(i, mean, err);
-    this->getParPtr(i)->setResult(mean, err, errP, errN);
-    //}
-  }
+  const std::vector<double>& par = _min.UserParameters().Params();
+  const std::vector<double>& err = _min.UserParameters().Errors();
+  for( unsigned int i=0; i<nPars(); ++i)
+    this->getParPtr(i)->setResult(par[i], err[i], 0.0, 0.0);
 
   theFunction()->parametersChanged();
 
   return true;
 }
 
-bool Minimiser::endOfFit()
+void Minimiser::PrintCovMatrix() const
 {
-  if( !parsOK() )
-    return false;
-
-  setParametersToResult();
-  theFunction()->endFit();
-
-  return true;
+  if( _min.IsValid() )
+    std::cout << _cov << std::endl;
+  else
+    std::cout << "WARNING: Cannot print covariance matrix. Minimum was invalid"
+	      << std::endl;
 }
 
-Int_t Minimiser::Eval( Int_t  npar, Double_t*  grad, Double_t& fval,
-		       Double_t* par, Int_t flag )
+TMatrixTSym<double> Minimiser::covMatrixFull()
 {
-  bool dbThis=false;
-  if(dbThis)
-    cout << "Eval got called " << endl;
+  TMatrixTSym<double> matrix(nPars());
 
-  if( !this->OK() ){
-    cout << "ERROR in Minimiser::Eval (file: Minimiser.C)"
-	 << " Got called although I'm not OK" << endl;
-    fval = -9999;
+  for( unsigned int i=0; i<_min.UserState().VariableParameters(); ++i )
+    for( unsigned int j=i; j<_min.UserState().VariableParameters(); ++j ){
+      const unsigned int ex_i = _min.UserState().ExtOfInt(i);
+      const unsigned int ex_j = _min.UserState().ExtOfInt(j);
 
-    return -1;
-  }
-
-  this->updateFitParameters(par);
-  fval = this->getFCNVal();
-  if( flag == 4 ){
-    if( _useAnalyticGradient ){
-      //calculate GRAD, the first derivatives of FVAL
-      this->FCNGradient(grad);
+      matrix(ex_i,ex_j) = matrix(ex_j,ex_i) = _cov(i,j);
     }
-  }
 
-  return -1;
-  (void)npar;
+  return matrix;
 }

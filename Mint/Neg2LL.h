@@ -195,10 +195,13 @@ namespace MINT
       return -2.* sum*fabs(sumweights/sumsquareweights);
     }
 
-    virtual void Gradient( Double_t* grad )
+    virtual std::vector<double> Gradient( const std::vector<double>& par )
     {
-      for( unsigned int i=0; i<this->getParSet()->size(); ++i)
-	grad[i]=_grad[i];
+      std::vector<double> grad;
+      for( unsigned int i=0; i<this->getParSet()->size(); ++i )
+	grad.push_back(_grad[i]);
+
+      return grad;
     }    
 
     virtual bool useAnalyticGradient()
@@ -280,8 +283,8 @@ namespace MINT
 
     virtual double getNewVal(){ return _imini->getNewVal(); }
     
-    virtual void Gradient( Double_t* grad )
-    { _imini->Gradient(grad); }
+    virtual std::vector<double> Gradient( const std::vector<double>& par )
+    { return _imini->Gradient(par); }
 
     virtual bool useAnalyticGradient()
     { return _imini->useAnalyticGradient(); }

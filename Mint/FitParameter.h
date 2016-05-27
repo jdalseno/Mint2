@@ -3,7 +3,6 @@
 // author: Jonas Rademacker (Jonas.Rademacker@bristol.ac.uk)
 // status:  Mon 9 Feb 2009 19:17:55 GMT
 
-//#include "TMinuit.h"
 #include "Mint/IMinuitParameter.h"
 #include "Mint/MinuitParameterSet.h"
 #include "Mint/NamedParameterBase.h"
@@ -50,11 +49,9 @@ class FitParameter : public NamedParameterBase, public IMinuitParameter{
  protected:
   static const char* _initString;
   
-  //  TMinuit* _minPtr;
   MinuitParameterSet* _pset;
   int _psetIndex;
 
-  //  int _pN;
   int _iFixInit;
   double _meanInit, _stepInit, _minInit, _maxInit;
 
@@ -120,8 +117,6 @@ class FitParameter : public NamedParameterBase, public IMinuitParameter{
 
   //  virtual bool updateResults();
 
-  //  const TMinuit* getMinuit() const;
-  //  TMinuit* getMinuit();
   int iFixInit() const;
   bool hidden() const{return iFixInit() == 1;}
   bool scan() const;
@@ -136,10 +131,6 @@ class FitParameter : public NamedParameterBase, public IMinuitParameter{
   double minInit() const;
   double maxInit() const;
   
-  //  int parNumber() const;
-  //  void associate(TMinuit* tm, int parNum);
-
-  //  bool MinuitOK() const;
   double valAtLastFCNCall()const;
   double mean()const;
   double min()const;

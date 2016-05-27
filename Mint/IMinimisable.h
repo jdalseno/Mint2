@@ -27,11 +27,11 @@ namespace MINT
     // we should make the following three abstract (=0)
     // and move their default definition to Minimisable.
     //move to vector argument
-    virtual void Gradient( Double_t* grad )
+    virtual std::vector<double> Gradient( const std::vector<double>& par )
     {
       std::cout << "Gradient of pdf is not implemented. Please implement me or set useAnalyticGradient to 0 in your options file. I'll crash now. " << std::endl;
       throw "crash";
-      (void)grad;
+      (void)par;
     }
 
     virtual bool useAnalyticGradient()
