@@ -49,7 +49,7 @@ Amplitude::Amplitude( const Amplitude& other
 		      , IFitParRegister* newDaddy)
 //: IReturnRealForEvent<IDalitzEvent>()
   : IReturnComplexForEvent<IDalitzEvent>()
-  , CachedByEvent()
+  , CachedByEvent(other)
   , FitParDependent(other, newDaddy)
   , _associatingDecayTree(other._associatingDecayTree)
   , _spinFactor(0)

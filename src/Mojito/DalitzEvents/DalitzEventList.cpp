@@ -28,17 +28,20 @@ const std::string DalitzEventList::_className("DalitzEventList");
 
 DalitzEventList::DalitzEventList() 
   : EventList<DalitzEvent>() 
+  , _file(0)
 {
 }
 
 DalitzEventList::DalitzEventList( const DalitzEventList& other ) 
   : IEventList<DalitzEvent>()
   , EventList<DalitzEvent>(other) 
+  , _file(other._file)
 {
 }
 
 DalitzEventList::DalitzEventList(TNtupleD* ntp) 
   : EventList<DalitzEvent>() 
+  , _file(0)
 {
   bool success = fromNtuple(ntp);
   if(! success){
@@ -421,9 +424,10 @@ bool DalitzEventList::fromNtuple(TTree* ntp, double num){
 }
 
 bool DalitzEventList::fromNtupleFile(const std::string& fname){
-  TFile f(fname.c_str());
-  f.cd();
-  TTree* ntp = (TTree*) f.Get(className().c_str());
+  counted_ptr<TFile> f(new TFile(fname.c_str()));
+  _file = f;
+  _file->cd();
+  TTree* ntp = (TTree*) _file->Get(className().c_str());
   if(0 == ntp){
     cout << "ERROR in DalitzEventList::fromNtupleFile"
 	 << "\n   > Can't get ntuple for filename = "

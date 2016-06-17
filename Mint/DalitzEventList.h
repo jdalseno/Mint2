@@ -18,10 +18,13 @@
 #include "Mint/PlotSet.h"
 #include "Mint/CLHEPSystemOfUnits.h"
 
+#include "Mint/counted_ptr.h"
+
 class TRandom;
 class TH1D;
 class TH2D;
 class TTree;
+#include "TFile.h"
 
 class FitAmpSum;
 
@@ -34,6 +37,8 @@ class DalitzEventList
 {
   static const std::string _className;
  protected:
+  //  TFile* _file;
+  MINT::counted_ptr<TFile> _file;
 
  public:
   DalitzEventList();

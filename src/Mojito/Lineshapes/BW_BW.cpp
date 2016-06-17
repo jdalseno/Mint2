@@ -80,7 +80,7 @@ BW_BW::BW_BW( const AssociatedDecayTree& decay)
 }
 BW_BW::BW_BW(const BW_BW& other)
   : ILineshape()
-  , FitParDependent()
+  , FitParDependent(other)
   , _prSq(other._prSq)
   , _prSqForGofM(other._prSqForGofM)
   , _pABSq(other._pABSq)
