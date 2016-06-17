@@ -14,8 +14,6 @@
 #include "Mint/GounarisSakurai.h"
 #include "Mint/Lass.h"
 #include "Mint/Flatte.h"
-#include "Mint/FocusFlatte.h"
-#include "Mint/CrystalBarrelFOCUS.h"
 #include "Mint/NonRes.h"
 #include "Mint/Bugg_BW.h"
 #include "Mint/RhoOmegaGS.h"
@@ -136,8 +134,6 @@ ILineshape* LineshapeMaker(const AssociatedDecayTree* tree
     if(abs(tree->getVal().pdg()) == 113 && A_is_in_B("RHO_OMEGA", lopt)){
       if(dbThis)cout << "LineshapeMaker returning rho-omega lineshape"<< endl;
       return new Rho0Omega(*tree);
-      //return new CrystalBarrelFOCUS(*tree);
-      //return new BW_BW(*tree);
     }else if(A_is_in_B("RhoOmegaGS", lopt)) return new RhoOmegaGS(*tree);    
     else if((abs(tree->getVal().pdg())%1000)==113 && A_is_in_B("GS", lopt)){
       if(dbThis) cout << "LineshapeMaker: return GS lineshape" << endl;
@@ -161,12 +157,7 @@ ILineshape* LineshapeMaker(const AssociatedDecayTree* tree
       return new BW_BW(*tree);
     }
   }else if(abs(tree->getVal().pdg()) == 9010221 ){ // f0(980)
-    if(A_is_in_B("FocusFlatte", lopt)){
-      cout << "LineshapeMaker: "
-	   << "\n\t> returning Flatte lineshape"
-	   << endl;
-      return new FocusFlatte(*tree);
-    }else if(A_is_in_B("Flatte", lopt)){
+    if(A_is_in_B("Flatte", lopt)){
       cout << "LineshapeMaker: "
 	   << "\n\t> returning Flatte lineshape"
 	   << endl;

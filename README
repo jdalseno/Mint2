@@ -1,4 +1,14 @@
 Mint2
+ - Amplitude analysis based on covariant spin tensor formalism and MC integration
+
+Requirements
+ - ROOT
+ - qft++ (https://github.com/jdalseno/qft)
 
 Build Instructions
-Type 'scons' in the base directory
+ - Ensure root-config is in your path
+ - Correctly set the QFT_PATH variable in your environment
+ - Type 'scons' in the base directory
+
+System-wide Installation Instruction (optional)
+ - Type '(sudo -E "PATH=$PATH") scons --install=<install dir>'
