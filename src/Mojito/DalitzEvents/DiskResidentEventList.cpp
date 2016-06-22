@@ -249,7 +249,10 @@ bool DiskResidentEventList::fromFile(){
     makeNewFile();
   }
   if(dbThis) cout << " opened file" << endl;
-  if(dbThis) _f->ls(); cout << " that's in it" << endl;
+  if(dbThis){
+    _f->ls();
+    cout << " that's in it" << endl;
+  }
   _f->cd();
   if(dbThis){
     cout << " cd'ed to file " << endl;

@@ -180,7 +180,10 @@ class DalitzPdfBaseFastInteg
     return _norm;
   }
   double getIntegralValue(){
-    if(_norm < 0) getNorm(); return _norm;
+    if(_norm < 0)
+      getNorm();
+
+    return _norm;
   }
   double redoIntegrator(){
     _norm = -1;
