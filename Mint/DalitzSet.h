@@ -9,10 +9,11 @@
 #include "Mint/DalitzCoordSet.h"
 #include "Mint/AllPossibleSij.h"
 #include "Mint/counted_ptr.h"
-#include <map>
+//#include <map>
+#include "Mint/PolymorphMap.h"
 
 template<typename T>
-class DalitzSet : public std::map< DalitzCoordSet, MINT::counted_ptr<T> >{
+class DalitzSet : public MINT::PolymorphMap< DalitzCoordSet, MINT::counted_ptr<T> >{
   std::string _name;
   void makeEmptyContainer(const DalitzEventPattern& pat){
     int nDaughters = pat.numDaughters();
@@ -34,7 +35,7 @@ class DalitzSet : public std::map< DalitzCoordSet, MINT::counted_ptr<T> >{
  public:
   DalitzSet(){ makeName();}
   DalitzSet(const DalitzSet<T>& other)
-    :  std::map< DalitzCoordSet, MINT::counted_ptr<T> >( other)
+    :  MINT::PolymorphMap< DalitzCoordSet, MINT::counted_ptr<T> >( other)
     {
       makeName();
     }

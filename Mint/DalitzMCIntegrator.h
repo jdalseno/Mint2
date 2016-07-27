@@ -50,7 +50,7 @@ class DalitzMCIntegrator : virtual public IDalitzIntegrator{
   DalitzEventPattern _pat;
   MINT::IReturnRealForEvent<IDalitzEvent>* _w;
   integrationWeight _iw;
-  DalitzEventPtrList _events;
+  DalitzEventPtrList _eventPtrList;
   TRandom* _rnd;
   double _precision;
 
@@ -110,7 +110,7 @@ class DalitzMCIntegrator : virtual public IDalitzIntegrator{
         double den= getVal();
         den *= _weightSum;
         if(den <= 0) den=1;
-        return _events.reWeightedHistoSet(&_iw)/den;
+        return _eventPtrList.reWeightedHistoSet(&_iw)/den;
   }
     
   virtual ~DalitzMCIntegrator(){};

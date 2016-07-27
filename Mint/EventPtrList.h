@@ -4,13 +4,13 @@
 // status:  Mon 9 Feb 2009 19:17:54 GMT
 
 #include <iostream>
-#include <vector>
+//#include <vector>
 #include <ctime>
 #include <cmath>
 
 #include "TRandom.h"
 
-#include "Mint/IEventList.h"
+#include "Mint/IMinimalEventList.h"
 //#include "Mint/EventAccess.h"
 #include "Mint/IReturnReal.h"
 #include "Mint/IReturnRealForEvent.h"
@@ -18,13 +18,14 @@
 #include "Mint/GeneralisedPareto.h"
 
 #include "Mint/counted_ptr.h"
+#include "Mint/PolymorphVector.h"
 
 namespace MINT{
 
 template<typename EVENT_TYPE>
 class EventPtrList 
-  : virtual public IEventList<EVENT_TYPE>
-    , public std::vector<MINT::counted_ptr<EVENT_TYPE> > 
+  : virtual public MINT::IMinimalEventList<EVENT_TYPE>
+    , public MINT::PolymorphVector<MINT::counted_ptr<EVENT_TYPE> > 
     {
   
   public:
@@ -36,29 +37,25 @@ class EventPtrList
   {
     Add(evt);
   }
+  virtual ~EventPtrList(){}
 
-  counted_ptr<EVENT_TYPE> getPtr(unsigned int i) const{
-    return std::vector<MINT::counted_ptr<EVENT_TYPE> >::operator[](i);
+  virtual counted_ptr<EVENT_TYPE> getPtr(unsigned int i) const{
+    return this->at(i);
   }
 
-  EVENT_TYPE& operator[](unsigned int i){
-    // a bit awkward, but makes it compatible with
-    // a MINT::EventList<EVENT_TYPE>
-    
+  virtual EVENT_TYPE getEvent(unsigned int i) const{
     return *(getPtr(i));
   }
-
-  const EVENT_TYPE& operator[](unsigned int i) const{
+  virtual const EVENT_TYPE& getEventRef(unsigned int i) const{
     return *(getPtr(i));
   }
-
-  EVENT_TYPE getEvent(unsigned int i) const{
+  virtual EVENT_TYPE& getEventRef(unsigned int i){
     return *(getPtr(i));
   }
   EventPtrList(const EventPtrList<EVENT_TYPE>& other)
-    : IEventList<EVENT_TYPE>()
-    , std::vector<MINT::counted_ptr<EVENT_TYPE> >(
-    (std::vector<MINT::counted_ptr<EVENT_TYPE> >)other)
+    : IMinimalEventList<EVENT_TYPE>()
+    , PolymorphVector<MINT::counted_ptr<EVENT_TYPE> >(
+        (MINT::PolymorphVector<MINT::counted_ptr<EVENT_TYPE> >)other)
   {
   }
   EventPtrList<EVENT_TYPE>& 
@@ -77,7 +74,7 @@ class EventPtrList
   }
 
   virtual unsigned int size() const{
-    return std::vector<counted_ptr<EVENT_TYPE> >::size();
+    return MINT::PolymorphVector<counted_ptr<EVENT_TYPE> >::size();
   }
 
   virtual MINT::counted_ptr<EVENT_TYPE> popLastEventPtr(){
@@ -108,7 +105,8 @@ class EventPtrList
     return true;
   }
 
-  double getMax(IReturnReal* amps){
+  /*
+  virtual double getMax(IReturnRealForEvent* amps){
     double max=-1;
     int counter=0;
     for(unsigned int i=0; i < this->size(); i++){
@@ -119,7 +117,7 @@ class EventPtrList
     return max;
   }
  
-  double getMin(IReturnReal* amps){
+  virtual double getMin(IReturnRealForEvent* amps){
     double min = +9999;
     int counter=0;
     for(unsigned int i=0; i < this->size(); i++){
@@ -129,6 +127,7 @@ class EventPtrList
     }
     return min;
   }
+  */
 };
 
 }//namespace MINT

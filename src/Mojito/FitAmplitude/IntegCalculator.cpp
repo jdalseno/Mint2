@@ -157,14 +157,14 @@ std::complex<double> IntegCalculator::ComplexSum()const{
 }
 
 bool IntegCalculator::makeAndStoreFractions(Minimiser* mini){
-  bool dbThis=true;
+  bool dbThis=false;
   if(dbThis){
     cout << "Fractions WITH efficiency (for debug only)" << endl;
     withEff().makeAndStoreFractions("wrongFractions_WithEff","fitFractions_wrong_WithEff.root",mini);
     cout << "\n and now Fractions WITHOUT efficiency"
 	 << " (i.e. what you really want):" << endl;
   }
-  if(_onlyOneFitAmpPairList) return withEff().makeAndStoreFractions();
+  if(_onlyOneFitAmpPairList) return withEff().makeAndStoreFractions(mini);
   else return noEff().makeAndStoreFractions(mini);
 }
 double IntegCalculator::getFractionChi2() const{
@@ -204,6 +204,8 @@ std::vector<DalitzHistoSet> IntegCalculator::GetInterferenceHistograms(){
 }
 
 void IntegCalculator::doFinalStats(Minimiser* mini){
+  bool dbThis=false;
+  if(dbThis) cout << "IntegCalculator::doFinalStats called" << endl;
   makeAndStoreFractions(mini);
 }
 

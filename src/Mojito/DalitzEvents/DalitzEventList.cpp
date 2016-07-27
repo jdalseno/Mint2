@@ -51,6 +51,9 @@ DalitzEventList::DalitzEventList(TNtupleD* ntp)
   }
 }
 
+DalitzEventList::~DalitzEventList(){
+  //if(0 != _file) _file->Close();
+}
 int DalitzEventList::generatePhaseSpaceEvents(int NumEvents
 					      , const DalitzEventPattern& pat
 					      , TRandom* rnd
@@ -298,24 +301,23 @@ TNtupleD* DalitzEventList::makeNtuple(const std::string& ntpName ) const{
 
   ntp->SetDirectory(0);
 
-  int arraySize = ((this->begin()))->ntupleVarArraySize();
-  Double_t *array = new Double_t[arraySize];
+  unsigned int arraySize = ((this->begin()))->ntupleVarArraySize();
+  vector<Double_t> array(arraySize);
 
 
   for(vector<DalitzEvent>::const_iterator it = this->begin();
       it != this->end(); it++){
 
-    bool success = (it)->fillNtupleVarArray(array, arraySize);
+    bool success = (it)->fillNtupleVarArray(array);
     if(! success){
       cout << "ERROR in DalitzEventList::makeNtuple"
 	   << ", call to DalitzEvent::fillNtupleVarArray"
 	   << " returned failure"
 	   << endl;
     }else{
-      ntp->Fill(array);
+      ntp->Fill(&(array[0]));
     }
   }
-  delete[] array;
   return ntp;
 }
 
@@ -344,12 +346,12 @@ bool DalitzEventList::saveAsNtuple(const std::string& fname
 	 << endl;
     return false;
   }
-  TFile f(fname.c_str(), "RECREATE");
-  f.cd();
+  TFile* f= TFile::Open(fname.c_str(), "RECREATE");
+  f->cd();
   TNtupleD* ntp = makeNtuple(ntpName);
-  ntp->Write();
-  f.Close();
-  ntp->Delete("all");
+  if(0 != ntp) ntp->Write();
+  f->Close();
+  //ntp->Delete("all");
   //delete ntp;
   return true;
 }
@@ -424,7 +426,13 @@ bool DalitzEventList::fromNtuple(TTree* ntp, double num){
 }
 
 bool DalitzEventList::fromNtupleFile(const std::string& fname){
-  counted_ptr<TFile> f(new TFile(fname.c_str()));
+  TFile* f(new TFile(fname.c_str()));
+  if(0 ==f){
+    cout << "ERROR in DalitzEventList::fromNtupleFile"
+	 << "\n   > Can't open file with filename = "
+	 << "\n   > " << fname << endl;
+    return false;
+  }
   _file = f;
   _file->cd();
   TTree* ntp = (TTree*) _file->Get(className().c_str());
@@ -434,13 +442,14 @@ bool DalitzEventList::fromNtupleFile(const std::string& fname){
 	 << "\n   > " << fname << endl;
     return false;
   }
+  
   return fromNtuple(ntp);
 }
 
 DalitzHistoSet DalitzEventList::histoSet() const{
   DalitzHistoSet hs;
   for(unsigned int i=0; i< this->size(); i++){
-    hs.addEvent(((*this)[i]));
+    hs.addEvent(this->at(i));
   }
   return hs;
 }
@@ -448,7 +457,7 @@ DalitzHistoSet DalitzEventList::weightedHistoSet() const{
   // mainly for diagnostics
   DalitzHistoSet hs;
   for(unsigned int i=0; i< this->size(); i++){
-    DalitzEvent evt((*this)[i]);
+    DalitzEvent evt(this->at(i));
     hs.addEvent(evt, evt.getWeight());
   }
   return hs;
@@ -458,7 +467,7 @@ DalitzHistoSet DalitzEventList::reWeightedHistoSet(IReturnRealForEvent<IDalitzEv
   DalitzHistoSet hs;
   if(0 == w) return hs;
   for(unsigned int i=0; i< this->size(); i++){
-    DalitzEvent evt((*this)[i]);
+    DalitzEvent evt(this->at(i));
     hs.addEvent(evt, w->RealVal(evt));
   }
   return hs;
@@ -468,7 +477,7 @@ DalitzHistoSet DalitzEventList::weighedReWeightedHistoSet(IReturnRealForEvent<ID
   DalitzHistoSet hs;
   if(0 == w) return hs;
   for(unsigned int i=0; i< this->size(); i++){
-    DalitzEvent evt((*this)[i]);
+    DalitzEvent evt(this->at(i));
     hs.addEvent(evt, w->RealVal(evt) * evt.getWeight());
   }
   return hs;

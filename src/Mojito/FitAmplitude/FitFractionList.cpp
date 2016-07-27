@@ -4,13 +4,13 @@
 
 
 FitFractionList::FitFractionList()
-  : std::vector<FitFraction>()
+  : MINT::PolymorphVector<FitFraction>()
   , _sum("sum", 0.0)
 {
 }
 
 FitFractionList::FitFractionList(const FitFractionList& other)
-  : std::vector<FitFraction>(other)
+  : MINT::PolymorphVector<FitFraction>(other)
   , _sum(other._sum)
 {
 }

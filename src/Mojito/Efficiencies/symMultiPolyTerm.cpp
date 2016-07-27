@@ -6,12 +6,12 @@ using namespace std;
 using namespace MINT;
 
 symMultiPolyTerm::symMultiPolyTerm(int dimension, int order)
-  : std::vector< symPolyTerm >()
+  : MINT::PolymorphVector< symPolyTerm >()
 {
   init(dimension, order);
 }
 symMultiPolyTerm::symMultiPolyTerm(const symMultiPolyTerm& other)
-  : std::vector< symPolyTerm >(other)
+  : MINT::PolymorphVector< symPolyTerm >(other)
 {
 }
 

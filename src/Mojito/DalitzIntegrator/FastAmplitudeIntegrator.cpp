@@ -11,6 +11,7 @@
 #include <iostream>
 #include <sstream>
 
+#include <ctime>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -40,6 +41,7 @@ FastAmplitudeIntegrator
   //  initialise(pattern, amps, weight, generator, rnd, precision);
   initialiseFromFile(pattern, amps, fname);
 }
+
 FastAmplitudeIntegrator::FastAmplitudeIntegrator()
   : _initialised(0), _db(false)
 {
@@ -169,6 +171,7 @@ bool FastAmplitudeIntegrator
 	    , TRandom* rnd
 	    , double precision
 	    ){
+  bool dbThis=false;
   _pat  = pattern;
   _amps = amps;
   //_weight = weight;
@@ -182,6 +185,11 @@ bool FastAmplitudeIntegrator
   _generator = generator;
 
   _integCalc = amps->makeIntegCalculator();
+  if(dbThis){
+    cout << "FastAmplitudeIntegrator::setValues: Have _integCalc ptr " << _integCalc
+	 << ", now printing it." << endl;
+    _integCalc->print();
+  }
 
   if(_db) _integCalc_copyForDebug = amps->makeIntegCalculator();
 
@@ -233,6 +241,11 @@ double FastAmplitudeIntegrator::weight(IDalitzEvent* ){
 }
 int FastAmplitudeIntegrator::addEvents(long int Nevents){
   bool dbThis=false;
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::addEvents "
+	 << " need to get initialised first." << endl;
+    return 0;
+  }
   if(dbThis) cout << "FastAmplitudeIntegrator::addEvents "
 		  << " got called " << endl;
   if(Nevents <= 0) return _integCalc->numEvents();
@@ -252,6 +265,7 @@ int FastAmplitudeIntegrator::addEvents(long int Nevents){
     if(maxTries < (unsigned long int) Nevents) maxTries = Nevents * 10;
     if(maxTries < (unsigned long int) Nevents) maxTries = Nevents;
 
+    //time_t startTime = time(0);
     for(unsigned long int i=0; i < maxTries && N_success < Nevents; i++){
       counted_ptr<IDalitzEvent> ptr(_generator->newEvent());
       if(dbThis) cout << "got event with ptr: " << ptr << endl;
@@ -279,6 +293,9 @@ int FastAmplitudeIntegrator::addEvents(long int Nevents){
 	  double sigma = -9999;
 	  if(v > 0) sigma = sqrt(v);
 	  cout << "\t integ= " << _mean << " +/- " << sigma;
+	  /*cout << "\t("
+	       << MINT::stringtime(difftime(time(0), startTime))
+	       << ")";*/
 	  cout << endl;
 	}
       }
@@ -299,9 +316,20 @@ int FastAmplitudeIntegrator::addEvents(long int Nevents){
 }
 
 double FastAmplitudeIntegrator::variance() const{
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::variance "
+	 << " need to get initialised first." << endl;
+    return 0;
+  }
   return _integCalc->variance();
 }
 double FastAmplitudeIntegrator::evaluateSum(){
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::evaluateSum "
+	 << " need to get initialised first." << endl;
+    return 0;
+  }
+
   time_t tstart = time(0);
   _Ncalls++;
 
@@ -343,6 +371,12 @@ double FastAmplitudeIntegrator::evaluateSum(){
 }
 
 int FastAmplitudeIntegrator::determineNumEvents(){
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::determineNumEvents "
+	 << " need to get initialised first." << endl;
+    return 0;
+  }
+
   updateEventSet(_minEvents);
   evaluateSum();
   double v = variance();
@@ -366,6 +400,12 @@ int FastAmplitudeIntegrator::determineNumEvents(){
 }
 
 int FastAmplitudeIntegrator::generateEnoughEvents(){
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::generateEnoughEvents "
+	 << " need to get initialised first." << endl;
+    return 0;
+  }
+
   updateEventSet(_minEvents);
   int counter(0);
   while(determineNumEvents() > _integCalc->numEvents() &&
@@ -382,35 +422,95 @@ double FastAmplitudeIntegrator::getVal(){
 }
 
 DalitzHistoSet FastAmplitudeIntegrator::histoSet() const{
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::histoSet "
+	 << " need to get initialised first." << endl;
+    throw "bummer";
+  }
+
   return _integCalc->histoSet();
 }
 void FastAmplitudeIntegrator::saveEachAmpsHistograms(const std::string& prefix) const{
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::saveEachAmpsHistograms "
+	 << " need to get initialised first." << endl;
+    cout << "So I won't do anything" << endl;
+    return;
+  }
   return _integCalc->saveEachAmpsHistograms(prefix);
 }
 std::vector<DalitzHistoSet> FastAmplitudeIntegrator::GetEachAmpsHistograms(){
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::GetEachAmpsHistograms "
+	 << " need to get initialised first." << endl;
+    std::vector<DalitzHistoSet> dummy;
+    return dummy;
+  }
   return _integCalc->GetEachAmpsHistograms();
 }
 
 DalitzHistoSet FastAmplitudeIntegrator::interferenceHistoSet() const{
-    return _integCalc->interferenceHistoSet();
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::interferenceHistoSet "
+	 << " need to get initialised first." << endl;
+    DalitzHistoSet dummy;
+    return dummy;
+  }
+  return _integCalc->interferenceHistoSet();
 }
 void FastAmplitudeIntegrator::saveInterferenceHistograms(const std::string& prefix) const{
-    return _integCalc->saveInterferenceHistograms(prefix);
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::saveInterferenceAmpsHistograms "
+	 << " need to get initialised first." << endl;
+    cout << "So I won't do anything" << endl;
+    return;
+  }
+  return _integCalc->saveInterferenceHistograms(prefix);
 }
 std::vector<DalitzHistoSet> FastAmplitudeIntegrator::GetInterferenceHistograms(){
-    return _integCalc->GetInterferenceHistograms();
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::GetInterferenceHistograms "
+	 << " need to get initialised first." << endl;
+    std::vector<DalitzHistoSet> dummy;
+    return dummy;
+  }
+
+  return _integCalc->GetInterferenceHistograms();
 }
 
 void FastAmplitudeIntegrator::doFinalStats(Minimiser* mini){
   bool dbThis=true;
-  if(dbThis) cout << "FastAmplitudeIntegrator::doFinalStats() called" << endl;
+  if(dbThis){
+    cout << "FastAmplitudeIntegrator::doFinalStats() called" << endl;
+    cout << "Am I initialised? " << _initialised << endl;
+    cout << "Got called with these pointers: mini " << mini
+	 << " and my own _integCalc " << _integCalc << endl;
+  }
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::doFinalStats "
+	 << " need to get initialised first." << endl;
+    cout << " So I won't do anything." << endl;
+    return;
+  }
+    
   _integCalc->doFinalStats(mini);
 }
 double FastAmplitudeIntegrator::getFractionChi2()const{
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::getFractionChi2() "
+	 << " need to get initialised first." << endl;
+    return -9999;
+  }
   return _integCalc->getFractionChi2();
 }
 
 bool FastAmplitudeIntegrator::save(const std::string& fname)const{
+  if(! _initialised){
+    cout << " FastAmplitudeIntegrator::save( " << fname << " ):"
+	 << " need to get initialised first." << endl;
+    cout << " So I won't do anything." << endl;
+    return false;
+  }
   return _integCalc->save(fname);
 }
 

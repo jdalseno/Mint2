@@ -218,7 +218,7 @@ bool DalitzBWArea::isInside(const DalitzEvent& evt
 			    , const Permutation& mapping) const{
   bool dbThis=false;
   //cout << "Hello from  DalitzBWArea::isInside" << endl;
-  if(mapping.mapOrder(_pat) != evt.eventPattern()){
+  if(mapping.mapOrder(_pat) != (MINT::PolymorphVector<DecayTreeItem>) evt.eventPattern()){
     if(dbThis) cout << "patterns don't match in isInside" << endl;
     return false;
   }

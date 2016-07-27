@@ -9,13 +9,13 @@ char QuarkContent::_NAMES[6] = {'D', 'U', 'S', 'C', 'B', 'T'};
 map<char, int> QuarkContent::_positions;
 
 QuarkContent::QuarkContent()
-  : vector<int>(6, 0)
+  : MINT::PolymorphVector<int>(6, 0)
 {
   initPositions();
 }
 
 QuarkContent::QuarkContent(const QuarkContent& other)
-  : vector<int>(other)
+  : MINT::PolymorphVector<int>(other)
 {}
 
 bool QuarkContent::initPositions(){

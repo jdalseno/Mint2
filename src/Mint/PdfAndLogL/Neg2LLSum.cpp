@@ -38,26 +38,26 @@ bool Neg2LLSum::add( IMinimisable* llPtr )
 
 void Neg2LLSum::beginFit()
 {
-  for( unsigned int i=0; i<_likList.size(); ++i)
+  for( unsigned int i=0; i<_likList.size(); ++i )
     _likList[i]->beginFit();
 }
 
 void Neg2LLSum::parametersChanged()
 {
-  for( unsigned int i=0; i<_likList.size(); ++i)
+  for( unsigned int i=0; i<_likList.size(); ++i )
     _likList[i]->parametersChanged();
 }
 
 void Neg2LLSum::endFit()
 {
-  for( unsigned int i=0; i<_likList.size(); ++i)
+  for( unsigned int i=0; i<_likList.size(); ++i )
     _likList[i]->endFit();
 }
 
 double Neg2LLSum::getVal()
 {
   double sum = 0.0;
-  for( unsigned int i=0; i<_likList.size(); ++i)
+  for( unsigned int i=0; i<_likList.size(); ++i )
     sum += _likList[i]->getVal();
 
   return sum;
@@ -65,9 +65,10 @@ double Neg2LLSum::getVal()
 
 bool Neg2LLSum::addConstraints()
 {
-  cout << "addConstraints for " << getParSet()->size() << " paramaters" <<  endl;
+  cout << "addConstraints for " << getParSet()->size()
+       << " paramaters" <<  endl;
 
-  for( unsigned int i=0; i<getParSet()->size(); ++i){
+  for( unsigned int i=0; i<getParSet()->size(); ++i ){
     string name_i= getParSet()->getParPtr(i)->name();
     cout << "paramater " << i << " : " <<  name_i << endl;
     NamedParameter<double> constrain( ("Constrain_"+name_i).c_str(),-1,-1,
@@ -107,7 +108,7 @@ std::vector<double> Neg2LLSum::Gradient( const std::vector<double>& par )
 bool Neg2LLSum::useAnalyticGradient()
 {
   bool b = true;
-  for( unsigned int i=0; i<_likList.size(); ++i)
+  for( unsigned int i=0; i<_likList.size(); ++i )
     b = b && _likList[i]->useAnalyticGradient();
 
   return b;
@@ -115,6 +116,6 @@ bool Neg2LLSum::useAnalyticGradient()
 
 void Neg2LLSum::setUseAnalyticGradient( bool useAnalyticGradient )
 {
-  for( unsigned int j=0; j<_likList.size(); ++j)
+  for( unsigned int j=0; j<_likList.size(); ++j )
     _likList[j]->setUseAnalyticGradient(useAnalyticGradient);
 }

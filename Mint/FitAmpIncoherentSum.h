@@ -19,6 +19,7 @@
 #include "Mint/ILookLikeFitAmpSum.h"
 
 #include "Mint/FitAmpList.h"
+#include <vector>
 
 class FitAmpIncoherentSum 
 : virtual public MINT::IReturnRealForEvent<IDalitzEvent>
@@ -76,7 +77,7 @@ class FitAmpIncoherentSum
     return getVal(*evtPtr);
   }
   
-  virtual void Gradient(IDalitzEvent& evt,Double_t* grad, MINT::MinuitParameterSet* mps);
+  virtual void Gradient(IDalitzEvent& evt,std::vector<double>& grad, MINT::MinuitParameterSet* mps);
   virtual bool useAnalyticGradient() {return _useAnalyticGradient;}
   
   /*

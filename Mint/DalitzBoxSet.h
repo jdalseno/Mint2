@@ -15,13 +15,13 @@
 #include <iostream>
 
 class DalitzBoxSet 
-: public std::vector<DalitzBox>
+: public MINT::PolymorphVector<DalitzBox>
 , virtual public MINT::IEventGenerator<IDalitzEvent>
 {
 
  protected:
   bool _ready;
-  std::vector<double> _volumeProbs;
+  MINT::PolymorphVector<double> _volumeProbs;
   MINT::IReturnRealForEvent<IDalitzEvent>* _amps;
 
   TRandom* _rnd;
@@ -50,7 +50,7 @@ class DalitzBoxSet
   DalitzBoxSet(const DalitzBoxSet& other);
 
   void add(const DalitzBox& box);
-  void add(const std::vector<DalitzBox>& boxes);
+  void add(const MINT::PolymorphVector<DalitzBox>& boxes);
   void add(const DalitzBoxSet& boxes);
   void setPDF(MINT::IReturnRealForEvent<IDalitzEvent>* amps);
 

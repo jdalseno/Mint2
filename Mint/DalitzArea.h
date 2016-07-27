@@ -11,8 +11,9 @@
 
 #include "Mint/counted_ptr.h"
 
-#include <vector>
+//#include <vector>
 #include <iostream>
+#include "Mint/PolymorphVector.h"
 
 class DalitzEvent;
 class IDalitzEvent;
@@ -53,7 +54,7 @@ class DalitzArea{
   DalitzArea();
   DalitzArea(const DalitzEventPattern& pat, TRandom* rnd = gRandom);
   DalitzArea(const DalitzArea& other);
-  ~DalitzArea();
+  virtual ~DalitzArea();
   
   DalitzArea& operator=(const DalitzArea& other);
 

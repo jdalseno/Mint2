@@ -35,6 +35,9 @@ class FromFileGenerator
 		    , const std::string& opt=""
 		    , const std::string& ntpName = "DalitzEventList"
 		    );
+
+  virtual ~FromFileGenerator(){}
+
   // option "" defaults to "UPDATE" if addThisWhenFileEmpty != 0 and
   // "READ" otherwise (this sets the option with which the root file
   // containing the events is opened). If you want to override this behaviour

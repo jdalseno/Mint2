@@ -4,7 +4,8 @@
 // status:  Mon 9 Feb 2009 19:18:00 GMT
 
 #include <iostream>
-#include <vector>
+//#include <vector>
+#include "Mint/PolymorphVector.h"
 
 #include "Mint/DecayTreeItem.h"
 
@@ -13,7 +14,7 @@
 
 class AmpInitialiser;
 
-class DalitzEventPattern : public std::vector<DecayTreeItem>{
+class DalitzEventPattern : public MINT::PolymorphVector<DecayTreeItem>{
  public:
   static const DalitzEventPattern NoPattern;
   DalitzEventPattern(){
@@ -21,14 +22,18 @@ class DalitzEventPattern : public std::vector<DecayTreeItem>{
   }
   DalitzEventPattern(int pdg_ids[], int arrayDimension );
   // note: arrayDimension = num mums (=1) + num daughters.
-  DalitzEventPattern(std::vector<int> pdg_ids);
+  DalitzEventPattern(PolymorphVector<int> pdg_ids);
+  DalitzEventPattern(const std::vector<int>& pdg_ids);
   DalitzEventPattern(const std::vector<DecayTreeItem>& yetAnother);
+  DalitzEventPattern(const MINT::PolymorphVector<DecayTreeItem>& yetAnother);
   DalitzEventPattern(const DalitzEventPattern& other);
 
   DalitzEventPattern(int mum, int d1, int d2);
   DalitzEventPattern(int mum, int d1, int d2, int d3);
   DalitzEventPattern(int mum, int d1, int d2, int d3, int d4);
   DalitzEventPattern(const DecayTree& dt_in);
+
+  virtual ~DalitzEventPattern(){}
 
   DalitzEventPattern makeCPConjugate() const;
 
@@ -45,6 +50,9 @@ class DalitzEventPattern : public std::vector<DecayTreeItem>{
   bool compatibleWithFinalState(const DecayTree& tree)const;
   bool compatibleWithFinalState(const DalitzEventPattern& pat)const;
   bool compatibleWithFinalState(const std::vector<int>& otherFs)const;
+  bool compatibleWithFinalState(const MINT::PolymorphVector<int>& otherFs)const{
+    return compatibleWithFinalState(otherFs.theVector());
+  }
 
   bool compatibleWith(const DecayTree& tree)const; // mother & final state
 
@@ -53,8 +61,8 @@ class DalitzEventPattern : public std::vector<DecayTreeItem>{
   void print(std::ostream& os = std::cout)const;
   std::vector<int> finalStates() const;
 
-  double sijMin(const std::vector<int>& indices) const;
-  double sijMax(const std::vector<int>& indices) const;
+  double sijMin(const MINT::PolymorphVector<int>& indices) const;
+  double sijMax(const MINT::PolymorphVector<int>& indices) const;
 
   double sijMin(int i, int j) const;
   double sijMax(int i, int j) const;

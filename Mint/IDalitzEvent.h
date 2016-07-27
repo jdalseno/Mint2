@@ -8,6 +8,7 @@
 
 #include "Mint/IWeightedEvent.h"
 #include "Mint/DalitzEventPattern.h"
+#include "Mint/PolymorphVector.h"
 
 #include <vector>
 #include <iostream>
@@ -32,11 +33,11 @@ class IDalitzEvent : public virtual MINT::IWeightedEvent{
   virtual void setMothers3Momentum(const TVector3& mp3)=0;
 
   virtual double s(unsigned int i, unsigned int j) const= 0;
-  virtual double sij(const std::vector<int>& indices) const= 0;
+  virtual double sij(const MINT::PolymorphVector<int>& indices) const= 0;
   virtual double t(unsigned int i, unsigned int j) const= 0;
   
-  virtual double sijMin(const std::vector<int>& indices) const=0;
-  virtual double sijMax(const std::vector<int>& indices) const=0;
+  virtual double sijMin(const MINT::PolymorphVector<int>& indices) const=0;
+  virtual double sijMax(const MINT::PolymorphVector<int>& indices) const=0;
 
   virtual double phaseSpace() const= 0;
 

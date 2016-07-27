@@ -3,20 +3,22 @@
 // author: Jonas Rademacker (Jonas.Rademacker@bristol.ac.uk)
 // status:  Mon 9 Feb 2009 19:18:00 GMT
 
-#include <vector>
+//#include <vector>
 #include <string>
 
 #include "TObject.h"
-#include "TFile.h"
+//#include "TFile.h"
 
-class PlotSet : public std::vector<TObject*>{
+#include "Mint/PolymorphVector.h"
+
+class PlotSet : public MINT::PolymorphVector<TObject*>{
 
  public:
   PlotSet()
-    : std::vector<TObject*>(){}
+    : MINT::PolymorphVector<TObject*>(){}
 
   PlotSet(const PlotSet& other)
-    : std::vector<TObject*>(other)
+    : MINT::PolymorphVector<TObject*>(other)
     {}
   /* beware!!!! this does not do
      the memory management for

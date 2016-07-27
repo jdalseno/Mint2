@@ -43,7 +43,9 @@ counted_ptr<IDalitzEvent> FromFileGenerator::newEventFromGenerator(){
   if(0 == _gen) return counted_ptr<IDalitzEvent>(0);
   counted_ptr<IDalitzEvent> evtPtr(_gen->newEvent());
 
-  if(mothers3MomentumIsSet() && 0 != evtPtr){
+  if(0 == evtPtr) return evtPtr;
+
+  if(mothers3MomentumIsSet()){
     evtPtr->setMothers3Momentum(mothers3Momentum());
   }
 
@@ -53,7 +55,7 @@ counted_ptr<IDalitzEvent> FromFileGenerator::newEventFromGenerator(){
 	   << " saving event to list"
 	   << " opt = " << _opt << endl;
     }
-    _dL.Add(evtPtr.get());
+    _dL.Add(*evtPtr);
     _listIndex++;
   }
   return evtPtr;

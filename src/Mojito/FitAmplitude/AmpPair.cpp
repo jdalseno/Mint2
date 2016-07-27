@@ -366,7 +366,7 @@ std::complex<double> AmpPair::add(IDalitzEvent* evtPtr
   return c;
 }
 
-std::complex<double> AmpPair::add(counted_ptr<IDalitzEvent> evtPtr
+std::complex<double> AmpPair::add(const counted_ptr<IDalitzEvent>& evtPtr
 		       , double weight
 		       , double efficiency
 		       ){

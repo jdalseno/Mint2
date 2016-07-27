@@ -4,32 +4,35 @@
 // status:  Mon 9 Feb 2009 19:17:54 GMT
 
 #include <iostream>
-#include <vector>
+//#include <vector>
 #include <ctime>
 #include <cmath>
 
 #include "TRandom.h"
 
 #include "Mint/IEventList.h"
+#include "Mint/PolymorphVector.h"
 
 namespace MINT{
   
   template<typename EVENT_TYPE>
     class EventList 
     : virtual public IEventList<EVENT_TYPE >
-    , public std::vector<EVENT_TYPE> 
+    , public MINT::PolymorphVector<EVENT_TYPE> // std::vector<EVENT_TYPE> 
     {
     public:
     EventList()
       : IEventList<EVENT_TYPE>()
-	, std::vector<EVENT_TYPE>()
+	, MINT::PolymorphVector<EVENT_TYPE>()
 	{
 	}
     EventList(const EventList<EVENT_TYPE>& other)
       : IEventList<EVENT_TYPE>()
-	, std::vector<EVENT_TYPE>(other)
+	, MINT::PolymorphVector<EVENT_TYPE>(other)
 	{
 	}
+      virtual ~EventList(){}
+
       EventList<EVENT_TYPE>& 
 	operator=(const EventList<EVENT_TYPE>& other){
 	if(this == &other) return *this;
@@ -40,20 +43,21 @@ namespace MINT{
 	return *this;
       }
       
-      virtual const EVENT_TYPE& operator[](unsigned int i) const{
-	return std::vector<EVENT_TYPE>::operator[](i);
-      }
-
       virtual EVENT_TYPE& operator[](unsigned int i){
-	return std::vector<EVENT_TYPE>::operator[](i);
+	return  MINT::PolymorphVector<EVENT_TYPE>::at(i);
+	//return std::vector<EVENT_TYPE>::operator[](i);
+      }
+      virtual const EVENT_TYPE& operator[] (unsigned int i) const{
+	return  MINT::PolymorphVector<EVENT_TYPE>::at(i);
+	//return std::vector<EVENT_TYPE>::operator[](i);
       }
       
-      EVENT_TYPE getEvent(unsigned int i)const{
-	return (*this)[i];
+      virtual EVENT_TYPE getEvent(unsigned int i)const{
+	return MINT::PolymorphVector<EVENT_TYPE>::at(i);
       }
 
       virtual unsigned int size() const{
-	return std::vector<EVENT_TYPE>::size();
+	return MINT::PolymorphVector<EVENT_TYPE>::size();
       }
       
       virtual bool Add(const EVENT_TYPE & evt){

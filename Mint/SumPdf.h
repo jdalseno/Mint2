@@ -96,9 +96,14 @@ namespace MINT
       _pdf_2.endFit();
     }
 
-    virtual void Gradient( EVENT_TYPE& evt, Double_t* grad,
+    virtual void Gradient( EVENT_TYPE& evt, std::vector<double>& grad,
 			   MINT::MinuitParameterSet* mps )
     {
+      if( grad.size() != mps->size() ){
+	std::cout << "size-mismatch in SumPdf::Gradient" << std::endl;
+	throw "bugger";
+      }
+
       std::vector<double> grad_1(mps->size(), 0.0);
       std::vector<double> grad_2(mps->size(), 0.0);
 
@@ -106,7 +111,7 @@ namespace MINT
       _pdf_2.Gradient(evt, grad_2, mps);
 
       for( unsigned int j=0; j<mps->size(); ++j )
-	grad[j]= _f1 * grad_1[j] + (1.0 - _f1) * grad_2[j];   
+	 grad.at(j) = _f1 * grad_1.at(j) + (1.0 - _f1) * grad_2.at(j);
     }
 
     virtual bool useAnalyticGradient()
@@ -118,4 +123,5 @@ namespace MINT
     IPdf<EVENT_TYPE>&  _pdf_2;
   };
 } //namespace MINT
+
 #endif //SUM_PDF_sums_two_normalised_pdfs_HH

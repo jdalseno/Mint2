@@ -22,9 +22,3 @@ MinuitParameterSet* Minimisable::getParSet()
     return MinuitParameterSet::getDefaultSet();
   }
 }
-
-double Minimisable::getNewVal()
-{
-  parametersChanged();
-  return getVal();
-}

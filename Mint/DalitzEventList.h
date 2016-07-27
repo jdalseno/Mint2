@@ -37,13 +37,14 @@ class DalitzEventList
 {
   static const std::string _className;
  protected:
-  //  TFile* _file;
-  MINT::counted_ptr<TFile> _file;
+  TFile* _file;
+  //MINT::counted_ptr<TFile> _file;
 
  public:
   DalitzEventList();
   DalitzEventList(const DalitzEventList& other);
   DalitzEventList(TNtupleD*);
+  virtual ~DalitzEventList();
 
   const std::string& className() const{return _className;}
 

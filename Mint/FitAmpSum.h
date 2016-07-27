@@ -18,6 +18,8 @@
 #include "Mint/ILookLikeFitAmpSum.h"
 #include "Mint/FitAmpList.h"
 
+#include <vector>
+
 // note - this inherits now from FitAmpList, and that from FitAmpLisBase
 // many methods formerly defined here are now defined there.
 
@@ -80,7 +82,7 @@ class FitAmpSum
 
   virtual std::complex<double> getVal(IDalitzEvent& evt);
   virtual std::complex<double> getVal(IDalitzEvent* evt);// for backward compatibility
-  virtual void Gradient(IDalitzEvent& evt,Double_t* grad, MINT::MinuitParameterSet* mps);
+  virtual void Gradient(IDalitzEvent& evt,std::vector<double>& grad, MINT::MinuitParameterSet* mps);
   virtual bool useAnalyticGradient() {return _useAnalyticGradient;}
 
   /*

@@ -87,7 +87,7 @@ class AmpPair : public MINT::FitParDependent{
   bool isSingleAmp() const;
 
   std::complex<double> add(IDalitzEvent* evt, double weight=1, double efficiency=1);
-  std::complex<double> add(MINT::counted_ptr<IDalitzEvent> evt, double weight=1, double efficiency=1);
+  std::complex<double> add(const MINT::counted_ptr<IDalitzEvent>& evt, double weight=1, double efficiency=1);
 
   // real part of the above.
   std::complex<double> integral() const;

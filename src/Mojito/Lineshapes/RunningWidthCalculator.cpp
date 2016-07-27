@@ -25,19 +25,19 @@ using namespace std;
 using namespace MINT;
 
 
-void RunningWidthCalculator::set_min_s_inGeV2()
-{
-  // Calculate lower phase space limit
-  double min_m = 0.;
-  for( unsigned int i=1; i<_pat.size(); ++i){
-    min_m += _pat[i].mass()/GeV;
-  }
-  _min_s_inGeV2 = min_m*min_m;
+void RunningWidthCalculator::set_min_s_inGeV2(){
+    // Calculate lower phase space limit
+    double min_m = 0.;
+    for(unsigned int i= 1; i<_pat.size(); i++){
+        min_m += _pat[i].mass()/GeV;
+    }
+    _min_s_inGeV2 = min_m*min_m;
 }
 
 RunningWidthCalculator::RunningWidthCalculator(const DalitzEventPattern& pat):
     _pat(pat)
 {
+  cout << "RunningWidthCalculator::RunningWidthCalculator: I got called." << endl;
     set_min_s_inGeV2();
 }
 
@@ -370,10 +370,10 @@ public:
     BF_Integrand(std::vector<TF1*> partialWidths, std::vector<FitParameter*> fit_couplings, double m0, double gamma0):
         _index(0),_m0(m0), _gamma0(gamma0), _partialWidths(partialWidths), _fit_couplings(fit_couplings){}
     
-  double operator()( Double_t* x, Double_t* par=0 ){ 
-    return Eval(x[0]);
-    (void)par;
-  }
+    double operator()(Double_t* x, Double_t* par=0){ 
+        return Eval(x[0]);
+	(void)par;
+    }
     
     double operator()(double x){
         return Eval(x);
@@ -384,8 +384,8 @@ public:
         double totalWidth_norm = 0.;
         
         double sum = 0.;
-        for( unsigned int i=1; i<_fit_couplings.size(); ++i){
-	  sum += *_fit_couplings[i];
+        for (unsigned int i=1; i<_fit_couplings.size(); i++) {
+            sum += *_fit_couplings[i];
         }
                 
         for (unsigned int i=0; i<_partialWidths.size(); i++) {
@@ -458,11 +458,11 @@ std::vector<double> RunningWidthCalculator::getPartialWidthCouplingsFromBF(std::
     FitParameter* scale = new FitParameter("scale",2,1,0.1);
     fit_couplings.push_back(scale);
     
-    for( unsigned int i=1; i<BF.size(); ++i){
-      FitParameter* g =
-	//new FitParameter(("g_"+anythingToString(i)).c_str(),0,1,0.1);
-	new FitParameter(("g_"+std::to_string(i)).c_str(),0,1,0.1);
-      fit_couplings.push_back(g);
+    for (unsigned int i=1; i < BF.size() ; i++) {
+        FitParameter* g =
+	new FitParameter(("g_"+anythingToString((int) i)).c_str(),0,1,0.1);
+	//new FitParameter(("g_"+std::to_string(i)).c_str(),0,1,0.1);
+        fit_couplings.push_back(g);
     }
       
     chi2BF f(BF, partialWidths, fit_couplings, m0, gamma0);
@@ -474,8 +474,8 @@ std::vector<double> RunningWidthCalculator::getPartialWidthCouplingsFromBF(std::
     
     
     double sum = 0.;
-    for( unsigned int i=1; i<fit_couplings.size(); ++i){
-      sum += *fit_couplings[i];
+    for (unsigned int i=1; i<fit_couplings.size(); i++) {
+        sum += *fit_couplings[i];
     }
     
     for (unsigned int i=0; i<fit_couplings.size(); i++) {

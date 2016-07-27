@@ -12,18 +12,24 @@
 #include "Mint/DalitzCoordSet.h"
 #include "TLegend.h"
 
+#include "Mint/PolymorphMap.h"
+
 class TTree;
 class IDalitzEvent;
 
-class DalitzHistoSet : public std::map< DalitzCoordSet, DalitzHistogram>{
+class DalitzHistoSet : public MINT::PolymorphMap<DalitzCoordSet, DalitzHistogram>{
   //mutable TTree* _tree;
   std::string _name;
   void makeHistograms(const DalitzEventPattern& pat);
   bool makeDirectory(const std::string& asSubdirOf)const;
   const std::string& makeName();
+
+  std::map< DalitzCoordSet, DalitzHistogram> _theMap;
  public:
+
   DalitzHistoSet();
   DalitzHistoSet(const DalitzHistoSet& other);
+  virtual ~DalitzHistoSet();
   void add(const DalitzHistogram& histo, double weight=1);
   void add(const DalitzHistoSet& hL, double weight=1);
 

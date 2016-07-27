@@ -16,6 +16,7 @@
 #include "Mint/DalitzEventPattern.h"
 
 #include <iostream>
+#include <vector>
 
 class IFastAmplitudeIntegrable 
 : virtual public MINT::IReturnRealForEvent<IDalitzEvent>{
@@ -30,13 +31,13 @@ class IFastAmplitudeIntegrable
 
   virtual void print(std::ostream& os=std::cout) const=0;
 
-    virtual void Gradient(IDalitzEvent& evt,Double_t* grad,MINT::MinuitParameterSet* mps){
-        std::cout << "Gradient of pdf is not implemented. Please implement me or set useAnalyticGradient to 0 in your options file. I'll crash now. " << std::endl;
-        throw "crash";
-	(void)evt;
-	(void)grad;
-	(void)mps;
-    }
+  virtual void Gradient(IDalitzEvent& evt,std::vector<double>& grad,MINT::MinuitParameterSet* mps){
+    std::cout << "Gradient of pdf is not implemented. Please implement me or set useAnalyticGradient to 0 in your options file. I'll crash now. " << std::endl;
+    throw "crash";
+    (void)evt;
+    (void)grad;
+    (void)mps;
+  }
   virtual bool useAnalyticGradient() {return false;}
   
   virtual ~IFastAmplitudeIntegrable(){}

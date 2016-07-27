@@ -18,6 +18,7 @@
 #include "Mint/counted_ptr.h"
 
 #include <string>
+#include <vector>
 
 //#define CHECK_INTEGRATOR
 
@@ -63,9 +64,6 @@ class DalitzPdfBaseFastInteg
   FastAmplitudeIntegrator _faint;
   IFastAmplitudeIntegrable* _amps;
   MINT::counted_ptr<IFastAmplitudeIntegrable> _countedAmps;
-  double _val;  
-  Double_t* _gradNorm; 
-  bool _redoGradNorm;  
   //  MINT::counted_ptr<IGetDalitzEvent> _efficiency;
 
   MINT::IEventGenerator<IDalitzEvent>* _generator;
@@ -73,6 +71,9 @@ class DalitzPdfBaseFastInteg
   MINT::counted_ptr<MINT::IEventGenerator<IDalitzEvent> > _defaultGenerator;
 
   std::string _commaSepList_of_SavedIntegrators;
+  double _val;  
+  std::vector<double> _gradNorm; 
+  bool _redoGradNorm;  
 
   void setup();
   bool makeAmps();
@@ -145,8 +146,8 @@ class DalitzPdfBaseFastInteg
     return getNewVal(*evt);
   }
     
-  virtual void Gradient(IDalitzEvent& evt,Double_t* grad, MINT::MinuitParameterSet* mps); 
-  virtual void GradientForLasso(Double_t* grad);  
+  virtual void Gradient(IDalitzEvent& evt,std::vector<double>& grad, MINT::MinuitParameterSet* mps); 
+  virtual void GradientForLasso(std::vector<double>& grad);  
   bool useAnalyticGradient() {return getAmps()->useAnalyticGradient();}
 
   virtual double RealVal(IDalitzEvent& evt){return getVal(evt);}

@@ -5,8 +5,9 @@
 
 #include <vector>
 #include <iostream>
+#include "Mint/PolymorphVector.h"
 
-class symMultiPolyTerm : public std::vector< symPolyTerm >{
+class symMultiPolyTerm : public MINT::PolymorphVector< symPolyTerm >{
 
   bool createTerms(int dimension, int order);
   bool createTerms(int dimension, int order

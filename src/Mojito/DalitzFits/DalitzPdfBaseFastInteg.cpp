@@ -137,17 +137,18 @@ DalitzPdfBaseFastInteg::DalitzPdfBaseFastInteg(const DalitzEventPattern& pat
   , _amps(amps)
   , _countedAmps(0)
     //, _efficiency(0)
-  , _val(-1)
-  , _gradNorm(0)
-  , _redoGradNorm(true)
   , _generator(generator)
   , _integrating(0)
   , _defaultGenerator(0)
   , _commaSepList_of_SavedIntegrators("")
+  , _val(-1)
+  , _gradNorm(1)
+  , _redoGradNorm(true)
 {
   setup();
-  _gradNorm= new Double_t[this->getMPS()->size()];  
-  for(unsigned int i=0; i < this->getMPS()->size(); i++) _gradNorm[i]= 0.;
+  _gradNorm.resize(this->getMPS()->size());
+  //_gradNorm= new Double_t[this->getMPS()->size()];  
+  for(unsigned int i=0; i < _gradNorm.size(); i++) _gradNorm[i]= 0.;
 }
 
 DalitzPdfBaseFastInteg::DalitzPdfBaseFastInteg(const DalitzEventPattern& pat
@@ -164,18 +165,18 @@ DalitzPdfBaseFastInteg::DalitzPdfBaseFastInteg(const DalitzEventPattern& pat
   , _precision(prec)
   , _amps(0)
   , _countedAmps(0)
-  , _val(-1)
-  , _gradNorm(0)
-  , _redoGradNorm(true)
     //  , _efficiency(eff)
   , _generator(generator)
   , _integrating(0)
   , _defaultGenerator(0)
   , _commaSepList_of_SavedIntegrators("")
+  , _val(-1)
+  , _gradNorm(1)
+  , _redoGradNorm(true)
 {
   setup();
-  _gradNorm= new Double_t[this->getMPS()->size()];  
-  for(unsigned int i=0; i < this->getMPS()->size(); i++) _gradNorm[i]= 0.;
+  _gradNorm.resize(this->getMPS()->size());//= new Double_t[this->getMPS()->size()];  
+  for(unsigned int i=0; i < _gradNorm.size(); i++) _gradNorm[i]= 0.;
   //  cout << "pset pointer in DalitzPdfBaseFastInteg " << _mps << " = " << getMPS() << endl;
 }
 
@@ -190,22 +191,25 @@ DalitzPdfBaseFastInteg::DalitzPdfBaseFastInteg(const DalitzPdfBaseFastInteg& oth
   , _precision(other._precision)
   , _amps(other._amps)
   , _countedAmps(other._countedAmps)
-  , _val(-1)
-  , _gradNorm(0)
-  , _redoGradNorm(true)
     //, _efficiency(other._efficiency)
   , _generator(other._generator)
   , _integrating(other._integrating)
   , _defaultGenerator(other._defaultGenerator)
   , _commaSepList_of_SavedIntegrators(other._commaSepList_of_SavedIntegrators)
+  , _val(-1)
+  , _gradNorm(1)
+  , _redoGradNorm(true)
 {
   setup();
-  _gradNorm= new Double_t[this->getMPS()->size()];  
-  for(unsigned int i=0; i < this->getMPS()->size(); i++) _gradNorm[i]= 0.;
+  _gradNorm.resize(this->getMPS()->size());//= new Double_t[this->getMPS()->size()];  
+  for(unsigned int i=0; i < _gradNorm.size(); i++) _gradNorm[i]= 0.;
 }
 
 DalitzPdfBaseFastInteg::~DalitzPdfBaseFastInteg(){
-    delete[] _gradNorm;
+  bool dbThis=false;
+  if(dbThis)cout << "DalitzPdfBaseFastInteg::~DalitzPdfBaseFastInteg() called" << endl;
+  //delete[] _gradNorm;
+  if(dbThis)cout << "DalitzPdfBaseFastInteg::~DalitzPdfBaseFastInteg() done" << endl;
 }
 
 void DalitzPdfBaseFastInteg::setup(){
@@ -237,7 +241,7 @@ double DalitzPdfBaseFastInteg::getVal(IDalitzEvent& evt){
   else return getVal_noPs(evt);
 }
 double DalitzPdfBaseFastInteg::getVal_noPs(IDalitzEvent& evt){
-  bool dbThis = false;
+  bool dbThis=false;
   static double maxVal=0;
   if(_pat.empty()) _pat = evt.eventPattern();
 
@@ -271,7 +275,8 @@ double DalitzPdfBaseFastInteg::getVal_noPs(IDalitzEvent& evt){
     */
       
     _val= num/_norm;
-
+    if(dbThis) cout << "DalitzPdfBaseFastInteg::getVal_noPs: returning "
+		    << _val << endl;
     return num/_norm;
   }
 }
@@ -287,38 +292,39 @@ double DalitzPdfBaseFastInteg::getVal_withPs(IDalitzEvent& evt){
   }
 }
 
-void DalitzPdfBaseFastInteg::Gradient( IDalitzEvent& evt, Double_t* grad,
-				       MINT::MinuitParameterSet* mps )
-{
-
-  if(_val == -1)un_normalised_noPs(evt);
-  if(_norm == -1) getNorm();
-
-  unsigned int N = mps->size();
-
-  std::vector<double> gradAmpSum(N);
-  for( unsigned int j=0; j<N; ++j)
-    gradAmpSum[j]= 0.;
-
-  _amps->Gradient(evt,&gradAmpSum[0],mps);
-
-  if(_redoGradNorm){
-    for(unsigned int j=0; j<N; ++j)
-      _gradNorm[j]= 0.;
-
-    _faint.Gradient(mps, _gradNorm);
-    _redoGradNorm=false;
-  }
-
-  for( unsigned int i=0; i<N; i++ ){
-    if(mps->getParPtr(i)->hidden() || mps->getParPtr(i)->iFixInit())
-      continue;
-
-    grad[i]= gradAmpSum[i]/_norm- _val/_norm*_gradNorm[i];
-  }
+void DalitzPdfBaseFastInteg::Gradient(IDalitzEvent& evt, vector<double>& grad, MINT::MinuitParameterSet* mps){
+    
+    if(_val == -1)un_normalised_noPs(evt);
+    if(_norm == -1) getNorm();
+    
+    unsigned int N= mps->size();
+    
+    std::vector<double> gradAmpSum(N);
+    for(unsigned int j=0; j < gradAmpSum.size(); j++) gradAmpSum[j]= 0.;   
+    
+    _amps->Gradient(evt,gradAmpSum,mps);
+    
+    if(_redoGradNorm){
+      for(unsigned int j=0; j < _gradNorm.size(); j++) _gradNorm[j]= 0.;   
+      _faint.Gradient(mps, _gradNorm);
+      _redoGradNorm=false;
+    }
+    
+    if(_gradNorm.size() != grad.size() || gradAmpSum.size() !=grad.size()
+       ||  gradAmpSum.size() != _gradNorm.size()){
+      cout << "array size mismatch in DalitzPdfBaseFastInteg::Gradient" << endl;
+      throw "out";
+    }
+       
+    for (unsigned int i=0; i<N; i++) {
+      if(mps->getParPtr(i)->hidden() || mps->getParPtr(i)->iFixInit())continue;
+      grad.at(i)= gradAmpSum.at(i)/_norm- _val/_norm*_gradNorm.at(i);
+    }
+    
+    
 }
 
-void DalitzPdfBaseFastInteg::GradientForLasso(Double_t* grad){
+void DalitzPdfBaseFastInteg::GradientForLasso(vector<double>& grad){
     _faint.GradientForLasso(this->getMPS(),grad);
 }
 

@@ -14,6 +14,7 @@
 #include "Mint/FitParDependent.h"
 #include "Mint/IFitParDependent.h"
 #include "Mint/AmpPair.h"
+#include "Mint/NamedParameter.h"
 
 //class FitAmplitude;
 class IDalitzEvent;
@@ -116,7 +117,7 @@ class FitAmpPair : public MINT::FitParDependent{
   double reAdd(IDalitzEvent& evt, double weight=1, double efficiency=1);
   double add(IDalitzEvent& evt, double weight=1, double efficiency=1);
   double add(IDalitzEvent* evt, double weight=1, double efficiency=1);
-  double add(MINT::counted_ptr<IDalitzEvent> evt, double weight=1, double efficiency=1);
+  double add(const MINT::counted_ptr<IDalitzEvent>& evt, double weight=1, double efficiency=1);
 
   // integral of things that depend on position in Dalitz space:
   std::complex<double> valNoFitPars() const;

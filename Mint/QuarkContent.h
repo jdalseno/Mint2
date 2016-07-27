@@ -1,11 +1,12 @@
 #ifndef DALITZ_MINT_QUARK_CONTENT_HH
 #define DALITZ_MINT_QUARK_CONTENT_HH
 
-#include <vector>
+//#include <vector>
 #include <iostream>
 #include <map>
+#include "Mint/PolymorphVector.h"
 
-class QuarkContent : public std::vector<int>{
+class QuarkContent : public MINT::PolymorphVector<int>{
   static char _names[6];
   static char _NAMES[6];
   static std::map<char, int> _positions;

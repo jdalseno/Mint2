@@ -3,8 +3,9 @@
 // author: Jonas Rademacker (Jonas.Rademacker@bristol.ac.uk)
 // status:  Mon 9 Feb 2009 19:18:13 GMT
 
-#include <vector>
+//#include <vector>
 #include <iostream>
+#include "Mint/PolymorphVector.h"
 
 /*
   naming: is the 'normal' ordering, i.e. 1, 2, 3, 4,...
@@ -101,9 +102,27 @@ class Permutation{
     }
     return out;    
   }
+
+  template<typename T>
+    std::vector<T>& mapOrder(const MINT::PolymorphVector<T>& pv
+			     , std::vector<T>& out) const{
+    return mapOrder(pv.theVector(), out);
+  }
+  template<typename T>
+    MINT::PolymorphVector<T>& mapOrder(const MINT::PolymorphVector<T>& pv
+			     , MINT::PolymorphVector<T>& out) const{
+    mapOrder(pv.theVector(), out.theVector());
+    return out;
+  }
+
   template<typename T>
     std::vector<T> mapOrder(const std::vector<T>& in) const{
     std::vector<T> out(in.size());
+    return mapOrder(in, out);
+  }
+  template<typename T>
+    MINT::PolymorphVector<T> mapOrder(const MINT::PolymorphVector<T>& in) const{
+    MINT::PolymorphVector<T> out(in.size());
     return mapOrder(in, out);
   }
 

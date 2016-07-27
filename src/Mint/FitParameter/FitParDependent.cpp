@@ -55,7 +55,7 @@ FitParDependent::FitParDependent(IFitParRegister* daddy) : _daddy(daddy){}
 
 
 FitParDependent::FitParDependent(const FitParDependent& other, IFitParRegister* newDaddy)
-  : std::vector<FitParRef>(other), _daddy(other._daddy){
+  : MINT::PolymorphVector<FitParRef>(other), _daddy(other._daddy){
   if(0 != newDaddy) _daddy = newDaddy;
 }
 

@@ -13,6 +13,9 @@ namespace MINT
 
     Minimisable( const Minimisable& other );
 
+    virtual ~Minimisable()
+    {}
+
     void setPset(MinuitParameterSet* mps);
 
     MinuitParameterSet* getParSet();
@@ -28,7 +31,12 @@ namespace MINT
     double getVal()=0;
 
     // useful:
-    double getNewVal();
+    double getNewVal()
+    {
+      parametersChanged();
+
+      return getVal();
+    }
 
   private:
     MinuitParameterSet* _pset;

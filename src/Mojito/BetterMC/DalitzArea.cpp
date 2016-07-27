@@ -259,7 +259,7 @@ double DalitzArea::size() const{
   cout << "_madeCMap = " << _madeCMap << endl;
   */
   makeCoordinateMap();
-  for(map<vector<int>, DalitzCoordinate*>::const_iterator it = _coords.begin();
+  for(map<DalitzCoordKey, DalitzCoordinate*>::const_iterator it = _coords.begin();
       it != _coords.end(); it++){
     //cout << "num indices " << it->second->size() << endl;
     //cout << " co-ordinate " << *(it->second) << endl;
@@ -357,7 +357,7 @@ counted_ptr<DalitzEvent> DalitzArea::make4Event() const{
 
 bool DalitzArea::setCoordinate(const DalitzCoordinate& c){
   //cout << " size before setting c = " << c << " : " << size();
-  map<vector<int>, DalitzCoordinate*>::iterator it = _coords.find(c);
+  map<DalitzCoordKey, DalitzCoordinate*>::iterator it = _coords.find(c);
   if(it == _coords.end()){
     cout << "ERROR: DalitzArea::setCoordinate failed to set coordinate "
 	 << c << endl;
@@ -452,7 +452,7 @@ std::vector<DalitzArea> DalitzArea::split_in_all_dim_4body(int n) const{
 void DalitzArea::print(std::ostream& os) const{
   makeCoordinateMap();
   os << "Area size: " << size();
-  for(std::map<std::vector<int>, DalitzCoordinate*>::const_iterator
+  for(std::map<DalitzCoordKey, DalitzCoordinate*>::const_iterator
 	it =_coords.begin();
       it != _coords.end();
       it++){      

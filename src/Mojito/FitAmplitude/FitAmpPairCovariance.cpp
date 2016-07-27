@@ -78,6 +78,9 @@ FitAmpPairCovariance::FitAmpPairCovariance(const FitAmpPairCovariance& other
 {  
 }
 
+FitAmpPairCovariance::~FitAmpPairCovariance(){
+  clearAll();
+}
 bool FitAmpPairCovariance::isCompatibleWith(const FitAmpPairCovariance& 
 					    other) const{
   if(0 == _myList && 0 == other._myList) return true;
@@ -165,10 +168,10 @@ bool FitAmpPairCovariance::resize(){
 }
 
 std::string FitAmpPairCovariance::realName(int listPosition) const{
-  return (*_myList)[listPosition].name() + "_real";
+  return _myList->at(listPosition).name() + "_real";
 }
 std::string FitAmpPairCovariance::imagName(int listPosition) const{
-  return (*_myList)[listPosition].name() + "_imag";
+  return _myList->at(listPosition).name() + "_imag";
 }
 
 bool FitAmpPairCovariance::addLastEventFromList(){
@@ -186,14 +189,14 @@ bool FitAmpPairCovariance::addLastEventFromList(){
   if(! isValid()) return false;
   for(unsigned int i=0; i < _myList->size(); i++){
     if(dbThis) cout << " i= " << i << endl;
-    double re_i =  (*_myList)[i].lastEntry().real();
-    double im_i =  (*_myList)[i].lastEntry().imag();
+    double re_i =  _myList->at(i).lastEntry().real();
+    double im_i =  _myList->at(i).lastEntry().imag();
     _sum_x(indexReal(i), 0) += re_i;
     _sum_x(indexImag(i), 0) += im_i;
 
     for(unsigned int j=0; j < _myList->size(); j++){
-      double re_j =  (*_myList)[j].lastEntry().real();
-      double im_j =  (*_myList)[j].lastEntry().imag();
+      double re_j =  _myList->at(j).lastEntry().real();
+      double im_j =  _myList->at(j).lastEntry().imag();
  
       _sum_xy(indexReal(i), indexReal(j)) += re_i * re_j;
       _sum_xy(indexReal(i), indexImag(j)) += re_i * im_j;
@@ -263,8 +266,8 @@ bool FitAmpPairCovariance::make_dN_by_d2N(){
    */
   for(unsigned int i=0; i < _myList->size(); i++){
     complex<double> fpv = 
-      (*_myList)[i].fitParValue()
-      * (double)((*_myList)[i].oneOrTwo());
+      _myList->at(i).fitParValue()
+      * (double)(_myList->at(i).oneOrTwo());
 
     _dN_by_d2N(i, indexReal(i)) =   fpv.real();
     _dN_by_d2N(i, indexImag(i)) = - fpv.imag();
@@ -294,7 +297,7 @@ bool FitAmpPairCovariance::make_dFraction_by_dN(){
   double integ = _myList->integral();
   double integ2 = integ*integ;
   for(unsigned int i=0; i < _myList->size(); i++){
-    double num = (*_myList)[i].integral();
+    double num = _myList->at(i).integral();
     for(unsigned int j=0; j < _myList->size(); j++){
       _dFraction_by_dN(i, j) = -num/integ2;
     }
@@ -333,7 +336,7 @@ bool FitAmpPairCovariance::make_dFractionSum_by_dFraction(){
    */
 
   for(unsigned int i=0; i < _myList->size(); i++){
-    if((*_myList)[i].isSingleAmp()){
+    if(_myList->at(i).isSingleAmp()){
       _dFractionSum_by_dFraction(0, i) = 1.0;
     }else{
       _dFractionSum_by_dFraction(0, i) = 0.0;
@@ -367,7 +370,7 @@ bool FitAmpPairCovariance::make2NCovariance(){
       // with.
       int il = listPositionFromIndex(i);
       int jl = listPositionFromIndex(j);
-      double sfden = (*_myList)[il].weightSum() * (*_myList)[jl].weightSum();
+      double sfden = _myList->at(il).weightSum() * _myList->at(jl).weightSum();
       if(sfden > 0){
 	_cov2N(i, j) *= dN*dN/sfden;
       }
@@ -750,7 +753,7 @@ bool FitAmpPairCovariance::retrieve_sum_x(const std::string & inDirectory){
     _sum_x(indexReal(i), 0) = map_x[realName(i)];
     _sum_x(indexImag(i), 0) = map_x[imagName(i)];
    if(dbThis){
-      cout << "Tryied to retrieve from map entry for " << realName(i)
+      cout << "Tried to retrieve from map entry for " << realName(i)
 	   << " \n got: " << map_x[realName(i)] << endl;
     }
  

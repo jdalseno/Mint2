@@ -11,6 +11,8 @@ namespace MINT
     GaussFct( const double& x_in, const double& h,
 	      const double& m, const double& s );
 
+    virtual ~GaussFct(){}
+
     double x() const
     { return _x; }
 

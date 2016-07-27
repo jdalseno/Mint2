@@ -8,14 +8,14 @@ using namespace std;
 using namespace MINT;
   
 Chi2BoxSet::Chi2BoxSet()
-  : vector<Chi2Box>()
+  : MINT::PolymorphVector<Chi2Box>()
   , _integCalc(0)
   , _normFactor(1)
 {
 }
 Chi2BoxSet::Chi2BoxSet(const DalitzEventPattern& pat
 		       , const counted_ptr<IIntegrationCalculator>& integPtr)
-  : vector<Chi2Box>()
+  : MINT::PolymorphVector<Chi2Box>()
   , _integCalc(integPtr)
   , _normFactor(1)
 {
@@ -24,21 +24,21 @@ Chi2BoxSet::Chi2BoxSet(const DalitzEventPattern& pat
 }
 Chi2BoxSet::Chi2BoxSet(const DalitzArea& area
 		       , const counted_ptr<IIntegrationCalculator>& integPtr)
-  : vector<Chi2Box>()
+  : MINT::PolymorphVector<Chi2Box>()
   , _integCalc(integPtr)
   , _normFactor(1)
 {
   Chi2Box b(area);
   add(b);
 }
-Chi2BoxSet::Chi2BoxSet(const vector<Chi2Box>& other)
-  : vector<Chi2Box>(other)
+Chi2BoxSet::Chi2BoxSet(const MINT::PolymorphVector<Chi2Box>& other)
+  : MINT::PolymorphVector<Chi2Box>(other)
   , _integCalc(0)
   , _normFactor(1)
 {
 }
 Chi2BoxSet::Chi2BoxSet(const Chi2BoxSet& other)
-  : vector<Chi2Box>(other)
+  : MINT::PolymorphVector<Chi2Box>(other)
   , _integCalc(0)
   , _histoData(other._histoData)
   , _histoMC(other._histoMC)

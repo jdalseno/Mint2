@@ -73,7 +73,7 @@ DalitzBoxSet::DalitzBoxSet(TRandom* rnd)
 
 DalitzBoxSet::DalitzBoxSet(const DalitzBoxSet& other)
   : IEventGenerator<IDalitzEvent>()
-  , std::vector<DalitzBox>(other)
+  , MINT::PolymorphVector<DalitzBox>(other)
   , _ready(other._ready)
   , _volumeProbs(other._volumeProbs)
   , _amps(other._amps)
@@ -225,7 +225,7 @@ void DalitzBoxSet::add(const DalitzBox& box){
   cout << " done that." << endl;
 }
 
-void DalitzBoxSet::add(const std::vector<DalitzBox>& boxes){
+void DalitzBoxSet::add(const MINT::PolymorphVector<DalitzBox>& boxes){
   _ready = false;
   for(unsigned int i=0; i<boxes.size(); i++){
     this->push_back(boxes[i]);

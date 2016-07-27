@@ -2,9 +2,10 @@
 #define MINT_DALITZ_COORD_SET_HH
 
 #include "Mint/DalitzCoordinate.h"
-#include <map>
+//#include <map>
+#include "Mint/PolymorphMap.h"
 
-class DalitzCoordSet : public std::map<DalitzCoordKey, DalitzCoordinate>{
+class DalitzCoordSet : public MINT::PolymorphMap<DalitzCoordKey, DalitzCoordinate>{
   // this list is always sorted (being a map)
   // map instead of set, so I can modify values inside DalitzCoordinate
  public:
@@ -27,6 +28,8 @@ class DalitzCoordSet : public std::map<DalitzCoordKey, DalitzCoordinate>{
 		 , const DalitzCoordinate& dc_4
 		 , const DalitzCoordinate& dc_5);
   DalitzCoordSet(const DalitzCoordSet& other);
+
+  virtual ~DalitzCoordSet(){}
 
   std::string name() const;
   std::string nameFileSave() const;

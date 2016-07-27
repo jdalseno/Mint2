@@ -18,17 +18,28 @@ int LASSO::numberOfFitFractionsLargerThanThreshold(double threshold){
     return _pdf->numberOfFitFractionsLargerThanThreshold(threshold);
 }
 
-void LASSO::Gradient( Double_t* grad )
-{
-  std::vector<double> grad_pdf(this->getParSet()->size());
+//void LASSO::Gradient(Double_t* grad){
+void LASSO::Gradient(vector<double>& grad){
+  std::vector<double> grad_pdf(this->getParSet()->size());  
+    
 
-  for( unsigned int j=0; j<this->getParSet()->size(); ++j)
-    grad_pdf[j]= 0.;
+  /*
+  for(unsigned int j=0; j < this->getParSet()->size(); j++){
+    grad_pdf.at(j) = 0.;   
     
   _pdf->GradientForLasso(&grad_pdf[0]);
+  }
+  */
 
-  for( unsigned int j=0; j<this->getParSet()->size(); ++j)
-    grad[j]= _lambda * grad_pdf[j];
+  for(unsigned int j=0; j < grad.size(); j++) grad[j]=0;
+    _pdf->GradientForLasso(grad);
+
+  /*
+  for(unsigned int j=0; j < this->getParSet()->size(); j++){
+    grad.at(j)= _lambda * grad_pdf.at(;   
+  }
+  */
+    
 }
 
 

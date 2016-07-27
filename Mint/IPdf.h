@@ -20,7 +20,7 @@ class IPdf : virtual public IReturnRealForEvent<EVENT>{
   virtual void endFit()=0;
 
   virtual void Gradient( EVENT& evt, std::vector<double>& grad,
-			 MINT::MinuitParameterSet* mps)
+			 MINT::MinuitParameterSet* mps )
   {
     std::cout << "Gradient of pdf is not implemented. Please implement me or set useAnalyticGradient to 0 in your options file. I'll crash now. " << std::endl;
     throw "crash";

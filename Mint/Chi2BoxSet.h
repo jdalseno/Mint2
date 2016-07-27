@@ -5,16 +5,18 @@
 #include "Mint/IIntegrationCalculator.h"
 #include "Mint/counted_ptr.h"
 #include "Mint/DalitzHistoSet.h"
+#include "Mint/PolymorphVector.h"
 
 #include "TColor.h"
 #include "Rtypes.h"
 
 #include <iostream>
-#include <vector>
+//#include <vector>
+
 
 class IDalitzEvent;
 
-class Chi2BoxSet : public std::vector<Chi2Box>{
+class Chi2BoxSet : public MINT::PolymorphVector<Chi2Box>{
   MINT::counted_ptr<IIntegrationCalculator> _integCalc;
 
   DalitzHistoSet _histoData, _histoMC;
@@ -29,9 +31,9 @@ class Chi2BoxSet : public std::vector<Chi2Box>{
   Chi2BoxSet(const DalitzArea& area
 	     , const MINT::counted_ptr<IIntegrationCalculator>& integPtr=
 	     (MINT::counted_ptr<IIntegrationCalculator>)0);
-  Chi2BoxSet(const std::vector<Chi2Box>& other);
+  Chi2BoxSet(const MINT::PolymorphVector<Chi2Box>& other);
   Chi2BoxSet(const Chi2BoxSet& other);
-
+  virtual ~Chi2BoxSet(){}
 
   void setIIntegrationCalculator(MINT::counted_ptr<IIntegrationCalculator> fap){
     _integCalc=fap;

@@ -14,8 +14,9 @@
 #include "Mint/IDalitzEvent.h"
 
 #include "Mint/counted_ptr.h"
-#include <vector>
+//#include <vector>
 
+#include "Mint/PolymorphVector.h"
 
 class FitAmplitude;
 class IDalitzEvent;
@@ -24,9 +25,13 @@ namespace MINT{
 }
 
 class FitAmpPairList 
-: public std::vector<FitAmpPair>
+: public MINT::PolymorphVector<FitAmpPair> // std::vector<FitAmpPair>
 , virtual public IIntegrationCalculator
 {
+
+  static MINT::NamedParameter<std::string> HistoOption;
+  void applyHistoOption();
+
   int _Nevents;
   double _sum;
   double _sumsq;
@@ -52,6 +57,8 @@ class FitAmpPairList
  public:
   FitAmpPairList();
   FitAmpPairList(const FitAmpPairList& other);
+  virtual ~FitAmpPairList(){}
+
   MINT::counted_ptr<IIntegrationCalculator> 
     clone_IIntegrationCalculator() const;
 
@@ -79,8 +86,8 @@ class FitAmpPairList
   virtual double variance() const;
   virtual double sumOfVariances() const;
   virtual std::complex<double> ComplexSum() const;
-  virtual void Gradient(MINT::MinuitParameterSet* mps, Double_t* grad);
-  virtual void GradientForLasso(MINT::MinuitParameterSet* mps, Double_t* grad);
+  virtual void Gradient(MINT::MinuitParameterSet* mps, std::vector<double>& grad);
+  virtual void GradientForLasso(MINT::MinuitParameterSet* mps, std::vector<double>& grad);
 
   double sumOfSqrtFitFractions();
   double absSumOfInterferenceFractions();

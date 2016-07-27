@@ -9,6 +9,7 @@
 #include "Mint/IReturnRealForEvent.h"
 #include "Mint/FitFractionList.h"
 #include <iostream>
+#include <vector>
 
 namespace MINT{
   class Minimiser;
@@ -64,10 +65,10 @@ class IntegCalculator : public virtual IIntegrationCalculator{
 
   virtual std::complex<double> ComplexSum() const;
 
-  virtual void Gradient(MINT::MinuitParameterSet* mps, Double_t* grad){
+  virtual void Gradient(MINT::MinuitParameterSet* mps, std::vector<double>& grad){
         withEff().Gradient(mps,grad);
   }
-  virtual void GradientForLasso(MINT::MinuitParameterSet* mps, Double_t* grad){
+  virtual void GradientForLasso(MINT::MinuitParameterSet* mps, std::vector<double>& grad){
         withEff().GradientForLasso(mps,grad);
   }  
 

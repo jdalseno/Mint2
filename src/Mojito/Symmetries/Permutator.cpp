@@ -7,14 +7,14 @@
 using namespace std;
 
 Permutator::Permutator()
-  : std::vector<Permutation>()
+  : MINT::PolymorphVector<Permutation>()
   , _pat(){
   Permutation p(1);
   this->push_back(p);
 }
 
 Permutator::Permutator(const DalitzEventPattern& pat) 
-  : std::vector<Permutation>()
+  : MINT::PolymorphVector<Permutation>()
   , _pat(pat)
 {
   findAllPermutations();

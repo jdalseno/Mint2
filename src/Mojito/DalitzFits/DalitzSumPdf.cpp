@@ -48,7 +48,15 @@ double DalitzSumPdf::getVal(IDalitzEvent& evt){
 }
 double DalitzSumPdf::getVal_noPs(IDalitzEvent& evt){
   bool dbThis=false;
-  if(dbThis) cout << "DalitzSumPdf::getVal_noPs(): you called? " << endl;
+  if(dbThis) {
+    cout << "DalitzSumPdf::getVal_noPs(): you called? " << endl;
+    cout << "DalitzSumPdf::getVal_noPs():  about to return:" << endl;
+    cout << "DalitzSumPdf::getVal_noPs(): " << _f1 << " * " << endl;
+    cout << "DalitzSumPdf::getVal_noPs(): " << _dalitz_pdf_1.getVal_noPs(evt) 
+	 << " + " << endl;    
+    cout << "DalitzSumPdf::getVal_noPs(): (" << 1 - _f1 << ") * "
+	 << _dalitz_pdf_1.getVal_noPs(evt) << endl;    
+  }
   double returnVal = 
     _f1         * _dalitz_pdf_1.getVal_noPs(evt) +
     (1.0 - _f1) * _dalitz_pdf_2.getVal_noPs(evt);

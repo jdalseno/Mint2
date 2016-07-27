@@ -210,37 +210,27 @@ std::complex<double> FitAmpSum::getVal(IDalitzEvent& evt){
 }
 
 
-double FitAmpSum::getAmpSqr( IDalitzEvent& evt, std::vector<string> ampNames,
-			     bool CC )
-{
-  double dbThis=false;
-
-  double sum = 0.0;
-  if( 0 == size() )
-    createAllAmps(evt.eventPattern());
-
-  for( unsigned int i=0; i<this->size(); ++i){
-    for( unsigned int n=0; n<ampNames.size(); ++n){
-      if( A_is_in_B(ampNames[n], this->getAmpPtr(i)->name()) ){
-	if( A_is_in_B("Cconj_FS", this->getAmpPtr(i)->name()) && !CC )
-	  continue;
-
-	if(dbThis)
-	  cout << "found amp " << this->getAmpPtr(i)->name() << endl;
-
-	sum += norm(this->getAmpPtr(i)->getVal(evt));
-      }
+double FitAmpSum::getAmpSqr(IDalitzEvent& evt, std::vector<string> ampNames, bool CC){
+    double dbThis=false;
+    
+    double sum = 0;
+    if(0 == size()) createAllAmps(evt.eventPattern());
+    for(unsigned int i=0; i< this->size(); i++){
+        for (unsigned int n=0; n <ampNames.size(); n++) {
+            if(A_is_in_B(ampNames[n], this->getAmpPtr(i)->name())){
+                if(A_is_in_B("Cconj_FS", this->getAmpPtr(i)->name()) && !CC) continue;
+                if(dbThis) cout << "found amp " << this->getAmpPtr(i)->name() << endl;
+                sum += norm(this->getAmpPtr(i)->getVal(evt));
+            }
+        }
     }
-  }
-
-  if(dbThis){
-    cout << "sum= " << sum << endl;
-  }
-
-  return sum;
+    if(dbThis){
+        cout << "sum= " << sum << endl;
+    }
+    return sum;
 }
 
-void FitAmpSum::Gradient(IDalitzEvent& evt,Double_t* grad,MinuitParameterSet* mps){
+void FitAmpSum::Gradient(IDalitzEvent& evt,vector<double>& grad,MinuitParameterSet* mps){
     
     std::complex<double> val = getVal(evt);
     std::complex<double> valConj= conj(val);
@@ -259,6 +249,12 @@ void FitAmpSum::Gradient(IDalitzEvent& evt,Double_t* grad,MinuitParameterSet* mp
             name_i.replace(name_i.find("_Re"),3,"");
             for(unsigned int j=0; j< this->size(); j++){
 	      if(A_is_in_B(name_i, this->getAmpPtr(j)->name())){
+		if(i+1 >= grad.size()){
+		  cout << "WARNING in FitAmpSum::Gradient"
+		       << " have to increase size of grad to avoid memory issues" << endl;
+		  grad.resize(i+2);
+		}
+		
 		std::complex<double> tmp = 2.*valConj* getAmpPtr(j)->getValWithoutFitParameters(evt);
                     grad[i]= tmp.real();
                     grad[i+1]= -tmp.imag();
@@ -294,9 +290,15 @@ void FitAmpSum::Gradient(IDalitzEvent& evt,Double_t* grad,MinuitParameterSet* mp
 } 
 
 void FitAmpSum::print(std::ostream& os) const{
-   os << "FitAmpSum::print\n====================";
-
+  bool dbThis=false;
+  os << "FitAmpSum::print " << this->size() << " amplitude components \n"
+     << "======================================================" << endl;
+  
   for(unsigned int i=0; i< this->size(); i++){
+    if(dbThis){
+      cout << "ampPtr( " << i << " ): " << endl;
+      cout << getAmpPtr(i) << endl;
+    }
     os << "\n\t" << getAmpPtr(i)->theBareDecay().oneLiner()
        << endl;
   }

@@ -17,10 +17,12 @@
 // when determining the lowest possible angular
 // momentum of a decay.
 #include "Mint/QuarkContent.h"
-#include <vector>
+//#include <vector>
 #include <iostream>
 
-class MultiQuarkContent : public std::vector<QuarkContent>{
+#include "Mint/PolymorphVector.h"
+
+class MultiQuarkContent : public MINT::PolymorphVector<QuarkContent>{
  public:
   MultiQuarkContent();
   MultiQuarkContent(const MultiQuarkContent& other);
@@ -36,6 +38,8 @@ class MultiQuarkContent : public std::vector<QuarkContent>{
 
   MultiQuarkContent operator+(const MultiQuarkContent& rhs) const;
   MultiQuarkContent operator-(const MultiQuarkContent& rhs) const;
+
+
 
 };
 std::ostream& operator<<(std::ostream& st, const MultiQuarkContent& qc);

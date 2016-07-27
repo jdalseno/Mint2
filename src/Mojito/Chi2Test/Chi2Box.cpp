@@ -42,10 +42,10 @@ void Chi2Box::enclosePhaseSpace(double safetyFactor){
   if(dbThis) cout << "result: " << _area << endl;
 }
 
-std::vector<Chi2Box> Chi2Box::split(int n){
+MINT::PolymorphVector<Chi2Box> Chi2Box::split(int n){
   
-  std::vector<DalitzArea> va= _area.split_in_all_dimensions(n);
-  std::vector<Chi2Box> vb(va.size());
+  MINT::PolymorphVector<DalitzArea> va= _area.split_in_all_dimensions(n);
+  MINT::PolymorphVector<Chi2Box> vb(va.size());
 
   for(unsigned int i=0; i < va.size(); i++){
     Chi2Box b(va[i]);

@@ -54,7 +54,7 @@ class DalitzBWBox{
 	    , TRandom* rnd = gRandom);
 
   DalitzBWBox(const DalitzBWBox& other);
-  ~DalitzBWBox();
+  virtual ~DalitzBWBox();
 
   DalitzEventPattern& pattern(){return _pat;}
   const DalitzEventPattern& pattern()const{return _pat;}

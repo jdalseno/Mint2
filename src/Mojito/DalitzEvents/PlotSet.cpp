@@ -1,6 +1,7 @@
 // author: Jonas Rademacker (Jonas.Rademacker@bristol.ac.uk)
 // status:  Mon 9 Feb 2009 19:18:00 GMT
 #include "Mint/PlotSet.h"
+#include "TFile.h"
 
 void PlotSet::save(const std::string& filename){
   TFile f(filename.c_str(), "RECREATE");

@@ -21,6 +21,8 @@
 #include "Mint/DalitzHistoSet.h"
 #include "Mint/counted_ptr.h"
 
+#include <vector>
+
 class FitAmpSum;
 class IDalitzEvent;
 
@@ -78,6 +80,8 @@ class FastAmplitudeIntegrator : virtual public IDalitzIntegrator{
 			   , const std::string& fname
 			   );
 
+  virtual ~FastAmplitudeIntegrator(){}
+
   bool initialise(const DalitzEventPattern& pattern
 		  , IFastAmplitudeIntegrable* amps=0
 		  //, MINT::counted_ptr<IGetDalitzEvent> weight=0
@@ -123,10 +127,10 @@ class FastAmplitudeIntegrator : virtual public IDalitzIntegrator{
   }
 
   double getVal();
-  void Gradient(MINT::MinuitParameterSet* mps, Double_t* grad){
+  void Gradient(MINT::MinuitParameterSet* mps, std::vector<double>& grad){
         _integCalc->Gradient(mps,grad);
   }
-  void GradientForLasso(MINT::MinuitParameterSet* mps, Double_t* grad){
+  void GradientForLasso(MINT::MinuitParameterSet* mps, std::vector<double>& grad){
         _integCalc->GradientForLasso(mps,grad);
   }  
     

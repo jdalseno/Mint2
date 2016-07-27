@@ -41,7 +41,6 @@ FitAmpPair::FitAmpPair()
   , _dirName("")
   , _lastEntry(0)
 {
-
 }
 
 FitAmpPair::FitAmpPair(FitAmplitude& a1, FitAmplitude& a2)
@@ -221,9 +220,9 @@ bool FitAmpPair::retrieve(const std::string& asSubdirOf){
   bool success=true;
 
   success &= retrieveValues(asSubdirOf);
-  success &= retrieveHistos(asSubdirOf);
+  if(slow()) success &= retrieveHistos(asSubdirOf);
 
-  if(dbThis){
+  if(dbThis && slow()){
     cout << "after FitAmpPair::retrieve: pat = "
 	 << histosRe().begin()->second.pattern() << ", "
 	 << histosIm().begin()->second.pattern() << endl;
@@ -435,7 +434,7 @@ double FitAmpPair::reAdd(IDalitzEvent& evt
 }
 
 
-double FitAmpPair::add(counted_ptr<IDalitzEvent> evtPtr
+double FitAmpPair::add(const counted_ptr<IDalitzEvent>& evtPtr
 		       , double weight
 		       , double efficiency
 		       ){
@@ -455,6 +454,8 @@ std::complex<double> FitAmpPair::valNoFitPars() const{
   double dN = (double) _Nevents;
   std::complex<double> total = ((std::complex<double>)oneOrTwo()) * _sum;
   std::complex<double> returnVal;
+
+  if(0.0 == total) return 0.0;
 
   if(_weightSum > 0){
     returnVal = total/_weightSum;

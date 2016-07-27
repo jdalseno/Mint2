@@ -67,6 +67,8 @@ class FitAmpPairCovariance{
   FitAmpPairCovariance(const FitAmpPairCovariance& other
 		       , const FitAmpPairList* newList);
 
+  virtual ~FitAmpPairCovariance();
+
   bool add(const FitAmpPairCovariance& other);
   bool reset();
 

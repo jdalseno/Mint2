@@ -9,10 +9,11 @@
 
 #include <iostream>
 #include <string>
+#include "Mint/PolymorphVector.h"
 
-typedef std::vector<int> DalitzCoordKey;
+typedef MINT::PolymorphVector<int> DalitzCoordKey;
 
-class DalitzCoordinate : public std::vector<int>{
+class DalitzCoordinate : public MINT::PolymorphVector<int>{
   double _mi, _ma, _val;
   std::string _name;
   std::string& makeName();
@@ -22,10 +23,12 @@ class DalitzCoordinate : public std::vector<int>{
   DalitzCoordinate();
   DalitzCoordinate(int i, int j);
   DalitzCoordinate(int i, int j, int k);
-  DalitzCoordinate(const std::vector<int>& other);
+  DalitzCoordinate(const MINT::PolymorphVector<int>& other);
   DalitzCoordinate(const DalitzCoordinate& other);
 
   DalitzCoordinate& operator=(const DalitzCoordinate& other);
+
+  virtual ~DalitzCoordinate(){}
 
   void setMin(double min){_mi = min;}
   void setMax(double max){_ma = max;}

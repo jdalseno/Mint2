@@ -18,15 +18,21 @@
 using namespace std;
 using namespace MINT;
 
-DalitzHistoSet::DalitzHistoSet() 
+DalitzHistoSet::DalitzHistoSet()
 {
+  //TH1::AddDirectory(kFALSE);
   makeName();
 }
 
 DalitzHistoSet::DalitzHistoSet(const DalitzHistoSet& other)
-  :  std::map< DalitzCoordSet, DalitzHistogram>( other)
+  : PolymorphMap( other )
 {
+  //TH1::AddDirectory(kFALSE);
   makeName();
+}
+
+DalitzHistoSet::~DalitzHistoSet(){
+  
 }
 
 void DalitzHistoSet::makeHistograms(const DalitzEventPattern& pat){
@@ -48,7 +54,7 @@ void DalitzHistoSet::add(const DalitzHistogram& histo, double weight){
   return;
 }
 void DalitzHistoSet::add(const DalitzHistoSet& hL, double weight){
-  for(map< DalitzCoordSet, DalitzHistogram>::const_iterator it = hL.begin();
+  for(std::map< DalitzCoordSet, DalitzHistogram>::const_iterator it = hL.begin();
       it != hL.end();
       it++){
     this->add(it->second, weight);
@@ -174,8 +180,8 @@ const std::string& DalitzHistoSet::dirName() const{
 }
 
 bool DalitzHistoSet::save(const std::string& filename) const{
-  TFile f(filename.c_str(), "RECREATE");
-  f.cd();
+  TFile* f = TFile::Open(filename.c_str(), "RECREATE");
+  f->cd();
   for(map< DalitzCoordSet, DalitzHistogram>::const_iterator 
 	it = this->begin();
       it != this->end();
@@ -183,7 +189,7 @@ bool DalitzHistoSet::save(const std::string& filename) const{
     if(0 == it->second.histo()) continue;
     it->second.histo()->Write();
   }
-  f.Close();
+  f->Close();
   return true;
 }
 
@@ -227,9 +233,12 @@ std::string DalitzHistoSet::fullDirListFname(const std::string&
   return asSubdirOf + "/" + dirName() + "/" + "directoryList.txt";
 }
 bool DalitzHistoSet::saveAsDir(const std::string& asSubdirOf) const{
-  bool dbThis=false;
+  bool dbThis=true;
 
   bool sc=true;
+
+  if(dbThis) cout << "DalitzHistoSet::saveAsDir: called with "
+		  << "asSubdirOf = " << asSubdirOf << endl;
 
   makeDirectory(asSubdirOf);
   std::string dir = asSubdirOf + "/" + dirName();
@@ -239,6 +248,7 @@ bool DalitzHistoSet::saveAsDir(const std::string& asSubdirOf) const{
 	it = this->begin();
       it != this->end();
       it++){
+    if(dbThis) cout << "DalitzHistoSet::saveAsDir: saving DalitzHistogram" << endl;
     sc &= it->second.saveAsDir(dir);
     directoryList.push_back(it->second.dirName());
   }

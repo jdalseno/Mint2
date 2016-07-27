@@ -142,6 +142,7 @@ ISpinFactor* SpinFactorMaker(const DecayTree& thisDcy
     // either 2 or less bodies, or non-resonant.
     sf = new SpinFactorTrivial;
   }else if( 3 == nFinalStates){
+    cout << " calling  SpinFactorMaker3Body " << endl;
     sf = SpinFactorMaker3Body(thisDcy, SPD_Wave,lopt);
   }else if( 4 == nFinalStates){
     sf = SpinFactorMaker4Body(thisDcy, SPD_Wave,lopt);
@@ -165,7 +166,7 @@ ISpinFactor* SpinFactorMaker(const DecayTree& thisDcy
 
 
 ISpinFactor* SpinFactorMaker3Body(const DecayTree& thisDcy, char SPD_Wave, const std::string& lopt){
-    bool dbThis=false;
+    bool dbThis=true;
     
     if(dbThis){
         std::cout << "SpinFactorMaker3Body called for"
@@ -221,9 +222,12 @@ ISpinFactor* SpinFactorMaker3Body(const DecayTree& thisDcy, char SPD_Wave, const
         return new SF_VtoAP1_AtoV0P2(thisDcy,-999);  
     }
     
-    if(thisDcy.getVal().J()==0) return new SpinFactor3(thisDcy);
-    else{
-        std::cout << "SpinFactorMaker WARNING!!"
+    cout << "thisDcy.getVal().J() " << thisDcy.getVal().J() << endl;
+    if(thisDcy.getVal().J()=="0"){
+      cout << "calling SpinFactor3()" << endl;
+      return new SpinFactor3(thisDcy);
+    }else{
+        std::cout << "SpinFactorMaker 3 WARNING!!"
         << " don't know spin factor of this decay:\n" 
         << thisDcy 
         << " (" << SPD_Wave << "-wave)" << std::endl;

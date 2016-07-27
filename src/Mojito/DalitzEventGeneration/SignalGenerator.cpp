@@ -58,6 +58,7 @@ SignalGenerator::SignalGenerator(const DalitzEventPattern& pat
   : BaseGenerator(rnd)
   , _pat(pat)
   , _myOwnPSet()
+  , _counted_amps(0)
   , _amps(amps)
   , _boxes(_amps->makeEventGenerator(pat))
 {

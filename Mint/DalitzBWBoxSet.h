@@ -20,12 +20,14 @@
 #include "TRandom.h"
 
 
-class DalitzBWBoxSet : public std::vector<DalitzBWBox>
+class DalitzBWBoxSet : public MINT::PolymorphVector<DalitzBWBox>
 , virtual public MINT::IUnweightedEventGenerator<IDalitzEvent>{
  protected:
   static double __phaseSpaceFracDefaultValue;
 
   DalitzEventPtrList _eventPtrList;
+  //DalitzEventList _eventList;
+
   double _maxWeightEstimate;
   double _maxWeightInSample;
 
@@ -74,6 +76,8 @@ class DalitzBWBoxSet : public std::vector<DalitzBWBox>
 		 , TRandom* r=gRandom);
   DalitzBWBoxSet(TRandom* r);
   DalitzBWBoxSet(const DalitzBWBoxSet& other);
+  virtual ~DalitzBWBoxSet(){}
+
   void add(DalitzBWBox& box);
   void add(DalitzBWBoxSet& boxes);
 

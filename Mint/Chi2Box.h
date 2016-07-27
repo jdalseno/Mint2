@@ -3,8 +3,9 @@
 
 #include "Mint/DalitzEventPattern.h"
 #include "Mint/DalitzArea.h"
-#include <vector>
+//#include <vector>
 #include <iostream>
+#include "Mint/PolymorphVector.h"
 
 class IDalitzEvent;
 class Chi2Box{
@@ -21,8 +22,9 @@ class Chi2Box{
   Chi2Box(const DalitzEventPattern& pat);
   Chi2Box(const DalitzArea& area);
   Chi2Box(const Chi2Box& other);
+  virtual ~Chi2Box(){}
 
-  std::vector<Chi2Box> split(int n=2);
+  MINT::PolymorphVector<Chi2Box> split(int n=2);
 
   void resetEventCounts();
   void resetAll(); // changes box size!!

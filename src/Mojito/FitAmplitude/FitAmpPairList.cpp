@@ -23,8 +23,32 @@
 using namespace std;
 using namespace MINT;
 
+MINT::NamedParameter<std::string> FitAmpPairList::HistoOption("FitAmpPairList::HistoOption"
+							  , (std::string) "default");
+
+/*
+FitAmpPairList::HistoOption can be set to either fast (no
+histograms will be created or retrieved by the integrator) or slow
+(histograms will be created or retrieved). The default option is
+"default" and the default behaviour with FastAmplitudeIntegrator used
+by DalitzPdfFastInteg is "slow", i.e. with histograms (the behaviour
+is a bit more complex for the case of the
+FlexiFastAmplitudeIntegrator, you're better off not using this option
+there at all). Omitting the histograms saves a bit of time and
+memory. Note that if you use this option when generating sgIntegrator
+files (not recommended), you will also need to use it when reading
+them. Recommended use is to use it with DalitzPdfFastInteg, when
+reading in pre-saved integrator directories ("sgIntegrator"), in cases
+where you don't make any plots.
+*/
+
+void FitAmpPairList::applyHistoOption(){
+  if((string)HistoOption == (string)"fast") setFast();
+  if((string)HistoOption == (string)"slow") setSlow();
+}
+
 FitAmpPairList::FitAmpPairList()
-  : std::vector<FitAmpPair>()
+  : MINT::PolymorphVector<FitAmpPair>()
   , _Nevents(0)
   , _sum(0)
   , _sumsq(0)
@@ -34,10 +58,11 @@ FitAmpPairList::FitAmpPairList()
   , _cov(this)
   , _efficiency(0)
 {
+  applyHistoOption();
 }
 FitAmpPairList::FitAmpPairList(const FitAmpPairList& other)
   : IIntegrationCalculator()
-  , std::vector<FitAmpPair>(other)
+  , MINT::PolymorphVector<FitAmpPair>(other)
   , _Nevents(other._Nevents)
   , _sum(other._sum)
   , _sumsq(other._sumsq)
@@ -47,6 +72,7 @@ FitAmpPairList::FitAmpPairList(const FitAmpPairList& other)
   , _cov(other._cov, this)
   , _efficiency(other._efficiency)
 {
+  applyHistoOption();
 }
 counted_ptr<IIntegrationCalculator> 
 FitAmpPairList::clone_IIntegrationCalculator() const{
@@ -89,8 +115,8 @@ void FitAmpPairList::addEvent(IDalitzEvent& evt, double weight){
   }
 
   for(unsigned int i=0; i< this->size(); i++){
-    //    x += (*this)[i].add(evtPtr, weight*efficiency(evtPtr));
-    x += (*this)[i].add(evt, weight, efficiency(&evt));
+    //    x += this->at(i).add(evtPtr, weight*efficiency(evtPtr));
+    x += this->at(i).add(evt, weight, efficiency(&evt));
   }
   if(dbThis) cout << "FitAmpPairList::addEvent(): adding event" << endl;
   //if(_cov.isValid()) 
@@ -114,8 +140,8 @@ void FitAmpPairList::reAddEvent(IDalitzEvent& evt, double weight){
   if(evt.phaseSpace() < 0) return;
 
   for(unsigned int i=0; i< this->size(); i++){
-    if( (*this)[i].acceptEvents()){
-      (*this)[i].reAdd(evt, weight, efficiency(&evt));
+    if( this->at(i).acceptEvents()){
+      this->at(i).reAdd(evt, weight, efficiency(&evt));
     }
   }
 
@@ -130,7 +156,7 @@ void FitAmpPairList::reAddEvent(IDalitzEvent& evt, double weight){
 bool FitAmpPairList::isCompatibleWith(const FitAmpPairList& otherList) const{
   if(this->size() != otherList.size()) return false;
   for(unsigned int i=0; i < this->size(); i++){
-    if((*this)[i].name() != otherList[i].name()) return false;
+    if(this->at(i).name() != otherList[i].name()) return false;
   }
   return true;
 }
@@ -163,7 +189,7 @@ bool FitAmpPairList::add(const FitAmpPairList& otherList){
   _cov      += otherList._cov;
 
   for(unsigned int i=0; i< this->size(); i++){
-    (*this)[i] += otherList[i];
+    this->at(i) += otherList[i];
   }
   
   return true;
@@ -206,31 +232,33 @@ int FitAmpPairList::numEvents() const{
 double FitAmpPairList::integral() const{
   double sum = 0;
   for(unsigned int i=0; i< this->size(); i++){
-    sum += (*this)[i].integral();
+    sum += this->at(i).integral();
   }
   return sum;
 }
-
-//laurenPsuedo
-std::complex<double> FitAmpPairList::ComplexSum() const
-{
+std::complex<double> FitAmpPairList::ComplexSum() const{ //laurenPsuedo
   bool dbThis = false;
-
   std::complex<double> sum = 0;
-  for( unsigned int i=0; i<this->size(); ++i){
-    sum += (*this)[i].complexVal();
+  for(unsigned int i=0; i< this->size(); i++){
+    sum += this->at(i).complexVal();
   }
-
   return sum;
   (void)dbThis;
 }
 
-void FitAmpPairList::Gradient(MinuitParameterSet* mps, Double_t* grad){
+void FitAmpPairList::Gradient(MinuitParameterSet* mps, std::vector<double>& grad){
     
   for (unsigned int i=0; i<mps->size(); i++) {
     if(mps->getParPtr(i)->hidden())continue;
     
-    grad[i]=0;
+    if(i+1 >= grad.size()){
+      cout << "WARNING in FitAmpPairList::Gradient:"
+	   << " have to increase size of grad to avoid memory issues" << endl;
+      grad.resize(i+2);
+    }
+ 
+    grad.at(i)=0; grad.at(i+1)=0;
+
     string name_i= mps->getParPtr(i)->name();
     if(name_i.find("_Re")!=std::string::npos){
       if(mps->getParPtr(i)->iFixInit() && mps->getParPtr(i+1)->iFixInit()){
@@ -240,21 +268,21 @@ void FitAmpPairList::Gradient(MinuitParameterSet* mps, Double_t* grad){
       name_i.replace(name_i.find("_Re"),3,"");
       complex<double> sum(0);
       for(unsigned int j=0; j< this->size(); j++){
-	if(!A_is_in_B(name_i,(*this)[j].name())) continue;
-	if(A_is_in_B("Inco", name_i) != A_is_in_B("Inco",(*this)[j].name()) ) continue;
+	if(!A_is_in_B(name_i,this->at(j).name())) continue;
+	if(A_is_in_B("Inco", name_i) != A_is_in_B("Inco",this->at(j).name()) ) continue;
 	double singleAmpCorrection= 1.;
-	if((*this)[j].isSingleAmp()) singleAmpCorrection = 2.;
+	if(this->at(j).isSingleAmp()) singleAmpCorrection = 2.;
 	// 2 a_j^* A_i A_j^*
-	if(A_is_in_B(name_i,(*this)[j].fitAmp1().name())){
-	  sum += singleAmpCorrection* (*this)[j].valNoFitPars()* conj((*this)[j].fitAmp2().AmpPhase());
+	if(A_is_in_B(name_i,this->at(j).fitAmp1().name())){
+	  sum += singleAmpCorrection* this->at(j).valNoFitPars()* conj(this->at(j).fitAmp2().AmpPhase());
 	}
 	else {
-	  sum += singleAmpCorrection* conj( (*this)[j].valNoFitPars()* (*this)[j].fitAmp1().AmpPhase() );
+	  sum += singleAmpCorrection* conj( this->at(j).valNoFitPars()* this->at(j).fitAmp1().AmpPhase() );
 	}
         
       }
-      grad[i]= sum.real();
-      grad[i+1]= -sum.imag();
+      grad.at(i)= sum.real();
+      grad.at(i+1)= -sum.imag();
       i++;
     } 
     // Doesn't work. Don't use! 
@@ -265,17 +293,17 @@ void FitAmpPairList::Gradient(MinuitParameterSet* mps, Double_t* grad){
        complex<double> sumPhase(0);
        
        for(unsigned int j=0; j< this->size(); j++){
-       if(!A_is_in_B(name_i,(*this)[j].name())) continue;
+       if(!A_is_in_B(name_i,this->at(j).name())) continue;
        double singleAmpCorrection= 1.;
-       if((*this)[j].isSingleAmp()) singleAmpCorrection = 2.;
+       if(this->at(j).isSingleAmp()) singleAmpCorrection = 2.;
        // 2 a_j^* A_i A_j^*
-       if(A_is_in_B(name_i,(*this)[j].fitAmp1().name())){
-       sumAmp += singleAmpCorrection*(*this)[j].complexVal()/std::abs((*this)[j].fitAmp1().AmpPhase());
-       if(!(*this)[j].isSingleAmp())sumPhase += (*this)[j].complexVal()*std::arg((*this)[j].fitAmp1().AmpPhase());
+       if(A_is_in_B(name_i,this->at(j).fitAmp1().name())){
+       sumAmp += singleAmpCorrection*this->at(j).complexVal()/std::abs(this->at(j).fitAmp1().AmpPhase());
+       if(!this->at(j).isSingleAmp())sumPhase += this->at(j).complexVal()*std::arg(this->at(j).fitAmp1().AmpPhase());
        }
        else {
-       sumAmp += singleAmpCorrection*conj((*this)[j].complexVal())/std::abs((*this)[j].fitAmp2().AmpPhase());
-       if(!(*this)[j].isSingleAmp())sumPhase += conj((*this)[j].complexVal())*std::arg((*this)[j].fitAmp2().AmpPhase());
+       sumAmp += singleAmpCorrection*conj(this->at(j).complexVal())/std::abs(this->at(j).fitAmp2().AmpPhase());
+       if(!this->at(j).isSingleAmp())sumPhase += conj(this->at(j).complexVal())*std::arg(this->at(j).fitAmp2().AmpPhase());
        }
        
        }
@@ -293,24 +321,33 @@ void FitAmpPairList::Gradient(MinuitParameterSet* mps, Double_t* grad){
     
 }
 
-void FitAmpPairList::GradientForLasso(MinuitParameterSet* mps, Double_t* grad){
+void FitAmpPairList::GradientForLasso(MinuitParameterSet* mps
+				      , std::vector<double>& grad){
     
     for (unsigned int i=0; i<mps->size(); i++) {
         if(mps->getParPtr(i)->hidden())continue;
-        grad[i]=0;
+
+        grad[i]=0; grad[i+1]=0;
         string name_i= mps->getParPtr(i)->name();
         if(name_i.find("_Re")!=std::string::npos){
             if(mps->getParPtr(i)->iFixInit() && mps->getParPtr(i+1)->iFixInit())continue;
             name_i.replace(name_i.find("_Re"),3,"");
             for(unsigned int j=0; j< this->size(); j++){
-                if(!A_is_in_B(name_i,(*this)[j].name())) continue;
-                if(A_is_in_B("Inco", name_i) != A_is_in_B("Inco",(*this)[j].name()) ) continue;
-                if(!(*this)[j].isSingleAmp()) continue;
-                double integral = (*this)[j].valNoFitPars().real()/sqrt((*this)[j].integral());
+                if(!A_is_in_B(name_i,this->at(j).name())) continue;
+                if(A_is_in_B("Inco", name_i) != A_is_in_B("Inco",this->at(j).name()) ) continue;
+                if(!this->at(j).isSingleAmp()) continue;
+
+		if(i+1 >= grad.size()){
+		  cout << "WARNING in FitAmpPairList::GradientForLasso:"
+		       << " have to increase size of grad to avoid memory issues" << endl;
+		  grad.resize(i+2);
+	}
+
+                double integral = this->at(j).valNoFitPars().real()/sqrt(this->at(j).integral());
                 // Re(a_j) A_j A_j^* dphi
-                grad[i]= integral * (*this)[j].fitAmp1().AmpPhase().real();
+                grad[i]= integral * this->at(j).fitAmp1().AmpPhase().real();
                 // Im(a_j) A_j A_j^* dphi
-                grad[i+1]= integral * (*this)[j].fitAmp1().AmpPhase().imag();
+                grad[i+1]= integral * this->at(j).fitAmp1().AmpPhase().imag();
                 i++;
                 break;
             }
@@ -327,7 +364,7 @@ void FitAmpPairList::GradientForLasso(MinuitParameterSet* mps, Double_t* grad){
 double FitAmpPairList::sumOfSqrtFitFractions() {
     double sum = 0;
     for(unsigned int i=0; i< this->size(); i++){
-        if((*this)[i].isSingleAmp())sum += sqrt((*this)[i].integral());
+        if(this->at(i).isSingleAmp())sum += sqrt(this->at(i).integral());
     }
     return sum;
 }
@@ -335,7 +372,7 @@ double FitAmpPairList::sumOfSqrtFitFractions() {
 double FitAmpPairList::sumOfFitFractions() {
     double sum = 0;
     for(unsigned int i=0; i< this->size(); i++){
-        if((*this)[i].isSingleAmp())sum += (*this)[i].integral();
+        if(this->at(i).isSingleAmp())sum += this->at(i).integral();
     }
     return sum/integral();
 }
@@ -343,7 +380,7 @@ double FitAmpPairList::sumOfFitFractions() {
 double FitAmpPairList::absSumOfSqrtInterferenceFractions() {
     double sum = 0;
     for(unsigned int i=0; i< this->size(); i++){
-        if(!(*this)[i].isSingleAmp())sum += sqrt(abs((*this)[i].integral()));
+        if(!this->at(i).isSingleAmp())sum += sqrt(abs(this->at(i).integral()));
     }
     return sum;
 }
@@ -351,7 +388,7 @@ double FitAmpPairList::absSumOfSqrtInterferenceFractions() {
 double FitAmpPairList::absSumOfInterferenceFractions() {
     double sum = 0;
     for(unsigned int i=0; i< this->size(); i++){
-        if(!(*this)[i].isSingleAmp())sum += abs((*this)[i].integral());
+        if(!this->at(i).isSingleAmp())sum += abs(this->at(i).integral());
     }
     return sum/integral();
 }
@@ -360,8 +397,8 @@ int FitAmpPairList::numberOfFitFractionsLargerThanThreshold(double threshold){
     int n=0;
     double norm = integral();
     for(unsigned int i=0; i< this->size(); i++){
-        if((*this)[i].isSingleAmp()){
-            if((*this)[i].integral()/norm > threshold)n++ ;
+        if(this->at(i).isSingleAmp()){
+            if(this->at(i).integral()/norm > threshold)n++ ;
         }
     }
     return n;
@@ -414,7 +451,7 @@ double FitAmpPairList::variance() const{
 double FitAmpPairList::sumOfVariances() const{
   double sum=0;
   for(unsigned int i=0; i < this->size(); i++){    
-    sum += (*this)[i].variance();
+    sum += this->at(i).variance();
   }
   return sum;
 }
@@ -423,8 +460,10 @@ double FitAmpPairList::oldVariance() const{
   // that the variance changes with the
   // fit paramters.
   bool dbThis=false;
+  if(0 == _Nevents) return -9999.0;
 
   double dN = (double) _Nevents;
+
   double mean   = _sum/dN;
   double meansq = _sumsq/dN;
   double v = (meansq - mean*mean)/dN;
@@ -462,14 +501,14 @@ DalitzHistoSet FitAmpPairList::histoSet() const{
 DalitzHistoSet FitAmpPairList::un_normalised_histoSetRe() const{
   DalitzHistoSet sum;
   for(unsigned int i=0; i< this->size(); i++){
-    sum += (*this)[i].histoSetRe();
+    sum += this->at(i).histoSetRe();
   }
   return sum;
 }
 DalitzHistoSet FitAmpPairList::un_normalised_histoSetIm() const{
   DalitzHistoSet sum;
   for(unsigned int i=0; i< this->size(); i++){
-    sum += (*this)[i].histoSetIm();
+    sum += this->at(i).histoSetIm();
   }
   return sum;
 }
@@ -478,11 +517,11 @@ void FitAmpPairList::saveEachAmpsHistograms(const std::string& prefix) const{
   DalitzHistoSet sum;
   int counter=0;
   for(unsigned int i=0; i< this->size(); i++){
-    if((*this)[i].isSingleAmp()){
+    if(this->at(i).isSingleAmp()){
       counter++;
       std::string name = prefix + "_" + anythingToString(counter) + ".root";
-      DalitzHistoSet hs((*this)[i].histoSet());
-      std::string title = (*this)[i].fitAmp1().name();
+      DalitzHistoSet hs(this->at(i).histoSet());
+      std::string title = this->at(i).fitAmp1().name();
       hs.setTitle(title);
       cout << "FitAmpPairList::saveEachAmpsHistograms: "
 	   << "saving " << title << " as " << name << endl;
@@ -497,12 +536,12 @@ std::vector<DalitzHistoSet> FitAmpPairList::GetEachAmpsHistograms(){
 	 DalitzHistoSet sum;
 	  int counter=0;
 	  for(unsigned int i=0; i< this->size(); i++){
-	    if((*this)[i].isSingleAmp()){
+	    if(this->at(i).isSingleAmp()){
 	      counter++;
 	      std::string name =  anythingToString(counter) + ".root";
-              double frac = (*this)[i].integral()/integral();  
-	      DalitzHistoSet hs((*this)[i].histoSet());
-	      std::string title = (*this)[i].fitAmp1().name();
+              double frac = this->at(i).integral()/integral();  
+	      DalitzHistoSet hs(this->at(i).histoSet());
+	      std::string title = this->at(i).fitAmp1().name();
 	      hs.setTitle(title);
 	      cout << "FitAmpPairList::saveEachAmpsHistograms: "
 		   << "saving " << title << " as " << name << endl;
@@ -516,7 +555,7 @@ std::vector<DalitzHistoSet> FitAmpPairList::GetEachAmpsHistograms(){
 DalitzHistoSet FitAmpPairList::interferenceHistoSet() const{
     DalitzHistoSet sum;
     for(unsigned int i=0; i< this->size(); i++){
-        if(!(*this)[i].isSingleAmp())sum += (*this)[i].histoSet();
+        if(!this->at(i).isSingleAmp())sum += this->at(i).histoSet();
     }
     sum /= integral();
     //  if(_Nevents > 0) sum /= (double) _Nevents;
@@ -529,11 +568,11 @@ void FitAmpPairList::saveInterferenceHistograms(const std::string& prefix) const
     DalitzHistoSet sum;
     int counter=0;
     for(unsigned int i=0; i< this->size(); i++){
-        if(!(*this)[i].isSingleAmp()){
+        if(!this->at(i).isSingleAmp()){
             counter++;
             std::string name = prefix + "_" + anythingToString(counter) + ".root";
-            DalitzHistoSet hs((*this)[i].histoSet());
-            std::string title = (*this)[i].name();
+            DalitzHistoSet hs(this->at(i).histoSet());
+            std::string title = this->at(i).name();
             hs.setTitle(title);
             cout << "FitAmpPairList::saveEachAmpsHistograms: "
             << "saving " << title << " as " << name << endl;
@@ -548,12 +587,12 @@ std::vector<DalitzHistoSet> FitAmpPairList::GetInterferenceHistograms(){
     DalitzHistoSet sum;
     int counter=0;
     for(unsigned int i=0; i< this->size(); i++){
-	    if(!(*this)[i].isSingleAmp()){
+	    if(!this->at(i).isSingleAmp()){
             counter++;
             std::string name =  anythingToString(counter) + ".root";
-            double frac = (*this)[i].integral()/integral();  
-            DalitzHistoSet hs((*this)[i].histoSet());
-            std::string title = (*this)[i].name();
+            double frac = this->at(i).integral()/integral();  
+            DalitzHistoSet hs(this->at(i).histoSet());
+            std::string title = this->at(i).name();
             hs.setTitle(title);
             cout << "FitAmpPairList::saveEachAmpsHistograms: "
             << "saving " << title << " as " << name << endl;
@@ -575,15 +614,128 @@ void FitAmpPairList::doFinalStats(Minimiser* mini){
   makeAndStoreFractions(mini);
 }
 
+
+bool FitAmpPairList::makeAndStoreFractions(const std::string& fname
+					   , const std::string&  // dummy
+					   , Minimiser* mini
+					   ){
+  bool dbThis=true;
+
+  if(this->empty()) return 0;
+  counted_ptr<FitAmpPairFitCovariance> fcov(0);
+  if(0 != mini){
+    if(mini->parSet() != this->at(0).fitAmp1().FitAmpPhase().p1().parSet()){
+      cout << "ERROR in FitAmpPairList::makeAndStoreFractions"
+	   << "\n Minuit parameter set and fit parameters incompatible"
+	   << endl;
+    }else{
+      cout << "getting minuitCov" << endl;
+      TMatrixTSym<double> minuitCov(mini->covMatrixFull());
+      cout << "got minuitCov" << endl;
+      counted_ptr<FitAmpPairFitCovariance> 
+	fc(new FitAmpPairFitCovariance(this, minuitCov));
+      fcov = fc;
+      cout << "got fcov" << endl;
+    }
+  }
+
+  bool printFitErrors = (fcov != 0 && fcov->isValid());
+
+  cout << "\n============================================"
+       << "============================================"
+       << "\n        Amplitude Fractions";
+  if(0 != fcov) cout << " +/- fit error ";
+  cout << " +/- integration error "
+       << endl;
+  double norm = integral();
+  if(norm <= 0){
+    cout << "ERROR in FitAmpPairList::makeAndStoreFractions()"
+	 << " integral = " << integral()
+	 << " won't do fractions."
+	 << endl;
+    return false;
+  }
+
+  for(unsigned int i=0; i < this->size(); i++){    
+    double frac = this->at(i).integral()/norm;
+    string name;
+    if(this->at(i).isSingleAmp()){
+      name = this->at(i).fitAmp1().name();
+    }else{
+      name = this->at(i).name();
+    }
+    FitFraction f(name, frac);
+    if(printFitErrors){
+      f.sigmaFit() = fcov->getFractionError(i);
+    }
+    if(_cov.isValid()){ 
+      f.sigmaInteg() = _cov.getFractionError(i);
+    }
+
+    if(this->at(i).isSingleAmp()){
+      this->at(i).fitAmp1().setFraction(frac);
+      _singleAmpFractions.add(f);
+    }else{
+      _interferenceFractions.add(f);
+    }
+  }
+
+
+  if(dbThis)cout << "filled FitFractionLists" << endl;
+  if(printFitErrors){
+    _singleAmpFractions.setSumFitError(fcov->getFractionSumError());
+    _interferenceFractions.setSumFitError(fcov->getInterferenceFracSumError());
+  }
+  if(_cov.isValid()){
+    _singleAmpFractions.setSumIntegError(_cov.getFractionSumError());
+  }
+
+  if(dbThis) cout << "... now including errors" << endl;
+  if(dbThis)cout  << " sorting" << endl;
+  _interferenceFractions.sortByMagnitudeDecending();
+  if(dbThis)cout << "sorted" << endl;
+
+  cout <<   "================================================="
+       << "\n================================================="
+       << "\n FRACTIONS:"
+       << "\n ^^^^^^^^^^" << endl;
+  cout << _singleAmpFractions << endl;
+  cout <<   "================================================="
+       << "\n================================================="
+       << "\n Interference terms (sorted by size)"
+       << "\n ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
+  cout << _interferenceFractions << endl;
+  cout <<   "================================================="
+       << "\n=================================================" << endl;
+
+  cout << "\n\n\t X-check: total sum of all terms"
+       << " (amplitude fractions + interference terms): "
+       << _singleAmpFractions.sum().frac() 
+    + _interferenceFractions.sum().frac();
+  cout << endl;
+  ofstream os(fname.c_str());
+  if(os){
+    os << _singleAmpFractions << endl;
+    os << _interferenceFractions << endl;
+    os.close();
+  }
+  
+  return true;
+}
+
+
+
+/*
 bool FitAmpPairList::makeAndStoreFractions(const std::string& fname, const std::string& fnameROOT, Minimiser* mini  ){
   bool dbThis=true;
+  //return 0;
   if(this->empty()) return 0;
     
   NamedParameter<string> OutputDir("OutputDir", (std::string) "", (char*) 0);  
     
   counted_ptr<FitAmpPairFitCovariance> fcov(0);
   if(0 != mini){
-    if(mini->parSet() != (*this)[0].fitAmp1().FitAmpPhase().p1().parSet()){
+    if(mini->parSet() != this->at(0].fitAmp1().FitAmpPhase().p1().parSet()){
       cout << "ERROR in FitAmpPairList::makeAndStoreFractions"
 	   << "\n Minuit parameter set and fit parameters incompatible"
 	   << endl;
@@ -593,6 +745,9 @@ bool FitAmpPairList::makeAndStoreFractions(const std::string& fname, const std::
       fcov = fc;
     }
   }
+  
+  // return 0;
+
   bool printFitErrors = (fcov != 0 && fcov->isValid());
 
   cout << "\n============================================"
@@ -611,16 +766,17 @@ bool FitAmpPairList::makeAndStoreFractions(const std::string& fname, const std::
   }
 
   TFile* paraFile = new TFile(((string)OutputDir + fnameROOT).c_str(), "RECREATE");
+  //  if(0 != paraFile) paraFile->cd();
   TTree* tree = new TTree("fractions","fractions");
   int counter = 0;  
     
   for(unsigned int i=0; i < this->size(); i++){    
-    double frac = (*this)[i].integral()/norm;
+    double frac = this->at(i).integral()/norm;
     string name;
-    if((*this)[i].isSingleAmp()){
-      name = (*this)[i].fitAmp1().name();
+    if(this->at(i).isSingleAmp()){
+      name = this->at(i).fitAmp1().name();
     }else{
-      name = (*this)[i].name();
+      name = this->at(i).name();
     }
     FitFraction f(name, frac);
     if(printFitErrors){
@@ -630,11 +786,14 @@ bool FitAmpPairList::makeAndStoreFractions(const std::string& fname, const std::
       f.sigmaInteg() = _cov.getFractionError(i);
     }
 
-    if((*this)[i].isSingleAmp()){
+    if(0 != tree && this->at(i).isSingleAmp()){
         counter++;
         double val = frac;
-        double diff = (frac-(*this)[i].fitAmp1().getFraction());
-        double pull = (frac-(*this)[i].fitAmp1().getFraction())/fcov->getFractionError(i);
+        double diff = (frac-this->at(i).fitAmp1().getFraction());
+	double sigma = -9999;
+	if(0 != fcov && fcov->isValid()) sigma = fcov->getFractionError(i);
+	double pull = -9999;
+        if(sigma > 0) pull = diff/sigma;
         std::string name_val = anythingToString((int)counter) + "_val";
         std::string name_pull = anythingToString((int)counter) + "_pull";
         std::string name_diff = anythingToString((int)counter) + "_diff";
@@ -642,18 +801,18 @@ bool FitAmpPairList::makeAndStoreFractions(const std::string& fname, const std::
         TBranch* Bra_val = tree->Branch( name_val.c_str(), &val, (name_val+"/D").c_str());
         TBranch* Bra_pull = tree->Branch( name_pull.c_str(), &pull, (name_pull+"/D").c_str());
         TBranch* Bra_diff = tree->Branch( name_diff.c_str(), &diff, (name_diff+"/D").c_str());
-        Bra_pull->Fill();
-        Bra_diff->Fill();
-        Bra_val->Fill();
-        //tree->Fill();
-        //(*this)[i].fitAmp1().setFraction(frac);
+        if(0 != Bra_pull) Bra_pull->Fill();
+        if(0 != Bra_diff) Bra_diff->Fill();
+        if(0 != Bra_val)  Bra_val->Fill();
+        // tree->Fill();
+        //this->at(i).fitAmp1().setFraction(frac);
         _singleAmpFractions.add(f);
     }else{
       _interferenceFractions.add(f);
     }
   }
 
-  tree->Fill();
+  if(0 != tree) tree->Fill();
 
   if(dbThis)cout << "filled FitFractionLists" << endl;
   if(printFitErrors){
@@ -695,11 +854,13 @@ bool FitAmpPairList::makeAndStoreFractions(const std::string& fname, const std::
   }
     
   tree->Write();  
-  paraFile->Close();
-  delete paraFile;
+  //paraFile->Close();
+  //delete paraFile;
   
   return true;
 }
+*/
+
 
 double FitAmpPairList::getFractionChi2() const{
   bool ErrorProportionalToSqrtTarget = true;
@@ -717,10 +878,10 @@ double FitAmpPairList::getFractionChi2() const{
   int counter=0;
   double sum=0;
   for(unsigned int i=0; i < this->size(); i++){
-    if((*this)[i].isSingleAmp()){
+    if(this->at(i).isSingleAmp()){
       counter++;
-      double frac = (*this)[i].integral()/norm;
-      double target_f = (*this)[i].fitAmp1().getFraction();
+      double frac = this->at(i).integral()/norm;
+      double target_f = this->at(i).fitAmp1().getFraction();
       if(i < 10){
 	cout << "(" << frac << " - " << target_f << ")" << endl;
       }
@@ -731,6 +892,7 @@ double FitAmpPairList::getFractionChi2() const{
   }
   return sum;
 }
+
 
 std::string FitAmpPairList::dirName() const{
   return "FitAmpPairList";
@@ -747,7 +909,7 @@ bool FitAmpPairList::save(const std::string& asSubdirOf) const{
   os.close();
 
   for(unsigned int i=0; i < this->size(); i++){
-    sc &= (*this)[i].save(asSubdirOf +"/"+ dirName());
+    sc &= this->at(i).save(asSubdirOf +"/"+ dirName());
   }
   if(_cov.isValid()){
     _cov.save(asSubdirOf + "/" + dirName());
@@ -782,7 +944,7 @@ bool FitAmpPairList::retrieve(const std::string& asSubdirOf){
   is >> dummy >> _psSumSq;
   is.close();
   for(unsigned int i=0; i < this->size(); i++){
-    sc &= (*this)[i].retrieve(asSubdirOf +"/"+ dirName());
+    sc &= this->at(i).retrieve(asSubdirOf +"/"+ dirName());
   }
   _cov.retrieve(asSubdirOf + "/" + dirName());
   return sc;
@@ -826,47 +988,47 @@ bool FitAmpPairList::makeDirectory(const std::string& asSubdirOf)const{
 void FitAmpPairList::print(std::ostream& os) const{
   os << "FitAmpPairList with " << this->size() << " FitAmpPairs:";
   for(unsigned int i=0; i < this->size(); i++){
-    os << "\n\t" << i << ") " << (*this)[i];
+    os << "\n\t" << i << ") " << this->at(i);
   }
 }
 
 bool FitAmpPairList::needToReIntegrate() const{
   for(unsigned int i=0; i < this->size(); i++){    
-    if ((*this)[i].needToReIntegrate() ) return true;
+    if (this->at(i).needToReIntegrate() ) return true;
   }
   return false;
 }
 void FitAmpPairList::startIntegration(){
   for(unsigned int i=0; i < this->size(); i++){    
-    (*this)[i].startIntegration();
+    this->at(i).startIntegration();
   }
 }
 void FitAmpPairList::startReIntegration(){
   for(unsigned int i=0; i < this->size(); i++){    
-    if( (*this)[i].needToReIntegrate() ) (*this)[i].startReIntegration();
+    if( this->at(i).needToReIntegrate() ) this->at(i).startReIntegration();
   }
 }
 void FitAmpPairList::startForcedReIntegration(){
   for(unsigned int i=0; i < this->size(); i++){    
-    (*this)[i].startReIntegration();
+    this->at(i).startReIntegration();
   }
 }
 void FitAmpPairList::endIntegration(){
   for(unsigned int i=0; i < this->size(); i++){    
-    (*this)[i].endIntegration();
+    this->at(i).endIntegration();
   }
 }
 
 void FitAmpPairList::setSlow(){
   _slow=true;
   for(unsigned int i=0; i < this->size(); i++){    
-    (*this)[i].setSlow();
+    this->at(i).setSlow();
   }
 }
 void FitAmpPairList::setFast(){
   _slow=false;
   for(unsigned int i=0; i < this->size(); i++){    
-    (*this)[i].setFast();
+    this->at(i).setFast();
   }
 }
 
@@ -889,7 +1051,7 @@ std::ostream& operator<<(std::ostream& os, const FitAmpPairList& fap){
 double FitAmpPairList::variance() const{
   double sum = 0;
   for(unsigned int i=0; i< this->size(); i++){
-    sum += (*this)[i].variance();
+    sum += this->at(i).variance();
   }
   return sum;
 }
@@ -902,9 +1064,9 @@ double FitAmpPairList::variance() const{
   double sumImRe      = 0;
 
   for(unsigned int i=0; i< this->size(); i++){
-    sumReSquared += (*this)[i].ReSquared();
-    sumImSquared += (*this)[i].ImSquared();
-    sumImRe      += (*this)[i].ImRe();
+    sumReSquared += this->at(i).ReSquared();
+    sumImSquared += this->at(i).ImSquared();
+    sumImRe      += this->at(i).ImRe();
   }
   double sumsq = sumReSquared + sumImSquared - 2.0*sumImRe;
 

@@ -40,6 +40,7 @@ public MINT::EventPtrList<DalitzEvent>
  public:
   DalitzEventPtrList();
   DalitzEventPtrList(const DalitzEventPtrList& other);
+  virtual ~DalitzEventPtrList();
 
   const std::string& className() const{return _className;}
 

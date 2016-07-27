@@ -55,6 +55,7 @@ class DalitzHistogram{
 		  );
   //  DalitzHistogram(TTree* t);
   DalitzHistogram(const DalitzHistogram& other);
+  virtual ~DalitzHistogram();
 
   const std::string& name() const{return _name;}
   void smartTitle(const DalitzCoordSet& c_in

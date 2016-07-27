@@ -344,7 +344,7 @@ bool DalitzEventList::saveAsNtuple(const std::string& fname
   TNtupleD* ntp = makeNtuple(ntpName);
   ntp->Write();
   f.Close();
-  ntp->Delete("all");
+  //ntp->Delete("all");
   //delete ntp;
   return true;
 }

@@ -157,6 +157,7 @@ class DDTree{
   template<typename COMPATIBLE_TYPE>
     MINT::counted_ptr<DDTree<COMPATIBLE_TYPE> > 
     CloneVariableType(DDTree<COMPATIBLE_TYPE>* parent=0) const{
+    //CloneVariableType(counted_ptr<DDTree<COMPATIBLE_TYPE> > parent=0) const{ // BIG DEBUG
     
     MINT::counted_ptr<DDTree<COMPATIBLE_TYPE> > 
       top(new DDTree<COMPATIBLE_TYPE>(static_cast<COMPATIBLE_TYPE>(_thisVal)

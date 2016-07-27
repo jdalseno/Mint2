@@ -5,13 +5,14 @@
 #include "Mint/IFitParRegister.h"
 #include "Mint/FitParRef.h"
 
-#include <vector>
+//#include <vector>
+#include "Mint/PolymorphVector.h"
 #include <iostream>
 
 namespace MINT{
   class FitParDependent 
     : virtual public IFitParRegister
-    , public std::vector<FitParRef>
+    , public MINT::PolymorphVector<FitParRef>
     {
       IFitParRegister* _daddy;
 
@@ -21,15 +22,15 @@ namespace MINT{
       //bool changedSinceLastCall() const;
       //void rememberFitParValues() const;
       
-      virtual unsigned int size() const{return std::vector<FitParRef>::size();}
+      virtual unsigned int size() const{return MINT::PolymorphVector<FitParRef>::size();}
       //const FitParRef& operator[](unsigned int i) const;
 
       virtual const FitParRef& operator[](unsigned int i) const{
-	return ((static_cast<const std::vector<FitParRef>& >(*this))[i]);
-      } 
+	return MINT::PolymorphVector<FitParRef>::at(i);
+      }
 
       virtual FitParRef& operator[](unsigned int i) {
-	return ((static_cast<std::vector<FitParRef>& >(*this))[i]);
+	return MINT::PolymorphVector<FitParRef>::at(i);
       } 
    
       virtual bool changedSinceLastCall() const{

@@ -14,15 +14,16 @@ using namespace std;
 using namespace MINT;
 
 DalitzEventPattern::DalitzEventPattern(int pdg_ids[], int arrayDimension)
-  : vector<DecayTreeItem>(arrayDimension)
+  : PolymorphVector<DecayTreeItem>(arrayDimension)
 {
   for(int i=0; i<arrayDimension; i++){
     DecayTreeItem dti(pdg_ids[i]);
     (*this)[i]=dti;
   }
 }
-DalitzEventPattern::DalitzEventPattern(std::vector<int> pdg_ids)  
-  : vector<DecayTreeItem>(pdg_ids.size())
+
+DalitzEventPattern::DalitzEventPattern(const std::vector<int>& pdg_ids)  
+  : PolymorphVector<DecayTreeItem>(pdg_ids.size())
 {
   for(unsigned int i=0; i<pdg_ids.size(); i++){
     DecayTreeItem dti(pdg_ids[i]);
@@ -30,8 +31,24 @@ DalitzEventPattern::DalitzEventPattern(std::vector<int> pdg_ids)
   }
 }
 
+DalitzEventPattern::DalitzEventPattern(const vector<DecayTreeItem>& other)
+  : PolymorphVector<DecayTreeItem>(other.size())
+{
+  for(unsigned int i=0; i < this->size(); i++){
+    (*this)[i] = other[i];
+  }
+}
+
+DalitzEventPattern::DalitzEventPattern(const PolymorphVector<DecayTreeItem>& other)
+  : PolymorphVector<DecayTreeItem>(other)
+{}
+DalitzEventPattern::DalitzEventPattern(const DalitzEventPattern& other)
+  : PolymorphVector<DecayTreeItem>(other)
+{}
+
+
 DalitzEventPattern::DalitzEventPattern(int mum, int d1, int d2)
-  : vector<DecayTreeItem>(3)
+  : PolymorphVector<DecayTreeItem>(3)
 {
   (*this)[0] = DecayTreeItem(mum);
   (*this)[1] = DecayTreeItem(d1);
@@ -39,7 +56,7 @@ DalitzEventPattern::DalitzEventPattern(int mum, int d1, int d2)
 }
 
 DalitzEventPattern::DalitzEventPattern(int mum, int d1, int d2, int d3)
-  : vector<DecayTreeItem>(4)
+  : PolymorphVector<DecayTreeItem>(4)
 {
   (*this)[0] = DecayTreeItem(mum);
   (*this)[1] = DecayTreeItem(d1);
@@ -48,7 +65,7 @@ DalitzEventPattern::DalitzEventPattern(int mum, int d1, int d2, int d3)
 }
 
 DalitzEventPattern::DalitzEventPattern(int mum,int d1,int d2,int d3,int d4)
-  : vector<DecayTreeItem>(5)
+  : PolymorphVector<DecayTreeItem>(5)
 {
   (*this)[0] = DecayTreeItem(mum);
   (*this)[1] = DecayTreeItem(d1);
@@ -57,12 +74,6 @@ DalitzEventPattern::DalitzEventPattern(int mum,int d1,int d2,int d3,int d4)
   (*this)[4] = DecayTreeItem(d4);
 }
 
-DalitzEventPattern::DalitzEventPattern(const DalitzEventPattern& other)
-  : std::vector<DecayTreeItem>(other)
-{}
-DalitzEventPattern::DalitzEventPattern(const std::vector<DecayTreeItem>& other)
-  : std::vector<DecayTreeItem>(other)
-{}
 
 DalitzEventPattern::DalitzEventPattern(const DecayTree& dt_in){
   bool dbThis=false;
@@ -102,6 +113,7 @@ bool DalitzEventPattern::equal(const DalitzEventPattern& other) const{
   }
   return true;
 }
+
 bool DalitzEventPattern::lt(const DalitzEventPattern& other) const{
   if(equal(other)) return false;
   if(size() < other.size()) return true;
@@ -182,7 +194,7 @@ bool DalitzEventPattern::compatibleWithFinalState(const DalitzEventPattern&
   return compatibleWithFinalState(otherFs);
 }
 
-bool DalitzEventPattern::compatibleWithFinalState(const vector<int>& 
+bool DalitzEventPattern::compatibleWithFinalState(const std::vector<int>& 
 						  otherFs_in) const{
 
   std::vector<int> fs = finalStates(); // my own;  
@@ -227,7 +239,7 @@ double DalitzEventPattern::sijMax(int i, int j, int k) const{
   return sijMax(indices);
 }
 
-double DalitzEventPattern::sijMin(const std::vector<int>& indices) const{
+double DalitzEventPattern::sijMin(const MINT::PolymorphVector<int>& indices) const{
   double sum=0;
   for(unsigned int i=0; i< indices.size(); i++){
     if(indices[i] < 1 || indices[i] >= (int) this->size()){
@@ -239,7 +251,7 @@ double DalitzEventPattern::sijMin(const std::vector<int>& indices) const{
   return sum*sum;
 }
 
-double DalitzEventPattern::sijMax(const std::vector<int>& indices) const{
+double DalitzEventPattern::sijMax(const MINT::PolymorphVector<int>& indices) const{
   if(this->empty()) return -9999;
 
   double sum=(*this)[0].mass();

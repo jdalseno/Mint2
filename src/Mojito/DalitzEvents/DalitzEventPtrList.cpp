@@ -25,10 +25,15 @@ DalitzEventPtrList::DalitzEventPtrList()
 }
 
 DalitzEventPtrList::DalitzEventPtrList( const DalitzEventPtrList& other ) 
-  : IEventList<DalitzEvent>()
+  : IMinimalEventList<DalitzEvent>()
   , EventPtrList<DalitzEvent>(other) 
 {
 }
+
+DalitzEventPtrList::~DalitzEventPtrList(){
+
+}
+
 
 int DalitzEventPtrList::generatePhaseSpaceEvents(int NumEvents
 					      , const DalitzEventPattern& pat
@@ -82,31 +87,30 @@ TNtupleD* DalitzEventPtrList::makeNtuple(const std::string& ntpName ) const{
 			       , ntpName.c_str()
 			       , varNameString.c_str());
   
-  int arraySize = (*(this->begin()))->ntupleVarArraySize();
-  Double_t *array = new Double_t[arraySize];
+  unsigned int arraySize = (*(this->begin()))->ntupleVarArraySize();
+  vector<Double_t> array(arraySize);
 
 
   for(vector<counted_ptr<DalitzEvent> >::const_iterator it = this->begin();
       it != this->end(); it++){
 
-    bool success = (*it)->fillNtupleVarArray(array, arraySize);
+    bool success = (*it)->fillNtupleVarArray(array);
     if(! success){
       cout << "ERROR in DalitzEventListt::makeNtuple"
 	   << ", call to DalitzEvent::fillNtupleVarArray"
 	   << " returned failure"
 	   << endl;
     }else{
-      ntp->Fill(array);
+      ntp->Fill(&(array[0]));
     }
   }
-  delete[] array;
   return ntp;
 }
 
 DalitzHistoSet DalitzEventPtrList::histoSet() const{
   DalitzHistoSet hs;
   for(unsigned int i=0; i< this->size(); i++){
-    DalitzEvent evt((*this)[i]);
+    DalitzEvent evt(this->getEventRef(i));
     hs.addEvent(evt);
   }
   return hs;
@@ -115,7 +119,7 @@ DalitzHistoSet DalitzEventPtrList::weightedHistoSet() const{
   // mainly for diagnostics
   DalitzHistoSet hs;
   for(unsigned int i=0; i< this->size(); i++){
-    DalitzEvent evt((*this)[i]);
+    DalitzEvent evt(this->getEventRef(i));
     hs.addEvent(evt, evt.getWeight());
   }
   return hs;
@@ -125,7 +129,7 @@ DalitzHistoSet DalitzEventPtrList::reWeightedHistoSet(IReturnRealForEvent<IDalit
   DalitzHistoSet hs;
   if(0 == w) return hs;
   for(unsigned int i=0; i< this->size(); i++){
-    DalitzEvent evt((*this)[i]);
+    DalitzEvent evt(this->getEventRef(i));
     hs.addEvent(evt, w->RealVal(evt) );
   }
   return hs;
@@ -136,7 +140,7 @@ DalitzHistoSet DalitzEventPtrList::weighedReWeightedHistoSet(IReturnRealForEvent
   DalitzHistoSet hs;
   if(0 == w) return hs;
   for(unsigned int i=0; i< this->size(); i++){
-    DalitzEvent evt((*this)[i]);
+    DalitzEvent evt(this->getEventRef(i));
     hs.addEvent(evt, w->RealVal(evt) * evt.getWeight());
   }
   return hs;
@@ -168,12 +172,12 @@ bool DalitzEventPtrList::saveAsNtuple(const std::string& fname
 	 << endl;
     return false;
   }
-  TFile f(fname.c_str(), "RECREATE");
-  f.cd();
+  TFile* f = TFile::Open(fname.c_str(), "RECREATE");
+  f->cd();
   TNtupleD* ntp = makeNtuple(ntpName);
-  ntp->Write();
-  f.Close();
-  ntp->Delete("all");
+  if(0 != ntp) ntp->Write();
+  f->Close();
+  //ntp->Delete("all");
 
   //  delete ntp;
   return true;

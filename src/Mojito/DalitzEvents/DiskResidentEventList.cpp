@@ -5,6 +5,7 @@
 
 #include "TNtupleD.h"
 #include "TFile.h"
+#include "TRandom.h"
 
 #include <iostream>
 #include <fstream>
@@ -218,13 +219,9 @@ bool DiskResidentEventList::openFile(){
 	 << _fname << ", " << _opt << ", " << _fname << ")"
 	 << endl;
   }
-  if(0 == _f) _f = new TFile(_fname.c_str(), _opt.c_str(), _fname.c_str());
-  if(dbThis){
-    cout << " got _f = " << _f << endl;
-    cout << " _f->ls() " << endl;
-    _f->ls();
-    cout << "?" << endl;
-  }
+  if(0 == _f)_f = TFile::Open(_fname.c_str(), _opt.c_str()
+			       , _fname.c_str()
+			       );
   
   if(0 == _f) return makeNewFile();
   if(_f->IsZombie()) return makeNewFile();
@@ -235,12 +232,18 @@ bool DiskResidentEventList::openFile(){
 	 << _fname << " not writable!"
 	 << endl;
   }
+  if(dbThis){
+    cout << " got _f = " << _f << endl;
+    cout << " _f->ls() " << endl;
+    _f->ls();
+    cout << "?" << endl;
+  }
 
 //  if (1 ==1) return makeNewFile();
   return true;
 }
 bool DiskResidentEventList::fromFile(){
-  bool dbThis=true;
+  bool dbThis=false;
   if(dbThis) cout << "DiskResidentEventList::fromFile() called" << endl;
   if(0 == _f) makeNewFile();
   if(_f->IsZombie()){
@@ -249,10 +252,7 @@ bool DiskResidentEventList::fromFile(){
     makeNewFile();
   }
   if(dbThis) cout << " opened file" << endl;
-  if(dbThis){
-    _f->ls();
-    cout << " that's in it" << endl;
-  }
+  if(dbThis){ _f->ls(); cout << " that's in it" << endl;}
   _f->cd();
   if(dbThis){
     cout << " cd'ed to file " << endl;
@@ -292,7 +292,7 @@ bool DiskResidentEventList::empty() const{
 }
 
 bool DiskResidentEventList::makeNewFile(){
-  _f = new TFile(generateFname().c_str(), "RECREATE");
+  _f = TFile::Open(generateFname().c_str(), "RECREATE");
   // owned by gDirectory, I don't delete this myself.
   return (0 != _f);
 }
@@ -309,10 +309,11 @@ bool DiskResidentEventList::makeNtp(const DalitzEvent& evt){
     _ntp = new TNtupleD(cName().c_str(), ntpName().c_str()
 			, evt.makeNtupleVarnames().c_str()
 			);
-    _ntp->SetDirectory(0);
+    cout << "made new ntuple" << endl;
+  }else{
+    cout << "found old ntuple" << endl;
   }
   if(0 != _ntp){
-    _ntp->SetDirectory(_f);
     _ntp->SetAutoSave(__maxBytes);
   }
   return 0 != _ntp;
@@ -321,27 +322,26 @@ bool DiskResidentEventList::Add(const DalitzEvent& evt){
   if(0 == _f) makeNewFile();
   _f->cd();
   if(0 == _ntp) makeNtp(evt);
-  int arraySize = evt.ntupleVarArraySize();
-  Double_t *array = new Double_t[arraySize];
+  unsigned int arraySize = evt.ntupleVarArraySize();
+  vector<Double_t> array(arraySize);
   
-  bool success = evt.fillNtupleVarArray(array, arraySize);
+  bool success = evt.fillNtupleVarArray(array);
   if(! success){
     cout << "ERROR in DiskResidentEventList::Add(const DalitzEvent& evt)"
 	 << ", call to DalitzEvent::fillNtupleVarArray"
 	 << " returned failure for event:\n" << evt
 	 << endl;
   }else{
-    _f = _ntp->GetCurrentFile(); 
-    _f->cd();
-    _ntp->Fill(array);
+    //_f = _ntp->GetCurrentFile(); 
+    //_f->cd();
+    _ntp->Fill(&(array[0]));
     _f = _ntp->GetCurrentFile(); 
     // above lines: to pick up when TNtuple (TTree) changes
     // files in case the current one is too big. All this
     // rubbish is necessary because of root's crazy way of
     // handling this.
   }
-  delete[] array;
-  if(! _initialised) init();
+
   return true;
 }
 
@@ -372,32 +372,64 @@ bool DiskResidentEventList::Add(const IMinimalEventList<DalitzEvent>& otherList)
   return true;
   }*/
 bool DiskResidentEventList::save(){
+  bool dbThis=false;
   if(0 == _ntp) return false;
   if(0 == _f) return false;
   bool success=true;
-  _f->cd();
-  success &= _ntp->AutoSave();
+  if(dbThis){
+    cout << "DiskResidentEventList::save() called"
+       << " for filename = " << _fname << endl;
+  }
+  //_f->cd();
+  // success &=
+  //_f = _ntp->GetCurrentFile();
+  //_f->cd();
+  if(0 == _f || (! _f->IsWritable()) || (! _f->IsOpen())){
+    cout << "big problem with f in DiskResidentEventList::save()" << endl;
+    throw "Scheibenkartoffel";
+  }
+  _ntp->AutoSave();
+  if(dbThis)cout << " done the saving" << endl;
   return success;
 }
 
 bool DiskResidentEventList::Close(){
   bool dbThis=false;
-  bool success = save();
-  if(dbThis && (! success)){
+  bool success = true;
+
+  if(dbThis){
+    cout << "DiskResidentEventList::Close() called"
+	 << " for filename = " << _fname << endl;
+  }
+  if(0 == _f) return false;
+  if(0 == _ntp) return false;
+
+
+  success &= save();
+  if(dbThis && ! success){
     cout << "DiskResidentEventList::Close() failure in saving when closing" 
 	 << endl;
   }
-  if(0 != _f){
-    _f->cd();
-    if(0 != _ntp){
-      _ntp->Write();
-      _ntp->Delete();
-    }
-    _f->Close();
-    _f->Delete("all"); // debug june 2011 (leave in for now)
-  }
+  if(dbThis) cout << "saved file with success = " << success << endl;
+  
+  //_f->cd();
+  //_ntp->Write();
+  //_f->Write();
+  if(dbThis) cout << "getting current file" << endl;
+  _f = _ntp->GetCurrentFile();
+  if(dbThis) cout << "_f = " << _f << endl;
+  _f->cd();
+  if(dbThis) cout << "cd'ed to _f and now about to Write" << endl;
+  //  _f->Write();
+  if(dbThis) cout << "written,now closing" <<endl;
+  _f->Close();
+  if(dbThis) cout << "closed." << endl;
+  //delete _ntp;
+  //delete _f;
   _f   = 0;
   _ntp = 0;
+
+  (void)dbThis;
   return success;
 }
 
@@ -408,6 +440,11 @@ DalitzEvent DiskResidentEventList::getEvent(unsigned int i) const{
 	 << " index i=" << i << " out of range " << size()
 	 << endl;
     throw "index out of range";
+  }
+  if(0 == _ntp){
+    cout << "FATAL ERROR in DiskResidentEventList::operator()"
+	 << "there is no ntuple "
+	 << endl;
   }
   _ntp->GetEvent(i);
   return DalitzEvent(_ntp);

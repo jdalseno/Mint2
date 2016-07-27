@@ -21,7 +21,7 @@ double DalitzBWBoxSet::__phaseSpaceFracDefaultValue=0.25;
 // model might have some artificial "holes" etc.
 
 DalitzBWBoxSet::DalitzBWBoxSet(IReturnRealForEvent<IDalitzEvent>* amps, TRandom* r)
-  : std::vector<DalitzBWBox>()
+  : MINT::PolymorphVector<DalitzBWBox>()
   , _maxWeightEstimate(-9999.0)
   , _maxWeightInSample(-9999.0)
   , _ampSum(amps)
@@ -34,7 +34,7 @@ DalitzBWBoxSet::DalitzBWBoxSet(IReturnRealForEvent<IDalitzEvent>* amps, TRandom*
   , _pick_ps_prob(-9999)
 {}
 DalitzBWBoxSet::DalitzBWBoxSet(TRandom* r)
-  : std::vector<DalitzBWBox>()
+  : MINT::PolymorphVector<DalitzBWBox>()
   , _maxWeightEstimate(-9999.0)
   , _maxWeightInSample(-9999.0)
   , _ampSum(0)
@@ -50,7 +50,7 @@ DalitzBWBoxSet::DalitzBWBoxSet(TRandom* r)
 DalitzBWBoxSet::DalitzBWBoxSet(const DalitzBWBoxSet& other)
   : IEventGenerator<IDalitzEvent>()
   , IUnweightedEventGenerator<IDalitzEvent>()
-  , std::vector<DalitzBWBox>(other)
+  , MINT::PolymorphVector<DalitzBWBox>(other)
   , _eventPtrList(other._eventPtrList)
   , _maxWeightEstimate(other._maxWeightEstimate)
   , _maxWeightInSample(other._maxWeightInSample)
@@ -352,7 +352,7 @@ void DalitzBWBoxSet::findMax(){
 	 << _eventPtrList.size()
 	 << " events in the eventPtrList." << endl;
     if( _eventPtrList.size() > 0){
-      cout << "The first one is: " << _eventPtrList[0] << endl;
+      cout << "The first one is: " << _eventPtrList.getEventRef(0) << endl;
     }
   }
 
@@ -366,7 +366,7 @@ void DalitzBWBoxSet::findMax(){
 	 << _eventPtrList.size()
 	 << " events in the eventPtrList." << endl;
     if( _eventPtrList.size() > 0){
-      cout << "The first unweighted event is: " << _eventPtrList[0] << endl;
+      cout << "The first unweighted event is: " << _eventPtrList.getEventRef(0) << endl;
     }
   }
 
@@ -378,7 +378,7 @@ void DalitzBWBoxSet::findMax(){
 
   // we've un-weighted them, need to set weight correctly...
   for(unsigned int i=0; i < _eventPtrList.size(); i++){
-    (_eventPtrList[i]).setWeight(1);
+    _eventPtrList.getEventRef(i).setWeight(1);
   }
 
   cout << "DalitzBWBoxSet::findMax() after throw away I have "
@@ -401,7 +401,7 @@ double DalitzBWBoxSet::findMaxInList(double& sampleMax){
   vals.resize(_eventPtrList.size());
   sampleMax=-9999;
   for(unsigned int i=0; i < _eventPtrList.size(); i++){
-    DalitzEvent& evt(_eventPtrList[i]);
+    DalitzEvent& evt(_eventPtrList.getEventRef(i));
 
     double w = evt.getWeight();
     double d=w;
@@ -468,9 +468,9 @@ int DalitzBWBoxSet::justThrowAwayData(double maxValue
   DalitzEventPtrList newList;
   
   for(unsigned int i=0; i < _eventPtrList.size(); i++){
-    double d=amps->RealVal(_eventPtrList[i]);
+    double d=amps->RealVal(_eventPtrList.getEventRef(i));
     if(_rnd->Rndm()*maxValue < d){
-      newList.Add( _eventPtrList[counter] );
+      newList.Add( _eventPtrList.getEventRef(counter) );
     }
     
     unsigned int printEvery = size()/10;
@@ -732,7 +732,7 @@ counted_ptr<DalitzEvent> DalitzBWBoxSet::popEventFromList(){
   if(_eventPtrList.empty()){
     return counted_ptr<DalitzEvent>(0);
   }
-  //  counted_ptr<DalitzEvent> evt(new DalitzEvent(_eventPtrList[_eventPtrList.size()-1]));
+  //  counted_ptr<DalitzEvent> evt(new DalitzEvent(_eventPtrList.getEventRef(_eventPtrList.size()-1]));
   //_eventPtrList.resize(_eventPtrList.size()-1);
   return _eventPtrList.popLastEventPtr();
 }

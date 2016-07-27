@@ -876,23 +876,22 @@ std::string DalitzEvent::makeNtupleVarnames()const{
 int DalitzEvent::singleParticleNtpArraySize(){
   return 5;
 }
-bool DalitzEvent::fillNtupleVarArray(Double_t* array
-				     , unsigned int arraySize)const{
+bool DalitzEvent::fillNtupleVarArray(std::vector<Double_t>& array)const{
 
   if(eventPattern().empty()){
     return false;
   }
   int counter=0;
-  int maxCounter = (arraySize - 2) - (singleParticleNtpArraySize()-1);
+  int maxCounter = (array.size() - 2) - (singleParticleNtpArraySize()-1);
   for(unsigned int i=0; i< _p.size() && counter < maxCounter; i++){
-    array[counter++] = _pat[i];
-    array[counter++] = _p[i].E();
-    array[counter++] = _p[i].X();
-    array[counter++] = _p[i].Y();
-    array[counter++] = _p[i].Z();
+    array.at(counter++) = _pat[i];
+    array.at(counter++) = _p[i].E();
+    array.at(counter++) = _p[i].X();
+    array.at(counter++) = _p[i].Y();
+    array.at(counter++) = _p[i].Z();
   }
-  array[counter++] = getWeight();
-  array[counter++] = getGeneratorPdfRelativeToPhaseSpace();
+  array.at(counter++) = getWeight();
+  array.at(counter++) = getGeneratorPdfRelativeToPhaseSpace();
   return true;
 }
 unsigned int DalitzEvent::ntupleVarArraySize() const{

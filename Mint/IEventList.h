@@ -28,6 +28,7 @@ template<typename EVENT_TYPE>
   // virtual EVENT_TYPE getEvent(unsigned int i) const=0;
   // virtual bool Add(const EVENT_TYPE & evt)=0;
 
+  virtual ~IEventList(){}
 };
 }//namespace MINT
 #endif

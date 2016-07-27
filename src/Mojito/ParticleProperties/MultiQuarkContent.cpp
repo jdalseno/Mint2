@@ -3,11 +3,11 @@
 using namespace std;
 
 MultiQuarkContent::MultiQuarkContent()
-  : vector<QuarkContent>(1)
+  : MINT::PolymorphVector<QuarkContent>(1)
 {
 }
 MultiQuarkContent::MultiQuarkContent(const MultiQuarkContent& other)
-  : vector<QuarkContent>(other)
+  : MINT::PolymorphVector<QuarkContent>(other)
 {
 }
 

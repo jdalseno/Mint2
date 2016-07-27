@@ -168,28 +168,34 @@ double FitAmpIncoherentSum::getVal(IDalitzEvent& evt){
 
 }
 
-void FitAmpIncoherentSum::Gradient(IDalitzEvent& evt,Double_t* grad,MinuitParameterSet* mps){
+void FitAmpIncoherentSum::Gradient(IDalitzEvent& evt,vector<double>& grad,MinuitParameterSet* mps){
     
     for (unsigned int i=0; i<mps->size(); i++) {
         if(mps->getParPtr(i)->hidden())continue;
+
         string name_i= mps->getParPtr(i)->name();
         if(name_i.find("Inco")==std::string::npos)continue;
         if(name_i.find("_Re")!=std::string::npos){
-            if(mps->getParPtr(i)->iFixInit() && mps->getParPtr(i+1)->iFixInit()){
-                i++;
-                continue;
-            }
-            //name_i.replace(name_i.find("Inco_"),5,"");
-            name_i.replace(name_i.find("_Re"),3,"");
-            for(unsigned int j=0; j< this->size(); j++){
-	      if(A_is_in_B(name_i, this->getAmpPtr(j)->name())){
-		double tmp = 2.*std::norm(this->getAmpPtr(j)->getValWithoutFitParameters(evt));
-		grad[i]= tmp * this->getAmpPtr(j)->AmpPhase().real();
-		grad[i+1]= tmp * this->getAmpPtr(j)->AmpPhase().imag();
-		i++;
-		break;
+	  if(mps->getParPtr(i)->iFixInit() && mps->getParPtr(i+1)->iFixInit()){
+	    i++;
+	    continue;
+	  }
+	  //name_i.replace(name_i.find("Inco_"),5,"");
+	  name_i.replace(name_i.find("_Re"),3,"");
+	  for(unsigned int j=0; j< this->size(); j++){
+	    if(A_is_in_B(name_i, this->getAmpPtr(j)->name())){
+	      if(i+1 >= grad.size()){
+		cout << "WARNING in FitAmpIncoherentSum::Gradient"
+		     << " have to increase size of grad to avoid memory issues" << endl;
+		grad.resize(i+2);
 	      }
-            }
+	      double tmp = 2.*std::norm(this->getAmpPtr(j)->getValWithoutFitParameters(evt));
+	      grad[i]= tmp * this->getAmpPtr(j)->AmpPhase().real();
+	      grad[i+1]= tmp * this->getAmpPtr(j)->AmpPhase().imag();
+	      i++;
+	      break;
+	    }
+	  }
 	}
 	else if(mps->getParPtr(i)->iFixInit())continue;
 	else {

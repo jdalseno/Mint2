@@ -13,10 +13,7 @@
    applied a few changes ('signed' with //jr)
    o removed friend that's specialisation of the own class (with Y)
    o added conversion to bool (well, to void*, apparently that's safer)
-   o completely changed the way the pointer is stored - now
-     as a pointer to void; this facilitates conversions of
-     counted_ptr<someclass> in the same way as real pointers to
-     a pointer of, say, counted_ptr<someclassesBase>
+   o conversions between counted_ptr<classX> and counted_ptr<classY> should work like those between normal pointers.
    Jonas.
 */
 
@@ -83,7 +80,7 @@ template <typename X> class counted_ptr
  counted_ptr(X* p = 0) // allocate a new counter
    : ptr(p)
     , itsCounter(0){
-    if (p){
+    if (0 != p){
       itsCounter = new counted_ptr_counter(1);
       ptr = p;
     }
@@ -113,25 +110,25 @@ template <typename X> class counted_ptr
 	  acquire(r);
 	}
     template <typename Y> counted_ptr& operator=(const counted_ptr<Y>& r)
-    {
-      if ((void*)this != (void*) (&r)) {
+      {
+	if ((const void*)this != (const void*) (&r)) {
 	  release();
 	  // std::cout << "copy = other" << std::endl;
 	  acquire(r);
-        }
+	}
         return *this;
-    }
+      }
 #endif // NO_MEMBER_TEMPLATES
 
-    X* get()const throw(){return (this->ok() ? static_cast<X*>(ptr) : 0);}
-    X& operator*()  const throw(){return *(static_cast<X*>(get()));}
-    X* operator->() const throw(){return static_cast<X*>(get());}
+    X* get()const throw(){return (this->ok() ? ptr : 0);}
+    X& operator*()  const throw(){return *(get());}
+    X* operator->() const throw(){return get();}
     bool unique()   const throw()
         {return (itsCounter ? itsCounter->count == 1 : true);}
 
     
-    operator void*() const{ // jr
-      return (void*) get();
+    operator const void*() const{ // jr
+      return (const void*) get();
     }
     
 

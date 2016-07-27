@@ -53,6 +53,8 @@ class SignalGenerator
 		  , TRandom* rnd=gRandom
 		  );
 
+  virtual ~SignalGenerator(){}
+
   virtual MINT::counted_ptr<IDalitzEvent> tryDalitzEvent();
   virtual MINT::counted_ptr<IDalitzEvent> newDalitzEvent();
 

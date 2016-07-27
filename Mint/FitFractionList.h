@@ -2,7 +2,9 @@
 #define MINT_DALITZ_FIT_FRACTION_LIST_HH
 
 #include "Mint/FitFraction.h"
-#include <vector>
+//#include <vector>
+#include "Mint/PolymorphVector.h"
+
 #include <iostream>
 #include <cmath>
 
@@ -13,7 +15,7 @@
    by itself
 */
 
-class FitFractionList : public std::vector<FitFraction>{
+class FitFractionList : public MINT::PolymorphVector<FitFraction>{
  protected:
   FitFraction _sum;
  public:

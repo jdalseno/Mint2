@@ -25,6 +25,9 @@
 #include "TH1D.h"
 #include "TH2D.h"
 
+#include "TROOT.h"
+#include "TRint.h"
+
 using namespace std;
 using namespace MINT;
 
@@ -100,6 +103,11 @@ DalitzHistogram::DalitzHistogram(const DalitzHistogram& other)
   bool dbThis=false;
   if(0 != other._h){
     _h = counted_ptr<TH1>((TH1*) other._h->Clone());
+    if(0 == _h){
+      cout << "Error in DalitzHistogram copy constructor"
+	   << endl;
+      throw "oh man!";
+    }
     _h->SetDirectory(0);
   }
   if(dbThis){
@@ -109,9 +117,17 @@ DalitzHistogram::DalitzHistogram(const DalitzHistogram& other)
   }
 }
 
+DalitzHistogram::~DalitzHistogram(){
+
+}
 DalitzHistogram& DalitzHistogram::operator=(const DalitzHistogram& other){
   if(0 != other.histo()){
     _h = counted_ptr<TH1>((TH1*) other.histo()->Clone());
+    if(0 == _h){
+      cout << "Error in DalitzHistogram = operator"
+	   << endl;
+      throw "oh man!";
+    }
     _h->SetDirectory(0);
   }else{
     _h = counted_ptr<TH1>(0);
@@ -191,6 +207,10 @@ void DalitzHistogram::init(const DalitzCoordSet& c_in
 
   counted_ptr<TH1D> local_h(new TH1D(name().c_str(), name().c_str()
 				     , _nbins, mi, ma));
+  if(0 == local_h){
+    cout << "Error in DalitzHistogram::init: local_h = " << local_h << endl;
+    throw "annoying";
+  }
   local_h->SetDirectory(0);
   local_h->SetNameTitle(hname().c_str(), "");// smartTitle().c_str());
   local_h->Sumw2();
@@ -277,6 +297,10 @@ void DalitzHistogram::multiply(const DalitzHistogram& multiplyWith){
 	   << endl;
     }
     _h = counted_ptr<TH1>((TH1*) multiplyWith.histo()->Clone());
+    if(0 == _h){
+      cout << "Error DalitzHistogram::multiply: _h = " << _h << endl;
+      throw "should not happen";
+    }
     _h->SetDirectory(0);
     _c = multiplyWith._c;
     makeName();
@@ -313,6 +337,10 @@ void DalitzHistogram::divide(const DalitzHistogram& divideBy){
 	   << endl;
     }
     _h = counted_ptr<TH1>((TH1*) divideBy.histo()->Clone());
+    if(0 == _h){
+      cout << "Error in DalitzHistogram::divide: _h = " << _h << endl;
+      throw "mistake";
+    }
     _h->SetDirectory(0);
     _c = divideBy._c;
     makeName();
@@ -331,6 +359,11 @@ void DalitzHistogram::divide(const DalitzHistogram& divideBy){
   return;
 }
 void DalitzHistogram::addEvent(const IDalitzEvent& evt, double weight){
+  if(0 == _h){
+    cout << "Error in DalitzHistogram::addEvent: trying to fill empty histogram"
+	 << endl;
+    return;
+  }
   _h->Fill(evt.sij(_c.begin()->second)/_units, weight);
 }
 
@@ -339,7 +372,7 @@ void DalitzHistogram::scale(double sf){
   _h->Scale(sf);
 }
 void DalitzHistogram::setTitle(const std::string& title){
-  _h->SetTitle(title.c_str());
+  if(0 != _h) _h->SetTitle(title.c_str());
 }
 void DalitzHistogram::clearHisto(){
   if(0 == _h) return;
@@ -557,11 +590,51 @@ bool DalitzHistogram::retrieveValues(const std::string& fromDirectory
 }
 
 bool DalitzHistogram::saveHisto(const std::string& inDir) const{
+  bool dbThis=false;
+  if(false && dbThis){
+    cout << "DalitzHistogram::saveHisto( " << inDir << " ) got called"
+	 << endl;
+  }
+
   std::string fn = histoFileName(inDir);
-  TFile f(fn.c_str(), "RECREATE");
+
+  if(0 == _h) return false;
+
+  //_h->SaveAs(fn.c_str());
+  //return true;
+
+  if(dbThis){
+    cout << "DalitzHistogram::saveHisto: tryring to save " << fn
+	 << endl;
+  }
+  TFile* f = TFile::Open(fn.c_str(), "RECREATE");
+  if(0 == f){
+    cout << "DalitzHistogram::saveHisto(const std::string& inDir)"
+	 << " failed to open file " << fn << endl;
+    return false;
+  }
+  if(dbThis){
+    cout << "file isOpen " << f->IsOpen() << endl;
+    cout << "file isWritable " << f->IsWritable() << endl;
+  }
+  if(! f->IsWritable()){
+    cout << "File " << fn << " not writeable" << endl;
+    throw "damn";
+  }
+  f->cd();
+  if(dbThis){
+    cout << "cd'ed to file" << endl;
+    cout << "number of entries in _h " << _h->GetEntries() << endl;
+    cout << "now about to write " << endl;
+  }
   _h->Write();
-  f.Close();
+  if(dbThis) cout << "done writing. now closing" << endl;
+  f->Close();
+  //h->SetDirectory(0);
+  if(dbThis) cout << "closed it. Now returning true" << endl;
+  //delete f;
   return true;
+ 
 }
 
 bool DalitzHistogram::retrieveHisto(const std::string& fromDir
@@ -569,18 +642,24 @@ bool DalitzHistogram::retrieveHisto(const std::string& fromDir
   bool dbThis=false;
   std::string fn = histoFileName(fromDir, theName);
   //  _name = theName();
-  TFile f(fn.c_str(), "READ");
-  TH1* th = (TH1*) f.Get(hname().c_str());
+  TFile* f = TFile::Open(fn.c_str(), "READ");
+  if(0 == f){
+    cout << "ERROR in DalitzHistogram::retrieveHisto: cannot open file "
+	 << fn << endl;
+    throw "bugger";
+  }
+  TH1* th = (TH1*) f->Get(hname().c_str());
   if(0 == th){
     cout << "ERROR in DalitzHistogram::retrieveHisto"
 	 << "\n\t can't find histogram " << hname()
 	 << "\n\t in file " << fn << endl;
     throw "errorRetrievingHisto";
   }
+  th->SetDirectory(0);
   counted_ptr<TH1> cth((TH1*) th->Clone());
   cth->SetDirectory(0);
   _h = cth;
-  f.Close();
+  f->Close();
   if(dbThis){
     cout << "DalitzHistogram::retrieveHisto"
 	 << "\n\t retrieved histogram " << hname()
@@ -601,8 +680,19 @@ bool DalitzHistogram::drawWithFit(const DalitzHistogram& fit
   TCanvas can;
 
   counted_ptr<TH1> h_c( (TH1*) histo()->Clone());
+  if(0 == h_c){
+    cout << "Error in DalitzHistogram::drawWithFit, failed to clone histo h_c"
+	 << endl;
+    throw "rubbish";
+  }
+  h_c->SetDirectory(0);
   counted_ptr<TH1> fit_c( (TH1*) fit.histo()->Clone());
-
+  if(0 == fit_c){
+    cout << "Error in DalitzHistogram::drawWithFit, failed to clone histo fit_c"
+	 << endl;
+    throw "rubbish";
+  }
+  fit_c->SetDirectory(0);
   fit_c->Scale(h_c->Integral()/fit_c->Integral());
 
   double maxiThis = h_c->GetMaximum();//Stored();
@@ -632,8 +722,22 @@ bool DalitzHistogram::drawWithFit( TCanvas& can
   string fname = baseName + _c.nameFileSave() + "." + format;
 
   counted_ptr<TH1> h_c( (TH1*) histo()->Clone());
-  counted_ptr<TH1> fit_c( (TH1*) fit.histo()->Clone());
+  if(0 == h_c){
+    cout << "Error in DalitzHistogram::drawWithFit 2"
+	 << ", failed to clone histo h_c"
+	 << endl;
+    throw "rubbish";
+  }
+  h_c->SetDirectory(0);
 
+  counted_ptr<TH1> fit_c( (TH1*) fit.histo()->Clone());
+  if(0 == fit_c){
+    cout << "Error in DalitzHistogram::drawWithFit 2"
+	 << ", failed to clone histo fit_c"
+	 << endl;
+    throw "rubbish";
+  }
+  fit_c->SetDirectory(0);
   fit_c->Scale(h_c->Integral()/fit_c->Integral());
 
   double maxiThis = h_c->GetMaximum();//Stored();

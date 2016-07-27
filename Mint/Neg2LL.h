@@ -46,7 +46,7 @@ namespace MINT
   {
    public:
     virtual ~Neg2LLClass()
-    { delete[] _grad; }
+    {}
 
     virtual void beginFit()
     { _pdf.beginFit(); }
@@ -66,10 +66,7 @@ namespace MINT
 		  << _eventList.size() << " events." << std::endl;
 	std::cout << "Neg2LLClass: with pointer: " << &_eventList << std::endl;
       }
-
-      _grad= new Double_t[this->getParSet()->size()];  
-      for( unsigned int i=0; i<this->getParSet()->size(); ++i)
-	_grad[i]= 0.;
+      _grad.resize(this->getParSet()->size(), 0.0);
 
       return true;
     }
@@ -83,10 +80,11 @@ namespace MINT
 		  << valPdf << std::endl;
 
       if( valPdf <= 0 ){
-	if(dbThis) std::cout << "ERROR in Neg2LLClass::logPdf()"
-			     << " the pdf is " << valPdf
-			     << " which is <= 0." 
-			     << std::endl;
+	if(dbThis)
+	  std::cout << "ERROR in Neg2LLClass::logPdf()"
+		    << " the pdf is " << valPdf
+		    << " which is <= 0." 
+		    << std::endl;
 
 	return -9999.e20 * (1.0 + fabs(valPdf));
       }
@@ -97,10 +95,12 @@ namespace MINT
     virtual double logPdf( unsigned int evtNumber )
     { return log(getPdf(evtNumber)); }
 
-    // trick: this is a template that will return one
-    // for all event types, but evt.getWeight in case 
-    // the event inherits from IWeightedEvent.
-    // This template is included in IWeightedEvent.h
+    /**
+       trick: this is a template that will return one
+       for all event types, but evt.getWeight in case 
+       the event inherits from IWeightedEvent.
+       This template is included in IWeightedEvent.h
+     */
     virtual double eventWeight( unsigned int evtNumber )
     { return MINT::getWeight(_eventList[evtNumber]); }
 
@@ -109,10 +109,10 @@ namespace MINT
       if( !_useAnalyticGradient )
 	return;
 
-      Double_t gradPDF[this->getParSet()->size()];
+      std::vector<double> gradPDF(this->getParSet()->size());
       _pdf.Gradient(_eventList[i],gradPDF,this->getParSet());
-      for( unsigned int j=0; j<this->getParSet()->size(); ++j)
-	_grad[j]+= weight*gradPDF[j]/pdfVal;
+      for( unsigned int j=0; j<this->getParSet()->size(); ++j )
+	_grad.at(j) += weight*gradPDF.at(j)/pdfVal;
 
       return;
     }
@@ -120,8 +120,8 @@ namespace MINT
     virtual double getVal()
     {
       _NCalls ++;
-      bool verbose=false;
-      bool dbThis=false;
+      bool verbose = false;
+      bool dbThis = false;
       int printFreq = 100;
       printFreq =    100;
       if( _NCalls >   500 )
@@ -134,7 +134,7 @@ namespace MINT
       printout |= dbThis;
       verbose  |= dbThis;
 
-      double sum=0;
+      double sum = 0.0;
 
       if( verbose && printout ){
 	std::cout << "Neg2LLClass::getVal after " << _NCalls << " calls."
@@ -145,8 +145,8 @@ namespace MINT
       double sumweights=0.0;
       double sumsquareweights=0.0;
 
-      for( unsigned int i=0; i<this->getParSet()->size(); ++i)
-	_grad[i]= 0.;
+      for( unsigned int i=0; i<this->getParSet()->size(); ++i )
+	_grad[i] = 0.0;
 
       // this little thing takes care of things that
       // get initialised at the first call
@@ -158,7 +158,7 @@ namespace MINT
       //getPdf(0);
 
       //#pragma omp parallel for reduction(+:sum, sumweights, sumsquareweights);
-      for( unsigned int i=0; i<_eventList.size(); ++i){
+      for( unsigned int i=0; i<_eventList.size(); ++i ){
 	//EVENT_TYPE & evt( (*_eventList)[i] );
 	// sum += logPdf((*_eventList)[i]);
 	double weight     = eventWeight(i);
@@ -181,8 +181,8 @@ namespace MINT
 	  */
       }
 
-      for( unsigned int i=0; i<this->getParSet()->size(); ++i)
-	_grad[i] = -2. * _grad[i] * fabs(sumweights/sumsquareweights);
+      for( unsigned int i=0; i<this->getParSet()->size(); ++i )
+	_grad[i] = -2.0 * _grad[i] * fabs(sumweights/sumsquareweights);
 
       if( printout ){
 	std::cout << "Neg2LLClass::getVal after " << _NCalls << " calls."
@@ -192,7 +192,7 @@ namespace MINT
 	std::cout   << "Sum of weights = " << sumweights << std::endl;
       }
 
-      return -2.* sum*fabs(sumweights/sumsquareweights);
+      return -2.0*sum*fabs(sumweights/sumsquareweights);
     }
 
     virtual std::vector<double> Gradient( const std::vector<double>& par )
@@ -202,6 +202,7 @@ namespace MINT
 	grad.push_back(_grad[i]);
 
       return grad;
+      (void)par;
     }    
 
     virtual bool useAnalyticGradient()
@@ -219,10 +220,10 @@ namespace MINT
     }
 
    protected:
-    PDF_TYPE       & _pdf;
+    PDF_TYPE & _pdf;
     EVENTLIST_TYPE & _eventList;
     bool _useAnalyticGradient;  
-    Double_t* _grad;
+    std::vector<double> _grad;
 
     // Putting the constructors into "protected" means that nobody can 
     // use this class except for Neg2LL. That's the idea. Use Neg2LL,
@@ -234,7 +235,7 @@ namespace MINT
       , _pdf(pdf)
       , _eventList(erptr)
       , _useAnalyticGradient(pdf.useAnalyticGradient())
-      , _grad(0)
+      , _grad()
     { init(); }
 
     Neg2LLClass( const Neg2LLClass<PDF_TYPE, EVENTLIST_TYPE>& other )
@@ -243,7 +244,7 @@ namespace MINT
       , _pdf(other._pdf)
       , _eventList(other.erptr)
       , _useAnalyticGradient(other._pdf.useAnalyticGradient())
-      , _grad(0)
+      , _grad()
       { init(); }
 
   private:
@@ -251,7 +252,7 @@ namespace MINT
 
     int _NCalls;
   };
-  
+
   // ===================================
 
   class Neg2LL : public Minimisable

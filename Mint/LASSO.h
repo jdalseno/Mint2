@@ -31,7 +31,8 @@ class LASSO: public Minimisable{
             return getVal();
         }
     
-        virtual void Gradient(Double_t* grad);
+        //virtual void Gradient(Double_t* grad);
+        virtual void Gradient(std::vector<double>& grad);
         virtual bool useAnalyticGradient() {return _pdf->useAnalyticGradient();}
 
         int numberOfFitFractionsLargerThanThreshold(double threshold);

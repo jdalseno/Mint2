@@ -16,7 +16,7 @@ bool DalitzCoordinate::I_am_Consecutive() const{
 }
 
 DalitzCoordinate::DalitzCoordinate()
-  : vector<int>(1)
+  : MINT::PolymorphVector<int>(1)
   , _mi(-9999)
   , _ma(-9999)
   , _val(-9999)
@@ -26,7 +26,7 @@ DalitzCoordinate::DalitzCoordinate()
 }
 
 DalitzCoordinate::DalitzCoordinate(int i, int j)
-  : vector<int>(2)
+  : MINT::PolymorphVector<int>(2)
   , _mi(-9999)
   , _ma(-9999)
   , _val(-9999)
@@ -37,7 +37,7 @@ DalitzCoordinate::DalitzCoordinate(int i, int j)
   makeName();
 }
 DalitzCoordinate::DalitzCoordinate(int i, int j, int k)
-  : vector<int>(3)
+  : MINT::PolymorphVector<int>(3)
   , _mi(-9999)
   , _ma(-9999)
   , _val(-9999)
@@ -49,8 +49,8 @@ DalitzCoordinate::DalitzCoordinate(int i, int j, int k)
   makeName();
 }
 
-DalitzCoordinate::DalitzCoordinate(const std::vector<int>& other)
-  : vector<int>( (vector<int>) other)
+DalitzCoordinate::DalitzCoordinate(const MINT::PolymorphVector<int>& other)
+  : MINT::PolymorphVector<int>(other)
   , _mi(-9999)
   , _ma(-9999)
   , _val(-9999)
@@ -59,7 +59,7 @@ DalitzCoordinate::DalitzCoordinate(const std::vector<int>& other)
   makeName();
 }
 DalitzCoordinate::DalitzCoordinate(const DalitzCoordinate& other)
-  : vector<int>( (vector<int>) other)
+  : MINT::PolymorphVector<int>( (MINT::PolymorphVector<int>) other)
   , _mi(other._mi)
   , _ma(other._ma)
   , _val(other._val)

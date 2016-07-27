@@ -5,11 +5,12 @@
 
 #include "Mint/Permutation.h"
 #include "Mint/DalitzEventPattern.h"
+#include "Mint/PolymorphVector.h"
 
 #include <vector>
 #include <iostream>
 
-class Permutator : public std::vector<Permutation> {
+class Permutator : public MINT::PolymorphVector<Permutation> {
   DalitzEventPattern _pat;
 
   int findAllPermutations();

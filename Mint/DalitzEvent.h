@@ -18,6 +18,7 @@
 #include "Mint/RememberAnythingFast.h"
 
 #include "Mint/Permutator.h"
+#include "Mint/PolymorphVector.h"
 
 class TRandom;
 class TNtupleD;
@@ -160,7 +161,9 @@ public:
   virtual double s(unsigned int i, unsigned int j) const;       // sij
   virtual double t(unsigned int i, unsigned int j) const;       // tij
   virtual double sij(const std::vector<int>& indices) const;
-
+  virtual double sij(const MINT::PolymorphVector<int>& indices) const{
+    return sij(indices.theVector());
+  }
 
   virtual void setMothers3Momentum(const TVector3& mp3);
 
@@ -194,7 +197,12 @@ public:
  
   // helpful
   double sijMin(const std::vector<int>& indices) const;
+  double sijMin(const MINT::PolymorphVector<int>& indices) const{
+    return sijMin(indices.theVector());}
+
   double sijMax(const std::vector<int>& indices) const;
+  double sijMax(const MINT::PolymorphVector<int>& indices) const{
+    return sijMax(indices.theVector());}
 
   int nDgtr() const{
     return _pat.size()-1;
@@ -214,7 +222,7 @@ public:
 
 
   std::string makeNtupleVarnames()const;
-  bool fillNtupleVarArray(Double_t* array, unsigned int arraySize) const;
+  bool fillNtupleVarArray(std::vector<Double_t>& array) const;
   unsigned int ntupleVarArraySize() const;
 
   // mainly for debugging and x-check with prev version

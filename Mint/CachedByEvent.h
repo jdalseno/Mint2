@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-#include <omp.h>
+//#include <omp.h>
 
 template <typename T>
 class CachedByEvent : virtual public MINT::IFitParDependent{
@@ -30,13 +30,12 @@ class CachedByEvent : virtual public MINT::IFitParDependent{
   }
     
   long int rememberNumberPermutation(IDalitzEvent& evt) {
-    if( _rememberNumberPermutation.size() <
-	static_cast<unsigned int>(evt.numPermutations()) ){
+    if(_rememberNumberPermutation.size() <
+       static_cast<unsigned int>(evt.numPermutations())){
       _rememberNumberPermutation.resize(evt.numPermutations());
-      for( unsigned int i=0; i<static_cast<unsigned int>(evt.numPermutations());
-	   ++i )
+      for(unsigned int i=0; i < static_cast<unsigned int>(evt.numPermutations()); i++)
 	_rememberNumberPermutation[i] = DalitzEvent::assignUniqueRememberNumber();
-
+      
     }
     return _rememberNumberPermutation[evt.permutationIndex()];
   }

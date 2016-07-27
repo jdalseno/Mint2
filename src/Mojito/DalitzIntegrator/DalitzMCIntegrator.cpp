@@ -85,24 +85,24 @@ int DalitzMCIntegrator::updateEventSet(int Nevents){
     return 0;
 
   }
-  int missingEvents = Nevents - _events.size();
+  int missingEvents = Nevents - _eventPtrList.size();
   cout << "missing events: " << missingEvents 
        << " = " << Nevents 
-       << " - " << _events.size()
+       << " - " << _eventPtrList.size()
        << endl;
   if(missingEvents > 0){
     addEvents(missingEvents);
   }
-  return _events.size();
+  return _eventPtrList.size();
 }
 
 int DalitzMCIntegrator::addEvents(int Nevents){
   bool dbThis=false;
-  if(Nevents <= 0) return _events.size();
+  if(Nevents <= 0) return _eventPtrList.size();
 
   if(0 == _generator){
-    _events.generatePhaseSpaceEvents(Nevents, _pat, _rnd);
-    return _events.size();
+    _eventPtrList.generatePhaseSpaceEvents(Nevents, _pat, _rnd);
+    return _eventPtrList.size();
   }
   
   int N_success = 0;
@@ -111,7 +111,7 @@ int DalitzMCIntegrator::addEvents(int Nevents){
     counted_ptr<DalitzEvent> ptr(new DalitzEvent(_generator->newEvent().get()));
     if(dbThis) cout << "got event with ptr: " << ptr << endl;
     if(0 != ptr){
-      _events.push_back(ptr); // change event list to list of counted ptrs
+      _eventPtrList.push_back(ptr); // change event list to list of counted ptrs
       N_success++;
       int printEvery = 1000;
       if(N_success > 10000) printEvery=10000;
@@ -123,8 +123,8 @@ int DalitzMCIntegrator::addEvents(int Nevents){
     }
   }
   cout << " added " << Nevents << " _eventList.size() "
-       << _events.size() << endl;
-  return _events.size();
+       << _eventPtrList.size() << endl;
+  return _eventPtrList.size();
 }
 
 double DalitzMCIntegrator::evaluateSum(){
@@ -135,7 +135,7 @@ double DalitzMCIntegrator::evaluateSum(){
     return 0;
   }
 
-  if(_events.empty()){
+  if(_eventPtrList.empty()){
     cout << "WARNING in DalitzMCIntegrator::evaluateSum()"
 	 << " no events!" << endl;
     _mean = _variance = 0;
@@ -147,14 +147,14 @@ double DalitzMCIntegrator::evaluateSum(){
   double sumsq = 0;
   double ws  =0;
   _weightSum = 0;
-  //int printEveryNEvents = (_events.size()/4);
+  //int printEveryNEvents = (_eventPtrList.size()/4);
   //if(printEveryNEvents < 1) printEveryNEvents = 1;
 
   //time_t tstart = time(0);
 
   //#pragma omp parallel for reduction(+:sum, sumsq, ws);
-  for(unsigned int N=0; N < _events.size(); N++){
-    //DalitzEvent thisEvt(_events[N]);
+  for(unsigned int N=0; N < _eventPtrList.size(); N++){
+    //DalitzEvent thisEvt(_eventPtrList[N]);
     /*  
     double ps = thisEvt.phaseSpace();
     if(ps <= 0.0){
@@ -163,8 +163,8 @@ double DalitzMCIntegrator::evaluateSum(){
       continue; // should not happen.
     }
     */
-    double weight =  _events[N].getWeight() / _events[N].getGeneratorPdfRelativeToPhaseSpace();
-    double val = _iw.RealVal(_events[N]); // _w->RealVal() * weight;
+    double weight =  _eventPtrList.getEventRef(N).getWeight() / _eventPtrList.getEventRef(N).getGeneratorPdfRelativeToPhaseSpace();
+    double val = _iw.RealVal(_eventPtrList.getEventRef(N)); // _w->RealVal() * weight;
 
     sum   += val;
     sumsq += val*val;
@@ -183,7 +183,7 @@ double DalitzMCIntegrator::evaluateSum(){
 
   _weightSum = ws;
 
-  double fN       = (double) _events.size();
+  double fN       = (double) _eventPtrList.size();
   _mean           = sum   / fN;
   double meanOfSq = sumsq / fN;
   _variance       = (meanOfSq - _mean * _mean)/fN;
@@ -216,7 +216,7 @@ int DalitzMCIntegrator::determineNumEvents(){
 
   double safetyFactor = 1.15;
   double maxVariance = _precision*_precision * _mean*_mean;
-  _numEvents = _events.size() * ( ((int)(_variance*safetyFactor/maxVariance)) + 1);
+  _numEvents = _eventPtrList.size() * ( ((int)(_variance*safetyFactor/maxVariance)) + 1);
   cout << " DalitzMCIntegrator::determineNumEvents():"
        << "\n    > mean: " << _mean << ", rms " << sqrt(_variance)
        << "\n    > currently, our precision is " << sqrt(_variance)/_mean
@@ -232,7 +232,7 @@ int DalitzMCIntegrator::generateEnoughEvents(){
   //updateEventSet(_minEvents);
   //determineNumEvents();
   //updateEventSet(_numEvents);
-  return _events.size();
+  return _eventPtrList.size();
 }
 
 double DalitzMCIntegrator::getVal(){
@@ -255,14 +255,14 @@ double DalitzMCIntegrator::getVal(){
     cout << "DalitzMCIntegrator::getVal, " << _Ncalls << "th call: Returning " << _mean
 	 << " this call took " << delT << " s,"
 	 << " average call " << _sumT/_Ncalls << " s, "
-	 << " for " << _events.size() << " events."
+	 << " for " << _eventPtrList.size() << " events."
 	 << endl;
   }
 
   return _mean;
 }
 
-void DalitzMCIntegrator::doFinalStats( MINT::Minimiser* ){}
+void DalitzMCIntegrator::doFinalStats(MINT::Minimiser*){}
 
 DalitzMCIntegrator::
 integrationWeight::integrationWeight(IReturnRealForEvent<IDalitzEvent>* externalPdf) 
