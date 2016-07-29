@@ -1,0 +1,66 @@
+
+*First time you run this, leave these lines commented out:
+
+*MakeIntegrators 0
+*InputFileName KKpipi
+
+** The effect of them being commented out is that sgIntegrator files will
+** be made, and that signal events will be generated.  In some cases,
+** this will run to the end, in some it will crash.  If the first run
+** produced several files with KKpipi_?.root, you can uncomment that
+** line.  If it also produced sgIntegrator directories, you can uncomment
+** that line, to. It will run faster and crash more reliably.
+
+
+*FitAmpPairList::HistoOption "fast" 
+
+*SaveEvents   0
+*DoFinalStats 0
+
+** The above option means that no histograms will
+** be generated. When you create your sgIntegrator files, it's strongly
+** recommended that you leave this commented out. But when reading in,
+** you can save some time by switching this feature on.
+
+* options:
+
+
+RandomSeed   5
+
+NormBF 1
+useAnalyticGradient 1
+"UseGlobalRadiusFor_rho(770)0" 0
+
+"Phases given in"       "rad"
+"Event Pattern"         421 321 -321 211 -211
+
+"Nevents"               100
+
+"IntegPrecision"        1.0e-1
+"IntegMethod"           "efficient"
+IntegratorSource        "file"
+
+
+doScan			0
+
+** name									Fix?	init	step	min	max
+*
+SignalFraction								2      0.75    0.05      0        1
+*
+"D0->phi(1020)0(->K+,K-),rho(770)0(->pi+,pi-)_Re"                       2      1.0     0.2       -10.0     10.0 **In
+"D0->phi(1020)0(->K+,K-),rho(770)0(->pi+,pi-)_Im"                       2      0.0     0.2       -10.0     10.0
+*
+"D0->K*(892)0(->K+,pi-),K*(892)bar0(->K-,pi+)_Re"                       0      0.5     0.2     -10.0     10.0 **In
+"D0->K*(892)0(->K+,pi-),K*(892)bar0(->K-,pi+)_Im"                       0      0.0     0.2     -10.0     10.0
+*
+"Inco_Inco1_BgSpinZeroD0->NonResS0(->K+,K-),rho(770)0(->pi+,pi-)_Amp"	2	16.2734 	2.49595 
+"Inco_Inco2_BgSpinZeroD0->NonResS0(->K+,K-),rho(770)0(->pi+,pi-)_Amp"	2	16.2734 	2.49595 
+"Inco_Inco3_BgSpinZeroD0->NonResS0(->K+,K-),rho(770)0(->pi+,pi-)_Amp"	2	16.2734 	2.49595 
+"Inco_Inco4_BgSpinZeroD0->NonResS0(->K+,K-),rho(770)0(->pi+,pi-)_Amp"	2	16.2734 	2.49595 
+"Inco_Inco5_BgSpinZeroD0->NonResS0(->K+,K-),rho(770)0(->pi+,pi-)_Amp"	2	16.2734 	2.49595 
+*
+*
+
+
+
+**

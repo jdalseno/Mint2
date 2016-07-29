@@ -12,3 +12,8 @@ Build Instructions
 
 System-wide Installation Instruction (optional)
  - Type '(sudo -E "PATH=$PATH") scons --install=<install dir>'
+
+Example Directory
+ - Create MINT2 environment variable pointing to <install dir>
+ - Type 'scons' in the example directory
+ - Type './ampFit < two.txt' to run example

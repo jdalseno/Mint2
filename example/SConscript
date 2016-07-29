@@ -1,0 +1,3 @@
+Import('*')
+
+env.Program('ampFit', ['ampFit.cpp'])
