@@ -39,7 +39,7 @@ namespace MINT
     /**
        Replace stored Minimisable
      */
-    bool attachFunction( IMinimisable* fcn );
+    bool attachFunction( IMinimisable* fitFunction );
 
     /**
        Return modifiable Minimisable
@@ -95,6 +95,9 @@ namespace MINT
        Minimisable status
      */
     bool fcnOK() const;
+
+    bool minOK() const
+    { return _min.IsValid(); }
 
     /**
        Prepare Minimisable

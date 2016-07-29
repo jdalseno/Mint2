@@ -2,7 +2,6 @@
 // status:  Mon 9 Feb 2009 19:18:04 GMT
 
 #include "Mint/LineshapeMaker.h"
-#include "Mint/CLEO2012_LineshapeMaker.h"
 #include "Mint/ILineshape.h"
 #include "Mint/Utils.h"
 #include "Mint/AssociatedDecayTree.h"
@@ -46,10 +45,6 @@ ILineshape* LineshapeMaker(const AssociatedDecayTree* tree
 			   , const std::vector<double>& numOptions 
 			   ){
   bool dbThis=true;
-
-  if(A_is_in_B("CLEO2012", lopt)){
-    return CLEO2012_LineshapeMaker(tree, lopt);
-  }
 
   if(0 == tree) return 0;
   

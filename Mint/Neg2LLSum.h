@@ -16,15 +16,14 @@ namespace MINT
     Neg2LLSum( MinuitParameterSet* mps=0 );
 
     template<typename IMINIMISIBLE_FIRST>
-    Neg2LLSum( IMINIMISIBLE_FIRST* ll,
-	       MinuitParameterSet* mps=0 )
+    Neg2LLSum( MinuitParameterSet* mps, IMINIMISIBLE_FIRST* ll )
       : Minimisable(mps)
     { add(ll); }
 
     template<typename IMINIMISIBLE_FIRST, typename... IMINIMISIBLE_REST>
-    Neg2LLSum( IMINIMISIBLE_FIRST* ll_first, IMINIMISIBLE_REST*... ll_rest,
-	       MinuitParameterSet* mps=0 )
-      : Neg2LLSum(ll_rest..., mps)
+    Neg2LLSum( MinuitParameterSet* mps,
+	       IMINIMISIBLE_FIRST* ll_first, IMINIMISIBLE_REST*... ll_rest )
+      : Neg2LLSum(mps, ll_rest...)
     { add(ll_first); }
 
     Neg2LLSum( const std::vector<IMinimisable*>& likList_in,

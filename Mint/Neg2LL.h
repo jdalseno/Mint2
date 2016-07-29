@@ -231,20 +231,20 @@ namespace MINT
     Neg2LLClass( PDF_TYPE& pdf, EVENTLIST_TYPE& erptr,
 		 MinuitParameterSet* mps = 0 )
       : Minimisable(mps)
-      , _NCalls(0)
       , _pdf(pdf)
       , _eventList(erptr)
       , _useAnalyticGradient(pdf.useAnalyticGradient())
       , _grad()
+      , _NCalls(0)
     { init(); }
 
     Neg2LLClass( const Neg2LLClass<PDF_TYPE, EVENTLIST_TYPE>& other )
       : Minimisable(other)
-      , _NCalls(other._NCalls)
       , _pdf(other._pdf)
       , _eventList(other.erptr)
       , _useAnalyticGradient(other._pdf.useAnalyticGradient())
       , _grad()
+      , _NCalls(other._NCalls)
       { init(); }
 
   private:

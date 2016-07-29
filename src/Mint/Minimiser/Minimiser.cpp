@@ -36,12 +36,12 @@ Minimiser::Minimiser( IMinimisable* fitFunction )
     Init();
 }
 
-bool Minimiser::attachFunction( IMinimisable* fcn )
+bool Minimiser::attachFunction( IMinimisable* fitFunction )
 {
-  if( 0 == fcn )
+  if( 0 == fitFunction )
     return false;
 
-  _theFunction = fcn;
+  _theFunction = fitFunction;
 
   return Init();
 }
@@ -125,12 +125,16 @@ bool Minimiser::initialiseVariables()
     if(dbThis)
       cout << i << ")" << getParPtr(i)->name() << endl;
 
-    double step = getParPtr(i)->stepInit();
-    if( getParPtr(i)->iFixInit() )
-      step = 0.0;
+    const double step = getParPtr(i)->stepInit();
 
-    _mn_param.Add( getParPtr(i)->name(), getParPtr(i)->meanInit(), step,
-		   getParPtr(i)->minInit(), getParPtr(i)->maxInit() );
+    _mn_param.Add( getParPtr(i)->name(), getParPtr(i)->meanInit(), step );
+    if( getParPtr(i)->minInit() != 0.0 )
+      _mn_param.SetLowerLimit(i, getParPtr(i)->minInit());
+    if( getParPtr(i)->maxInit() != 0.0 )
+      _mn_param.SetUpperLimit(i, getParPtr(i)->maxInit());
+
+    if( getParPtr(i)->iFixInit() )
+      _mn_param.Fix(i);
 
     success &= ! ierflag;
   }
@@ -156,7 +160,7 @@ bool Minimiser::CallSimplex()
   ROOT::Minuit2::MnSimplex simplex( *_fcn, _mn_param, 2 );
   _min = simplex();
   _cov = _min.UserCovariance();
-  if( _useAnalyticGradient )
+  if( _useAnalyticGradient == false )
     static_cast<MintFcn*>(_fcn)->SetBestMin(_min.Fval());
   else
     static_cast<MintFcnGrad*>(_fcn)->SetBestMin(_min.Fval());
@@ -170,7 +174,7 @@ bool Minimiser::CallMigrad()
   ROOT::Minuit2::MnMigrad migrad( *_fcn, _mn_param, 2 );
   _min = migrad();
   _cov = _min.UserCovariance();
-  if( _useAnalyticGradient )
+  if( _useAnalyticGradient == false )
     static_cast<MintFcn*>(_fcn)->SetBestMin(_min.Fval());
   else
     static_cast<MintFcnGrad*>(_fcn)->SetBestMin(_min.Fval());
@@ -185,7 +189,7 @@ bool Minimiser::CallImprove( const unsigned int& searches )
   for( unsigned int i=0; i<searches; ++i ){
     _min = migrad();
     _cov = _min.UserCovariance();
-    if( _useAnalyticGradient )
+    if( _useAnalyticGradient == false )
       static_cast<MintFcn*>(_fcn)->SetBestMin(_min.Fval());
     else
       static_cast<MintFcnGrad*>(_fcn)->SetBestMin(_min.Fval());
@@ -367,12 +371,15 @@ bool Minimiser::Init()
   if(dbThis)
     cout << "Minimiser::Init(): returning true" << endl;
 
-
   _useAnalyticGradient = theFunction()->useAnalyticGradient();  
-  if( _useAnalyticGradient )
-    _fcn = new MintFcnGrad(theFunction());
-  else
+  if( _useAnalyticGradient == false )
     _fcn = new MintFcn(theFunction());
+  else
+    _fcn = new MintFcnGrad(theFunction());
+
+  std::cout << std::endl << "Behold the mighty Minuit2!" << std::endl
+	    << std::endl << "Initial parameter state:"
+	    << _mn_param << std::endl;
 
   return true;
 }

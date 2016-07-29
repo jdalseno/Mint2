@@ -83,12 +83,16 @@ MINT::minimisePareto::minimisePareto(std::vector<double>& data, double threshold
 {
   this->setPset(&_mps);
 }
+
 double MINT::minimisePareto::getVal(){
-  double sum=0;
-  for(unsigned int i=0; i < _data.size(); i++){
-    double x = _data[i] - _threshold;
-    if(x > 0) sum -= 2*generalisedPareto_logPdf(x, _xi, _sigma);
+  double sum = 0.0;
+#pragma omp parallel for reduction(+:sum)
+  for( unsigned int i=0; i < _data.size(); ++i ){
+    const double x = _data[i] - _threshold;
+    if( x > 0 )
+      sum -= 2.0*generalisedPareto_logPdf(x, _xi, _sigma);
   }
+
   return sum;
 }
 
@@ -163,6 +167,10 @@ double MINT::generalisedPareto_estimateMaximum(std::vector<double> input_a
   minimisePareto ll(input, threshold, xi, sg);
   Minimiser mini(&ll);
   mini.doFit();
+  if( mini.minOK() == false ){
+    std::cout << "GeneralisedPareto: Maximum estimator fit failed" << std::endl;
+    exit(1);
+  }
   xi = ll.getXi();
   sg = ll.getSigma();
   cout << "xi, sg after fit: xi = " << xi << ", sg = " << sg << endl;
