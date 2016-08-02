@@ -108,7 +108,7 @@ bool Minimiser::initialiseVariables()
     cout << "\n\t(declaring them to MINUIT)" << endl;
   }
 
-  //remove hidden MinuitParameter, let's see if this is still needed
+  //Temove hidden MinuitParameters
   for( unsigned int i=0; i < nPars(); i++ ){
     if( getParPtr(i)->hidden() ){
       if(dbThis)
@@ -126,12 +126,10 @@ bool Minimiser::initialiseVariables()
       cout << i << ")" << getParPtr(i)->name() << endl;
 
     const double step = getParPtr(i)->stepInit();
-
     _mn_param.Add( getParPtr(i)->name(), getParPtr(i)->meanInit(), step );
-    if( getParPtr(i)->minInit() != 0.0 )
-      _mn_param.SetLowerLimit(i, getParPtr(i)->minInit());
-    if( getParPtr(i)->maxInit() != 0.0 )
-      _mn_param.SetUpperLimit(i, getParPtr(i)->maxInit());
+    //This logic may need checking and needs updating for single sided limits
+    if( getParPtr(i)->maxInit() != 0.0 && getParPtr(i)->minInit() != 0.0 )
+      _mn_param.SetLimits(i, getParPtr(i)->minInit(), getParPtr(i)->maxInit());
 
     if( getParPtr(i)->iFixInit() )
       _mn_param.Fix(i);
@@ -264,7 +262,7 @@ bool Minimiser::prepFit()
   bool success=true;
 
   theFunction()->beginFit();
-  success &= this->initialiseVariables();
+
   if(dbThis)
     cout << "re-initialised variables" << endl;
 

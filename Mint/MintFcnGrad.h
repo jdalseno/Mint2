@@ -25,9 +25,12 @@ namespace MINT
       for( unsigned int i=0; i<par.size(); ++i )
 	_theFunction->getParSet()->getParPtr(i)->setCurrentFitVal(par[i]);
 
-      std::cout << "-2logL = " << _theFunction->getVal()-_best_min << std::endl;
+      const double negll = _theFunction->getVal()-_best_min;
 
-      return _theFunction->getVal()-_best_min;
+      std::cout << std::setprecision(std::numeric_limits<double>::digits10);
+      std::cout << "-2logL = " << negll << std::endl;
+
+      return negll;
     }
 
     /**

@@ -2,7 +2,7 @@ Mint2
  - Amplitude analysis based on covariant spin tensor formalism and MC integration
 
 Requirements
- - ROOT
+ - ROOT built with Minuit2 enabled
  - qft++ (https://github.com/jdalseno/qft)
 
 Build Instructions
