@@ -36,6 +36,20 @@ bool Neg2LLSum::add( IMinimisable* llPtr )
   return true;
 }
 
+bool Neg2LLSum::insert( IMinimisable* llPtr )
+{
+  if( 0 == llPtr ){
+    std::cout << "ERROR in Neg2LLSum::insert: trying to insert null pointer"
+	      << std::endl;
+
+    return false;
+  }
+
+  _likList.insert(_likList.begin(), llPtr);
+
+  return true;
+}
+
 void Neg2LLSum::beginFit()
 {
   for( unsigned int i=0; i<_likList.size(); ++i )

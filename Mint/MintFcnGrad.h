@@ -24,6 +24,7 @@ namespace MINT
     {
       for( unsigned int i=0; i<par.size(); ++i )
 	_theFunction->getParSet()->getParPtr(i)->setCurrentFitVal(par[i]);
+      _theFunction->parametersChanged();
 
       const double negll = _theFunction->getVal()-_best_min;
 

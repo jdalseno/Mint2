@@ -15,16 +15,16 @@ namespace MINT
    public:
     Neg2LLSum( MinuitParameterSet* mps=0 );
 
-    template<typename IMINIMISIBLE_FIRST>
-    Neg2LLSum( MinuitParameterSet* mps, IMINIMISIBLE_FIRST* ll )
+    template<typename IMINIMISIBLE>
+    Neg2LLSum( MinuitParameterSet* mps, IMINIMISIBLE* ll )
       : Minimisable(mps)
-    { add(ll); }
+    { insert(ll); }
 
     template<typename IMINIMISIBLE_FIRST, typename... IMINIMISIBLE_REST>
     Neg2LLSum( MinuitParameterSet* mps,
 	       IMINIMISIBLE_FIRST* ll_first, IMINIMISIBLE_REST*... ll_rest )
       : Neg2LLSum(mps, ll_rest...)
-    { add(ll_first); }
+    { insert(ll_first); }
 
     Neg2LLSum( const std::vector<IMinimisable*>& likList_in,
 	       MinuitParameterSet* mps=0 );
@@ -32,6 +32,7 @@ namespace MINT
     Neg2LLSum( const Neg2LLSum& other );
 
     bool add( IMinimisable* llPtr );
+    bool insert( IMinimisable* llPtr );
 
     virtual void beginFit();
 
