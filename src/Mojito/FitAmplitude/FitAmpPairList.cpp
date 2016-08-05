@@ -23,8 +23,8 @@
 using namespace std;
 using namespace MINT;
 
-MINT::NamedParameter<std::string> FitAmpPairList::HistoOption("FitAmpPairList::HistoOption"
-							  , (std::string) "default");
+//MINT::NamedParameter<std::string> FitAmpPairList::HistoOption("FitAmpPairList::HistoOption"
+//							  , (std::string) "default");
 
 /*
 FitAmpPairList::HistoOption can be set to either fast (no
@@ -49,6 +49,7 @@ void FitAmpPairList::applyHistoOption(){
 
 FitAmpPairList::FitAmpPairList()
   : MINT::PolymorphVector<FitAmpPair>()
+  , HistoOption("FitAmpPairList::HistoOption", (std::string) "default")
   , _Nevents(0)
   , _sum(0)
   , _sumsq(0)
@@ -63,6 +64,7 @@ FitAmpPairList::FitAmpPairList()
 FitAmpPairList::FitAmpPairList(const FitAmpPairList& other)
   : IIntegrationCalculator()
   , MINT::PolymorphVector<FitAmpPair>(other)
+  , HistoOption("FitAmpPairList::HistoOption", (std::string) "default")
   , _Nevents(other._Nevents)
   , _sum(other._sum)
   , _sumsq(other._sumsq)

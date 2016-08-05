@@ -29,7 +29,7 @@ class FitAmpPairList
 , virtual public IIntegrationCalculator
 {
 
-  static MINT::NamedParameter<std::string> HistoOption;
+  MINT::NamedParameter<std::string> HistoOption;
   void applyHistoOption();
 
   int _Nevents;
