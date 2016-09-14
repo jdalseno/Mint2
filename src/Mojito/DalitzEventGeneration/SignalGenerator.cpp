@@ -131,4 +131,13 @@ counted_ptr<IDalitzEvent> SignalGenerator::newEvent(){
   return counted_ptr<IDalitzEvent>(newDalitzEvent());
 }
 
+bool SignalGenerator::am_I_generating_what_I_think_I_am_generating(int Nevents){
+  if(0 == _boxes) return false;
+  return _boxes->am_I_generating_what_I_think_I_am_generating(Nevents);
+
+}
+bool SignalGenerator::compareGenerationMethodsForFullPDF(int Nevents){
+  if(0 == _boxes) return false;
+  return _boxes->compareGenerationMethodsForFullPDF(Nevents);
+}
 //

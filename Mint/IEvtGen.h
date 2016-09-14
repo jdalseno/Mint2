@@ -32,7 +32,8 @@ namespace MINT
     /**
        Generate single event in Mint
      */
-    std::vector<std::vector<double>> GenerateEvent();
+    void GenerateEvent( std::vector<std::vector<double>>& daughters,
+			double& weight_gen );
 
     /**
        Intermediary to go between Mint and EvtGen 4-vector types

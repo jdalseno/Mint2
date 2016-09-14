@@ -19,13 +19,12 @@ IEvtGen::IEvtGen( const std::string& inputFileName,
   m_sg = new SignalGenerator(pdg, rand);
 }
 
-std::vector<std::vector<double>> IEvtGen::GenerateEvent()
+void IEvtGen::GenerateEvent( std::vector<std::vector<double>>& daughters,
+			     double& weight_gen )
 {
   MINT::counted_ptr<IDalitzEvent> newEvt = m_sg->newEvent();
   const IDalitzEvent* const event = newEvt.get();
   //const IDalitzEvent* const event = m_sg->newEvent().get();
-
-  std::vector<std::vector<double>> daughters;
 
   //0th entry is the mother particle
   for( unsigned int i=1;
@@ -35,7 +34,7 @@ std::vector<std::vector<double>> IEvtGen::GenerateEvent()
     daughters.push_back(daughter);
   }
 
-  return daughters;
+  weight_gen = event->getGeneratorPdfRelativeToPhaseSpace();
 }
 
 std::vector<double> IEvtGen::GetDaughter( const IDalitzEvent* const event,

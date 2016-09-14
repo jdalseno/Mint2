@@ -22,6 +22,14 @@ class IUnweightedEventGenerator : public virtual IEventGenerator<RETURN_TYPE>{
   virtual bool setRnd(TRandom* rnd)=0;
 
   virtual ~IUnweightedEventGenerator(){}
+
+  // not really nice, but I need it now for debugging:
+  virtual bool am_I_generating_what_I_think_I_am_generating(int ){
+    return true;
+  };
+  virtual bool compareGenerationMethodsForFullPDF(int ){
+    return true;
+  }
 };
 
 }//namespace MINT

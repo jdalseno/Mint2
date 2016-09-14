@@ -8,10 +8,12 @@ QFT_LIB = os.environ['QFT_PATH'] + '/lib'
 env.Append(CPPPATH = ['.', QFT_INC])
 env.Append(CXXFLAGS = ['-O3', '-Wall', '-Wextra', '-Werror', '-pedantic', '-std=c++11', '-fopenmp'])
 #env.Append(CXXFLAGS = ['-g', '-Wall', '-Wextra', '-Werror', '-pedantic', '-std=c++11', '-fopenmp'])
+#env.Append(CXXFLAGS = ['-O3', '-Wall', '-fprofile-arcs', '-ftest-coverage', '-Wextra', '-Werror', '-pedantic', '-std=c++11', '-fopenmp'])
 env.ParseConfig("root-config --libs --cflags --ldflags")
 env.Append(LIBPATH = [QFT_LIB])
 env.Append(LIBS = ['Minuit2', 'MathMore', 'qft++'])
 env.Append(LINKFLAGS = ['-fopenmp'])
+#env.Append(LINKFLAGS = ['-fopenmp', ' -fprofile-arcs'])
 
 #Export environment
 Export('env')

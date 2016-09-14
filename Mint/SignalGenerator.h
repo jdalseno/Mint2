@@ -67,6 +67,10 @@ class SignalGenerator
   virtual bool exhausted() const{return false;}
 
   virtual bool ensureFreshEvents();
+
+  bool am_I_generating_what_I_think_I_am_generating(int Nevents=100000);
+  bool compareGenerationMethodsForFullPDF(int Nevents = 100000);
+
 };
 
 #endif

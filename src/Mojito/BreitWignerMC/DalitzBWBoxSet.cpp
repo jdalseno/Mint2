@@ -158,6 +158,7 @@ bool DalitzBWBoxSet::am_I_generating_what_I_think_I_am_generating(int Nevents){
 }
 bool DalitzBWBoxSet::compareGenerationMethodsForFullPDF(int Nevents){
   cout << "Hello from DalitzBWBoxSet::compareGenerationMethodsForFullPDF"
+       << " (with " << this->size() << " boxes)"
        << " with " << Nevents << " events to generate for each case" << endl;
 
   DiskResidentEventList generated_fullPDF_efficient_weighted_events("generated_fullPDF_efficient_weighted_events.root"
@@ -165,10 +166,16 @@ bool DalitzBWBoxSet::compareGenerationMethodsForFullPDF(int Nevents){
   DiskResidentEventList generatedFlat_fullPDF_flat_weighted_events("generated_fullPDF_flat_weighted_events.root"
 								, "RECREATE");
 
+  bool unweightFull = false;
+
   int printEvery = min(Nevents/10, 10000);
  
   for(int i=0; i < Nevents; i++){
-    generated_fullPDF_efficient_weighted_events.Add(*makeWeightedEventForOwner());
+    if(unweightFull) {
+      generated_fullPDF_efficient_weighted_events.Add(*makeEventForOwner());
+    }else{
+      generated_fullPDF_efficient_weighted_events.Add(*makeWeightedEventForOwner());
+    }
     if(0 == i%printEvery) cout << "done event " << i << endl;
   }
   cout << "generated approxPDF_events"<< endl;
