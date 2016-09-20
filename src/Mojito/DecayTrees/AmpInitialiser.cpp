@@ -19,11 +19,15 @@ AmpInitialiser::AmpInitialiser()
   , _autoSwap(true)
 {}
 AmpInitialiser::AmpInitialiser(const std::string& StandardisedDecayTreeName
+			       , const std::string& namePrefix
+			       , const std::string& lineshapePrefix
 			       , const std::string& lopt_in
 			       , const std::vector<double>& numOpts_in
 			       , bool autoSwap_in
 			       )
   : _valid(false)
+  , _prefix(namePrefix)
+  , _lsPrefix(lineshapePrefix)
   , _lopt(lopt_in)
   , _numOpts(numOpts_in)
   , _autoSwap(autoSwap_in)
@@ -46,11 +50,15 @@ AmpInitialiser::AmpInitialiser(const std::string& StandardisedDecayTreeName
 }
 AmpInitialiser::AmpInitialiser(const DecayTree& dt_in
 			       , char SPD_in
+			       , const std::string& namePrefix
+			       , const std::string& lineshapePrefix
 			       , const std::string& lopt_in
 			       , const std::vector<double>& numOpts_in
 			       , bool autoSwap_in
 			       )
-  : _lopt(lopt_in)
+  : _prefix(namePrefix)
+  , _lsPrefix(lineshapePrefix)
+  , _lopt(lopt_in)
   , _numOpts(numOpts_in)
   , _autoSwap(autoSwap_in)
 {
@@ -58,11 +66,15 @@ AmpInitialiser::AmpInitialiser(const DecayTree& dt_in
   setSPD(SPD_in);
 }
 AmpInitialiser::AmpInitialiser(const DecayTree& dt_in
+			       , const std::string& namePrefix
+			       , const std::string& lineshapePrefix
 			       , const std::string& lopt_in
 			       , const std::vector<double>& numOpts_in
 			       , bool autoSwap_in
 			       )
-  : _lopt(lopt_in)
+  : _prefix(namePrefix)
+  , _lsPrefix(lineshapePrefix)
+  , _lopt(lopt_in)
   , _numOpts(numOpts_in)
   , _autoSwap(autoSwap_in)
 {
@@ -70,9 +82,11 @@ AmpInitialiser::AmpInitialiser(const DecayTree& dt_in
   setSPD('?');
 }
 
-AmpInitialiser::AmpInitialiser(const AmpInitialiser& other)
+AmpInitialiser::AmpInitialiser(const AmpInitialiser& other, const std::string& addedPrefix, const std::string& addedLineshapePrefix)
   : _SPD(other._SPD)
   , _valid(other._valid)
+  , _prefix(addedPrefix + other._prefix)
+  , _lsPrefix(addedLineshapePrefix + other._lsPrefix)
   , _lopt(other._lopt)
   , _numOpts(other._numOpts)
   , _autoSwap(other._autoSwap)
@@ -83,6 +97,8 @@ AmpInitialiser& AmpInitialiser::operator=(const AmpInitialiser& rhs){
   setTree(rhs._dt);
   _SPD   = rhs._SPD;
   _valid = rhs._valid;
+  _prefix = rhs._prefix;
+  _lsPrefix = rhs._lsPrefix;
   _lopt  = rhs._lopt;
   _numOpts = rhs._numOpts;
   _autoSwap = rhs._autoSwap;
@@ -157,9 +173,24 @@ bool AmpInitialiser::setAutoSwap(bool autoSwap_in) {
   return _autoSwap=autoSwap_in;
 }
 
+
+const std::string&  AmpInitialiser::prefix() const{
+  return _prefix;
+}
+void AmpInitialiser::addPrefix(const std::string& namePrefix){
+  _prefix = namePrefix + _prefix;
+}
+
+const std::string&  AmpInitialiser::lsPrefix() const{
+  return _lsPrefix;
+}
+void AmpInitialiser::addLsPrefix(const std::string& lineshapePrefix){
+  _lsPrefix = lineshapePrefix + _lsPrefix;
+}
+
 std::string AmpInitialiser::uniqueName() const{
   if(_valid){
-    std::string s = _lopt + _dt.oneLiner();
+    std::string s = prefix() + _lopt + _dt.oneLiner();
     //    if(_SPD != '?') s = s + "_" + _SPD;
     return s;
   }else{

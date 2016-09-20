@@ -12,8 +12,8 @@ using namespace std;
 using namespace MINT;
 
 NonRes::NonRes( const AssociatedDecayTree& tree,
-		const std::string& type )
-  : BW_BW(tree)
+		const std::string& type, const std::string& namePrefix)
+  : BW_BW(tree, namePrefix)
   , _type(type)
   //, _alpha("NonRes::alpha", 1.0)
 {

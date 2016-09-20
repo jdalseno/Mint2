@@ -23,7 +23,7 @@ bool PDGWithReco=true;
 bool DoAsLaurenDid = false;
 bool compareToOldRooFit = DoAsLaurenDid;
 
-BW_BW::BW_BW( const AssociatedDecayTree& decay)
+BW_BW::BW_BW( const AssociatedDecayTree& decay, const std::string& lineshapePrefix, MINT::MinuitParameterSet* mps)
   : _eventPtr(0)
   , _prSq(-9999.0)
   , _prSqForGofM(-9999.0)
@@ -46,6 +46,8 @@ BW_BW::BW_BW( const AssociatedDecayTree& decay)
   , _daughterWidth(2, -9999.0)
   , _substitutePDGForReco(false)
   , _genFct(0)
+  , _mps(mps)
+  , _prefix(lineshapePrefix)
   , _normBF("NormBF", 2)
   , _useGlobalRadius(true)
   , _theDecay(decay)
@@ -57,7 +59,8 @@ BW_BW::BW_BW( const AssociatedDecayTree& decay)
 {
   //  const fitSetup* fs = fitSetup::getMe();
   resetPDG();
-  
+  if(0 == _mps) _mps = MinuitParameterSet::getDefaultSet();
+
   if(_theDecay.nDgtr() > 2 && ! (startOfDecayChain())){
     std::cout << "WARNING: BW_BW can only properly handle"
 	      << "\n    > two body decays."
@@ -102,6 +105,8 @@ BW_BW::BW_BW(const BW_BW& other)
   , _daughterWidth(other._daughterWidth)
   , _substitutePDGForReco(other._substitutePDGForReco)
   , _genFct(other._genFct)
+  , _mps(other._mps)
+  , _prefix(other._prefix)
   , _normBF(other._normBF)
   , _useGlobalRadius(other._useGlobalRadius)
   , _theDecay(other._theDecay)
@@ -123,6 +128,14 @@ BW_BW::BW_BW(const BW_BW& other)
 BW_BW::~BW_BW(){
   delete _fittableResonancePropertiesPtr;
   delete  _fittableGlobalRadiusPtr;
+}
+
+const MINT::MinuitParameterSet* BW_BW::getMinuitParameterSet()const{
+  return _mps;
+}
+MINT::MinuitParameterSet* BW_BW::getMinuitParameterSet(){
+  if(0 == _mps) _mps = MinuitParameterSet::getDefaultSet();
+  return _mps;
 }
 
 bool BW_BW::setEventPtr(IDalitzEvent& evt) const{
@@ -376,7 +389,8 @@ const ParticleProperties* BW_BW::mumsProperties() const{
 }
 
 ResonancePropertiesList*  BW_BW::resonancePropertiesList() const{
-  if(0 == _RPL) _RPL = ResonancePropertiesList::getMe();
+  //cout << "in BW_BW::resonancePropertiesList(): prefix() = " << prefix() << endl;
+  if(0 == _RPL) _RPL = ResonancePropertiesList::getMe(prefix(), _mps);
   if(0 == _RPL){
     cout << "ERROR in BW_BW::resonanceProperties()"
 	 << " can't find properties for first element"
@@ -387,12 +401,7 @@ ResonancePropertiesList*  BW_BW::resonancePropertiesList() const{
 }
 
 const ResonanceProperties* BW_BW::resonanceProperties() const{
-  const ResonanceProperties* rp = resonancePropertiesList()->get(mumsPID());
-  if(0 == rp){
-    ResonanceProperties* rpnew= new ResonanceProperties(mumsProperties()->pdg_id());
-    resonancePropertiesList()->AddToList(rpnew);
-    rp=rpnew;
-  }
+  const ResonanceProperties* rp = resonancePropertiesList()->AddToListIfMissing(mumsPID());
   if(0 == rp){
     cout << "ERROR in BW_BW::ResonanceProperties()"
 	 << " can't find properties for first element"

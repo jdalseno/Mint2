@@ -12,6 +12,8 @@
 #include "Mint/NamedParameter.h"
 
 #include <complex>
+#include <string>
+
 /*
   Lass parameterised a la BaBar, Phys.Rev.D78:012004,2008 also
   available as: arXiv:0803.4451[hep-ex], SLAC-PUB-13189,
@@ -40,13 +42,13 @@ class Lass : public BW_BW, virtual public ILineshape{
 
  public:
   
-  Lass( const AssociatedDecayTree& decay);
+  Lass( const AssociatedDecayTree& decay, const std::string& namePrefix="");
   Lass(const Lass& other);
 
   virtual std::complex<double> getVal(IDalitzEvent& evt);
 
   virtual std::string name() const{
-    return "LASS("+_theDecay.oneLiner() +")";
+    return "LASS("+prefix()+_theDecay.oneLiner() +")";
   }
   virtual ~Lass(){}
 };

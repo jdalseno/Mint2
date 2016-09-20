@@ -39,8 +39,8 @@ class Flatte : public BW_BW, virtual public ILineshape{
  
  public:
   
-  Flatte( const AssociatedDecayTree& decay)
-    : BW_BW(decay)
+ Flatte( const AssociatedDecayTree& decay, const std::string& namePrefix="")
+   : BW_BW(decay, namePrefix)
     , _pi0Mass(-9999.0)
     , _piPlusMass(-9999.0)
     , _K0Mass(-9999.0)
@@ -54,7 +54,7 @@ class Flatte : public BW_BW, virtual public ILineshape{
   // (magic of 'virtual' functions)
 
   virtual std::string name() const{
-    return "FLATTE_alaBaBar_pipi("+_theDecay.oneLiner() +")";
+    return "FLATTE_alaBaBar_pipi("+prefix()+_theDecay.oneLiner() +")";
   }
 
   virtual ~Flatte(){}

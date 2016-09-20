@@ -21,11 +21,11 @@ using namespace std;
 class Histo_BW  : public BW_BW, virtual public ILineshape{
  public:
   
-  Histo_BW( const AssociatedDecayTree& tree): BW_BW(tree), _runningWidthHist(0), _runningMassHist(0)
+ Histo_BW( const AssociatedDecayTree& tree, const std::string& namePrefix): BW_BW(tree, namePrefix), _runningWidthHist(0), _runningMassHist(0)
   {
-      NamedParameter<string> fileNameWidth(("RunningWidth_"+ (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID())))),("RunningWidth_"+ (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID()))) + ".root"));
+      NamedParameter<string> fileNameWidth(("RunningWidth_"+ namePrefix + (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID())))),("RunningWidth_"+ (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID()))) + ".root"));
       
-      NamedParameter<string> fileNameMass(("RunningMass_"+ (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID())))),("RunningMass_"+ (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID()))) + ".root"));
+      NamedParameter<string> fileNameMass(("RunningMass_"+ namePrefix+ (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID())))),("RunningMass_"+ (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID()))) + ".root"));
       
       TFile* f_w = TFile::Open(((string)fileNameWidth).c_str());
       _runningWidthHist = get_width_histo(f_w, "RunningWidth");
@@ -34,7 +34,7 @@ class Histo_BW  : public BW_BW, virtual public ILineshape{
   }
 
   virtual std::string name() const{
-    return "Histo_BW("+_theDecay.oneLiner() +")";
+    return "Histo_BW("+prefix()+_theDecay.oneLiner() +")";
   }
 
   virtual ~Histo_BW(){}

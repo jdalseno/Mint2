@@ -32,7 +32,7 @@ class FitAmplitude
 , public MINT::FitParDependent
 {
  public:
-  enum STRING_USAGE{FULL_NAME, PREFIX, DEFAULT};
+  //  enum STRING_USAGE{FULL_NAME, PREFIX, DEFAULT};
  protected:
   // members
   Amplitude _amp;
@@ -55,17 +55,17 @@ class FitAmplitude
 				  );
   
 
-  FitAmplitude(const std::string& yourOwnName
+  FitAmplitude(const std::string& yourOwnNameWithoutPrefix
 	       , const AmpInitialiser& treeWithOpts
 	       , const char* fname=0
 	       , MINT::MinuitParameterSet* pset=0
-	       , STRING_USAGE useStringAs = FULL_NAME
+	       //	       , STRING_USAGE useStringAs = FULL_NAME
 	       );
 
-  FitAmplitude(const std::string& yourOwnName
+  FitAmplitude(const std::string& yourOwnNameWithoutPrefix
 	       , const AmpInitialiser& treeWithOpts
 	       , MINT::MinuitParameterSet* pset
-	       , STRING_USAGE useStringAs = FULL_NAME
+	       //	       , STRING_USAGE useStringAs = FULL_NAME
 	       );
   // you decide name and pass decay as DecayTree
 
@@ -80,10 +80,14 @@ class FitAmplitude
 
   // derives name from tree
   FitAmplitude(const std::string& StandardisedDecayTreeName
+	       , const std::string& prefix = ""
+	       , const std::string& linshapePrefix = ""
 	       , const char* fname=0
 	       , MINT::MinuitParameterSet* pset=0
 	       );
   FitAmplitude(const std::string& StandardisedDecayTreeName
+	       , const std::string& prefix
+	       , const std::string& linshapePrefix
 	       , MINT::MinuitParameterSet* pset
 	       );
   // derives tree from name (if known by NamedDecayTreeList

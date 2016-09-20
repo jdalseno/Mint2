@@ -20,6 +20,7 @@ FitAmpList::FitAmpList(const DalitzEventPattern& pat
 		       , const char* fname
 		       , MinuitParameterSet* pset
 		       , const std::string& prefix
+		       , const std::string& lineshapePrefix
 		       , const std::string& opt
 		     )
   : FitAmpListBase()
@@ -33,12 +34,13 @@ FitAmpList::FitAmpList(const DalitzEventPattern& pat
     _paraFName.clear();
   }
   
-  createAllAmps(pat, prefix);
+  createAllAmps(pat, prefix, lineshapePrefix);
 }
 
 FitAmpList::FitAmpList(const DalitzEventPattern& pat
 		       , MinuitParameterSet* pset
 		       , const std::string& prefix
+		       , const std::string& lineshapePrefix
 		       , const std::string& opt
 		     )
   : FitAmpListBase()
@@ -51,10 +53,11 @@ FitAmpList::FitAmpList(const DalitzEventPattern& pat
   
   _paraFName.clear();
   
-  createAllAmps(pat, prefix);
+  createAllAmps(pat, prefix, lineshapePrefix);
 }
 FitAmpList::FitAmpList(const DalitzEventPattern& pat
 		       , const std::string& prefix
+		       , const std::string& lineshapePrefix
 		       , const std::string& opt
 		       )
   : FitAmpListBase()
@@ -65,7 +68,7 @@ FitAmpList::FitAmpList(const DalitzEventPattern& pat
   
   _paraFName.clear();
   
-  createAllAmps(pat, prefix);
+  createAllAmps(pat, prefix, lineshapePrefix);
 }
 
 FitAmpList::FitAmpList(const FitAmpList& other)
@@ -120,7 +123,9 @@ counted_ptr<FitAmpListBase> FitAmpList::GetCPConjugateSameFitParameters() const{
 }
 
 bool FitAmpList::createAllAmps(const DalitzEventPattern& thePattern
-			      , const std::string& prefix){
+			       , const std::string& prefix
+			       , const std::string& lineshapePrefix
+			       ){
   bool dbThis=false;
 
   //  cout << "pset pointer in FitAmpList::createAllAmps " << getMPS() << endl;
@@ -163,19 +168,17 @@ bool FitAmpList::createAllAmps(const DalitzEventPattern& thePattern
 	continue;
       }
       MultiTopHat mth;
-      for( unsigned int i=1; i<static_cast<unsigned int>(TopHatsLimits.size());
-	   ++i){
+      for( int i=1; i < TopHatsLimits.size(); i++){
 	double lo = TopHatsLimits.getVal(i-1);
 	double hi = TopHatsLimits.getVal(i);
 	
 	cout << "TopHatLimits: " << lo << ", " << hi << endl;
-	AmpInitialiser ai(it->second);
+	AmpInitialiser ai(it->second, prefix, lineshapePrefix);
 	ai.setNumOpts(lo, hi);
 	cout << "ai set " << endl;
 	//success &= addAmplitude(new FitAmplitude(prefix + it->first + "_" + anythingToString(i)
 
-	FitAmplitude* famp(new FitAmplitude((prefix 
-					     + it->first + "_" 
+	FitAmplitude* famp(new FitAmplitude(( it->first + "_" 
 					     + anythingToString((int) i)).c_str()
 					    , ai
 					    , fnamePtr
@@ -193,8 +196,10 @@ bool FitAmpList::createAllAmps(const DalitzEventPattern& thePattern
       addAsList(mth);
     }else{
       //cout << "making a normal amplitude " << it->first << endl;
-      FitAmplitude* famp(new FitAmplitude(prefix + it->first
-					  , it->second
+      AmpInitialiser ai(it->second, prefix, lineshapePrefix);
+      //cout << "at FitAmpList: lineshapePrefix " << lineshapePrefix << endl;
+      FitAmplitude* famp(new FitAmplitude(it->first
+					  , ai
 					  , fnamePtr
 					  , getMPS()
 					  )
@@ -222,10 +227,10 @@ bool FitAmpList::createAllAmps(const DalitzEventPattern& thePattern
 }
 
 void FitAmpList::printLargestAmp(IDalitzEvent& evt, std::ostream& os){
-  bool dbThis=false;
+  bool dbthis=false;
   if(_fitAmps.empty()) createAllAmps(evt.eventPattern());
   FitAmpListBase::printLargestAmp(evt, os);
-  (void)dbThis;
+  (void)dbthis;
 }
 
 

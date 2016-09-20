@@ -37,17 +37,20 @@ class FitAmpSum
 	    , const char* fname=0
 	    , MINT::MinuitParameterSet* pset=0
 	    , const std::string& prefix=""
+	     , const std::string& lineshapePrefix=""
 	     , const std::string& opt=""
 	    );
 
   FitAmpSum(const DalitzEventPattern& pat
 	    , MINT::MinuitParameterSet* pset
 	    , const std::string& prefix=""
+	     , const std::string& lineshapePrefix=""
 	     , const std::string& opt=""
 	    );
 
   FitAmpSum(const DalitzEventPattern& pat
 	    , const std::string& prefix
+	     , const std::string& lineshapePrefix=""
 	     , const std::string& opt=""
 	    );
   

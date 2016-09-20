@@ -13,22 +13,32 @@
 using namespace std;
 using namespace MINT;
 
-ResonancePropertiesList* ResonancePropertiesList::ptr=0;
+//ResonancePropertiesList* ResonancePropertiesList::ptr=0;
 
+std::map<std::pair<std::string, const MINT::MinuitParameterSet*>, ResonancePropertiesList*> ResonancePropertiesList::_mapOfLists;
 
-ResonancePropertiesList* ResonancePropertiesList::getMe(){
+ResonancePropertiesList* ResonancePropertiesList::getMe(const std::string& namePrefix, MinuitParameterSet* mps) {
   //cout << "Hello from  ResonancePropertiesList::getMe()" << endl;
+  ResonancePropertiesList* ptr(0);
+  if(0 == mps) mps = MinuitParameterSet::getDefaultSet();
+  std::pair<std::string, const MINT::MinuitParameterSet*> nameAndSet(namePrefix, mps);
+ 
+  auto it=_mapOfLists.find(nameAndSet);
+
+  if(_mapOfLists.end() != it) ptr=it->second;
   if(0 == ptr){
     //cout << "ResonancePropertiesList: making myself" << endl;
-    ptr = new ResonancePropertiesList();
+    ptr = new ResonancePropertiesList(namePrefix, mps);
   }
   if(0 == ptr){
-    cout << "ERROR in ResonanceProperties::getMe"
+    cout << "ERROR in ResonanceProperties::getMe( " << namePrefix << " )"
 	 << " Couldn't get ResonancePropertiesList (i.e. myself)"
 	 << "\n\t This is a serious problem. Will crash."
 	 << endl;
     throw "No ResonancePropertiesList";
   }
+  _mapOfLists[nameAndSet] = ptr;
+
   return ptr;
 }
 
@@ -54,8 +64,10 @@ double ParticlePropertiesList::width(int pid) {
 */
 
 
-ResonancePropertiesList::ResonancePropertiesList()
-  : _radius("BW_radius", 1, 1.5/GeV, 0, 0, 0, 0,  NamedParameterBase::QUIET) //, _rp(10323)
+ResonancePropertiesList::ResonancePropertiesList(const std::string& namePrefix, MinuitParameterSet* mps)
+  : _mps(mps)
+  , _prefix(namePrefix)
+  , _radius(namePrefix + "BW_radius", 1, 1.5/GeV, 0, 0, 0, mps,  NamedParameterBase::QUIET) //, _rp(10323)
 {   
 
   /*
@@ -78,11 +90,30 @@ ResonancePropertiesList::ResonancePropertiesList()
     }
     */
 }
-
-void ResonancePropertiesList::AddToList(ResonanceProperties* rp){
-    //theList.push_back(rp);
-    byID[rp->pid()] = rp;
+const MINT::MinuitParameterSet* ResonancePropertiesList::getMinuitParameterSet()const{
+  return _mps;
 }
+MINT::MinuitParameterSet* ResonancePropertiesList::getMinuitParameterSet(){
+  if(0 == _mps) _mps = MinuitParameterSet::getDefaultSet();
+  return _mps;
+}
+
+const ResonanceProperties* ResonancePropertiesList::AddToList(ResonanceProperties* rp){
+    //theList.push_back(rp);
+  if(0 != rp) byID[rp->pid()] = rp;
+  return rp;
+}
+
+const ResonanceProperties* ResonancePropertiesList::AddToListIfMissing(int pdg_id){
+  const ResonanceProperties* rp = this->get(pdg_id);
+  if(0 == rp){
+    ResonanceProperties* rpnew= new ResonanceProperties(pdg_id, getMinuitParameterSet(), prefix());
+    this->AddToList(rpnew);
+    rp=rpnew;
+  }
+  return rp;
+}
+
 
 const ResonanceProperties* ResonancePropertiesList::get(int id_in) const{
   // assume CPT holds

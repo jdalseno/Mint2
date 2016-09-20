@@ -10,6 +10,7 @@
 #include <vector>
 
 ILineshape* LineshapeMaker(const AssociatedDecayTree* tree
+			   , const std::string& lineshapePrefix
 			   , const std::string& lopt
 			   , const std::vector<double>& numOptions 
 			   = std::vector<double>()

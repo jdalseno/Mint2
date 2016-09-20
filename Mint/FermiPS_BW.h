@@ -4,6 +4,7 @@
 // status: 19 March 2015 GMT
 
 #include <complex>
+#include <string>
 
 #include "Mint/ILineshape.h"
 #include "Mint/BW_BW.h"
@@ -18,8 +19,8 @@ using namespace MINT;
 class FermiPS_BW  : public BW_BW, virtual public ILineshape{
  public:
   
-  FermiPS_BW( const AssociatedDecayTree& tree): 
-    BW_BW(tree), _threshold(0)
+ FermiPS_BW( const AssociatedDecayTree& tree, const std::string& namePrefix): 
+  BW_BW(tree, namePrefix), _threshold(0)
     //, _lambda("Fermi_lambda", 1, 2.  , 0, 0, 0, 0,  NamedParameterBase::QUIET)
     //, _s0("Fermi_s0", 1, 2. , 0, 0, 0, 0,  NamedParameterBase::QUIET)    
   {
@@ -31,8 +32,8 @@ class FermiPS_BW  : public BW_BW, virtual public ILineshape{
       std::cout << "s0 = " << _s0 << std::endl;
        */
       std::vector<const AssociatedDecayTreeItem*> adti = _theDecay.finalState(); 
-      for( unsigned int i=0; i<adti.size(); ++i ){
-	_threshold += adti[i]->mass();
+      for (unsigned int i=0; i<adti.size(); i++) {
+          _threshold += adti[i]->mass();
       }
       std::cout << "FermiPS_threshold = " << _threshold << " for decay " << _theDecay.oneLiner() << std::endl;
   }

@@ -11,6 +11,9 @@ class AmpInitialiser{
   DecayTree _dt;
   char _SPD;
   bool _valid;
+  std::string _prefix; // prefix for fit parameter names, default "".
+  std::string _lsPrefix;
+
   std::string _lopt; // note: the linshape maker
   // figures out which lineshape to use by
   // knowing the particle types involved.
@@ -20,28 +23,35 @@ class AmpInitialiser{
 
   std::vector<double> _numOpts; // numerical options
   // (introduced for min/max in piece-wise defined functions)
-
   bool _autoSwap;
   
  public:
   AmpInitialiser();
   AmpInitialiser(const std::string& StandardisedDecayTreeName
+		 , const std::string& namePrefix=""
+		 , const std::string& linshapePrefix=""
 		 , const std::string& lopt =""
 		 , const std::vector<double>& numOpts = std::vector<double>()
 		 , bool autoSwap=true
 		 );
   AmpInitialiser(const DecayTree& dt_in
 		 , char SPD_in='?'
+		 , const std::string& namePrefix=""
+		 , const std::string& linshapePrefix=""
 		 , const std::string& lopt =""
 		 , const std::vector<double>& numOpts = std::vector<double>()
 		 , bool autoSwap=true
 		 );
   AmpInitialiser(const DecayTree& dt_in
-		 , const std::string& lopt
+		 , const std::string& namePrefix
+		 , const std::string& linshapePrefix=""
+		 , const std::string& lopt = ""
 		 , const std::vector<double>& numOpts = std::vector<double>()
 		 , bool autoSwap = true
 		 );
-  AmpInitialiser(const AmpInitialiser& other);
+  AmpInitialiser(const AmpInitialiser& other
+		 , const std::string& addedPrefix=""
+		 , const std::string& addedLineshapePrefix="");
   AmpInitialiser& operator=(const AmpInitialiser& rhs);
 
 
@@ -65,6 +75,12 @@ class AmpInitialiser{
 
   bool autoSwap() const;
   bool setAutoSwap(bool autoSwap_in=true);
+
+  const std::string& prefix() const;
+  void addPrefix(const std::string& namePrefix);
+
+  const std::string& lsPrefix() const;
+  void addLsPrefix(const std::string& linshapePrefix);
 
   std::string uniqueName() const;
   std::string name() const; // same as unique name.

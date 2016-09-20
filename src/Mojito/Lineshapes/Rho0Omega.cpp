@@ -11,8 +11,8 @@
 using namespace std;
 using namespace MINT;
 
-Rho0Omega::Rho0Omega( const AssociatedDecayTree& tree)
-  : BW_BW(tree)
+Rho0Omega::Rho0Omega( const AssociatedDecayTree& tree, const std::string& namePrefix)
+  : BW_BW(tree, namePrefix)
   , _pr("Rho0Omega::pr", 0.1973)
   , _aRatioSq("Rho0Omega::aRatioSq", 3.9)
   , _eps_coh("Rho0Omega::eps_coh", 1.14)

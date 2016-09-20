@@ -12,8 +12,8 @@ using namespace MINT;
 // (and of course originally developed by Lass,
 // D. Aston et al. (LASS), Nucl. Phys. B296, 493 (1988).
 
-Lass::Lass( const AssociatedDecayTree& decay)
-  : BW_BW(decay)
+Lass::Lass( const AssociatedDecayTree& decay, const std::string& namePrefix)
+  : BW_BW(decay, namePrefix)
   , _a("Lass::a", 2.07/GeV)
   , _r("Lass::r", 3.32/GeV) // same as b in Lass paper
   , _phi("Lass::phi", 0*pi/180.0)

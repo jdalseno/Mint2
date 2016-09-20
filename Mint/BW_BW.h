@@ -17,8 +17,9 @@
 #include "Mint/IGenFct.h"
 #include "Mint/ResonancePropertiesList.h"
 #include "Mint/FitParDependent.h"
-#include "ResonancePropertiesFitRef.h"
+#include "Mint/ResonancePropertiesFitRef.h"
 #include "Mint/NamedParameter.h"
+#include "Mint/MinuitParameterSet.h"
 
 #include "TRandom.h"
 
@@ -55,6 +56,12 @@ class BW_BW : virtual public ILineshape, public MINT::FitParDependent{
   void makeGeneratingFunction() const;
 
  protected:
+  mutable MINT::MinuitParameterSet* _mps;
+
+  const MINT::MinuitParameterSet* getMinuitParameterSet()const;
+  MINT::MinuitParameterSet* getMinuitParameterSet();
+
+  std::string _prefix;
 
   MINT::NamedParameter<int> _normBF;
   bool _useGlobalRadius;
@@ -62,6 +69,7 @@ class BW_BW : virtual public ILineshape, public MINT::FitParDependent{
   const AssociatedDecayTree& _theDecay; 
   double _gen_s_mi, _gen_s_ma;
 
+  const std::string& prefix() const{return _prefix;}
   bool substitutePDGForReco() const{
     return _substitutePDGForReco;
   }
@@ -171,7 +179,7 @@ class BW_BW : virtual public ILineshape, public MINT::FitParDependent{
   virtual void resetPDG();
 
  public:
-  BW_BW( const AssociatedDecayTree& decay);
+  BW_BW( const AssociatedDecayTree& decay, const std::string& lineshapePrefix="", MINT::MinuitParameterSet* mps=0);
   BW_BW(const BW_BW& other);
   virtual ~BW_BW();
 

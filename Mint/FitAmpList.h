@@ -41,18 +41,21 @@ class FitAmpList : public FitAmpListBase
 	     , const char* fname=0
 	     , MINT::MinuitParameterSet* pset=0
 	     , const std::string& prefix=""
+	     , const std::string& lineshapePrefix=""
 	     , const std::string& opt=""
 	    );
 
   FitAmpList(const DalitzEventPattern& pat
-	    , MINT::MinuitParameterSet* pset
-	    , const std::string& prefix=""
+	     , MINT::MinuitParameterSet* pset
+	     , const std::string& prefix=""
+	     , const std::string& lineshapePrefix=""
 	     , const std::string& opt=""
-	    );
+	     );
   FitAmpList(const DalitzEventPattern& pat
-	    , const std::string& prefix
+	     , const std::string& prefix
+	     , const std::string& lineshapePrefix=""
 	     , const std::string& opt=""
-	    );
+	     );
 
   FitAmpList(const FitAmpList& other);
   /* 
@@ -77,7 +80,9 @@ class FitAmpList : public FitAmpListBase
   // ... see example in FitAmpSum. The Trick is the different new...
 
   virtual bool createAllAmps(const DalitzEventPattern& thePattern
-			     , const std::string& prefix="");
+			     , const std::string& prefix=""
+			     , const std::string& lineshapePrefix=""
+			     );
 
   virtual bool createAmpsFromFile(){return false;}// to be implemented later
   
