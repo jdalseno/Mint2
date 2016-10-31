@@ -4,6 +4,8 @@
 // This implements the line shape for sigma suggested in D. V. Bugg, J. Phys. G34:151, 2007, arXiv:hep-ph/0608081
 
 #include <complex>
+#include <string>
+
 #include "Mint/CLHEPPhysicalConstants.h"
 #include "Mint/ILineshape.h"
 #include "Mint/BW_BW.h"
@@ -11,18 +13,18 @@
 #include "Mint/NamedParameterBase.h"
 #include "Mint/ResonancePropertiesList.h"
 #include "Mint/FitParDependent.h"
-#include "ResonancePropertiesFitRef.h"
+#include "Mint/ResonancePropertiesFitRef.h"
 
-using namespace MINT;
+//using namespace MINT;
 
 class Bugg_BW  : public BW_BW, virtual public ILineshape{
  public:
   
-  Bugg_BW( const AssociatedDecayTree& tree): 
-    BW_BW(tree)
-    , _m_pi(ParticlePropertiesList::mass(211)/GeV)
-    , _m_K(ParticlePropertiesList::mass(321)/GeV)
-    , _m_eta(ParticlePropertiesList::mass(221)/GeV)
+ Bugg_BW( const AssociatedDecayTree& tree, const std::string& namePrefix=""): 
+  BW_BW(tree, namePrefix)
+      , _m_pi(ParticlePropertiesList::mass(211)/GeV)
+      , _m_K(ParticlePropertiesList::mass(321)/GeV)
+      , _m_eta(ParticlePropertiesList::mass(221)/GeV)
   {
   }
 

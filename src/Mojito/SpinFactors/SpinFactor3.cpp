@@ -48,7 +48,7 @@ bool SpinFactor3::setSpin(){
   }else{    
     cout << "SpinFactor3::setSpin() Don't know how to"
 	 << " handle resonance with spin = " << R->getVal().J()
-	 << "\n    > looking at decay\n" << theBareDecay()
+	 << "\n    > looking at decay\n" << theDecay()
 	 << "\n    > Sorry, will crash now!" << endl;
     throw "sorry";
   }
@@ -95,7 +95,7 @@ bool SpinFactor3::parseTree(const DalitzEventPattern& pat){
 void SpinFactor3::printYourself(std::ostream& os)const{
   os << "INFO from SpinFactor3::printYourself():\n"
      << "    > parsed the following tree "
-     << theBareDecay().oneLiner() << " like this:\n"
+     << theDecay().oneLiner() << " like this:\n"
      << "    > R =  " << R->getVal().name()
      << ", fsPS[0]=C= " << fsPS[0]->getVal().name()
      << ", fsPS[1]=A= " << fsPS[1]->getVal().name()
@@ -125,7 +125,7 @@ double SpinFactor3::getVal(IDalitzEvent& evt){
   }else{    
     cout << "SpinFactor3::getVal() Don't know how to"
 	 << " handle resonance with spin = " << R->getVal().J()
-	 << "\n    > looking at decay\n" << theBareDecay()
+	 << "\n    > looking at decay\n" << theDecay()
 	 << "\n    > Sorry, will crash now!" << endl;
     throw "sorry";
   }
@@ -158,7 +158,7 @@ double SpinFactor3::spinOneVal(IDalitzEvent& evt){
   TLorentzVector rhs = p(1, evt) - p(2, evt);
 
   if(dbThis){
-    cout << " spinOneVal for " << theBareDecay().oneLiner()
+    cout << " spinOneVal for " << theDecay().oneLiner()
 	 << "\n   > compare: Sandwich: "  
 	 << -spin_sum.Sandwich(lhs, rhs)
 	 << "\n   > from masses             "  
@@ -266,7 +266,7 @@ double SpinFactor3::spinTwoVal(IDalitzEvent& evt){
   double returnVal = spin_sum.Sandwich(lhs, lhs, rhs, rhs)/(GeV*GeV*GeV*GeV);
   if(dbThis){
     cout << "spin-2 spin factor got called for "
-	 << theBareDecay().oneLiner()
+	 << theDecay().oneLiner()
 	 << "\n   >  returning " << returnVal
 	 << "\n   >  compare " << spinTwoFromMasses(evt)
 	 << "\n   >  ratio " << returnVal/spinTwoFromMasses(evt)

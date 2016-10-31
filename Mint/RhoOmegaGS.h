@@ -4,6 +4,7 @@
 // Rho-omega mixing as suggested in arXiv:hep-ex/0112031v1
 
 #include <complex>
+#include <string>
 
 #include "Mint/ILineshape.h"
 #include "Mint/BW_BW.h"
@@ -19,8 +20,8 @@ using namespace MINT;
 class RhoOmegaGS  : public GounarisSakurai, virtual public ILineshape{
  public:
   
-  RhoOmegaGS( const AssociatedDecayTree& tree): 
-    GounarisSakurai(tree),omega_pid(223)   
+ RhoOmegaGS( const AssociatedDecayTree& tree, const std::string& namePrefix=""): 
+  GounarisSakurai(tree, namePrefix),omega_pid(223)   
   {
       setOmegaFitParameters();
   }

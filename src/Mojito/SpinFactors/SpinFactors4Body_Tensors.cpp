@@ -271,7 +271,7 @@ void SF_DtoVT_VtoP0P1_TtoP2P3_P::printYourself(ostream& os) const{
      << "\n\t implemented as: (tT.Contract(tV)).Dot(pV) / GeV^4"
      << "\n\t with T1(V) = ZTspin1 tV(qV, pV, MV), T2(T)= ZTspin2 tT(qT, pT, MT);"
      << "\n\t and pV = p(0) + p(1), qV = p(0) - p(1), pT = p(2) + p(3), qT = p(2) - p(3)"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -329,7 +329,7 @@ void SF_DtoVT_VtoP0P1_TtoP2P3_D::printYourself(ostream& os) const{
      << "\n\t  double returnVal = LeviCivita(tV, vecT, qD, pD) /units;"
      << "\n\t with pV = p(0) + p(1), qV = p(0) - p(1), pT = p(2) + p(3), qT = p(2) - p(3)"
      << "\n\t and  pD = pT + pV, qD = pT - qV;"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -427,7 +427,7 @@ void SF_DtoT1T2_T1toP0P1_T2toP2P3_S::printYourself(ostream& os) const{
      << "\n\t  ZTspin2 tT2(qT2, pT2, MT2);"
      << "\n\t  return: tT1.Contract_2(tT2) / GeV^8"
      << "\n\t with pT1 = p(0) + p(1), qT = p(0) - p(1), pT2 = p(2) + p(3), qT2 = p(2)-p(3)"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -478,7 +478,7 @@ void SF_DtoT1T2_T1toP0P1_T2toP2P3_P::printYourself(ostream& os) const{
      << "\n\t  qD = pT1 - pT2 "
      << "\n\t  return:  LeviCivita(pD, qD, tT1.Contract_1(tT2))/ GeV^4"
      << "\n\t  with pT1 = p(0) + p(1), qT = p(0) - p(1), pT2 = p(2) + p(3), qT2 = p(2)-p(3)"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -533,7 +533,7 @@ void SF_DtoT1T2_T1toP0P1_T2toP2P3_D::printYourself(ostream& os) const{
      << "\n\t  qD = pT1 - pT2"
      << "\n\t  return: (tT1.Contract(qD))* (tT2.Contract(qD))/ GeV^4"
      << "\n\t  with pT1 = p(0) + p(1), qT = p(0) - p(1), pT2 = p(2) + p(3), qT2 = p(2)-p(3)"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -646,7 +646,7 @@ void SF_DtoTP0_TtoVP1_VtoP2P3::printYourself(ostream& os) const{
      << "\n\t  pT = pV + p(1); qT = pV - p(1);"
      << "\n\t  pD = pT + p(0); qD = pT - p(0);"
      << "\n\t  return: DT(tT.Contract(qD))/GeV^6"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -760,7 +760,7 @@ void SF_DtoT1P0_T1toT2P1_T2toP2P3::printYourself(ostream& os) const{
      << "\n\t  pT = pV + p(1); qT = pV - p(1);"
      << "\n\t  pD = pT + p(0); qD = pT - p(0);"
      << "\n\t  return: LeviCivita(pD, DT, tT2)/GeV^6"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -874,7 +874,7 @@ void SF_DtoTS_TtoP0P1_StoP2P3::printYourself(ostream& os) const{
      << "\n\t  ZTspin2 tT(qT, pT, MT);"
      << "\n\t  return: (tT.Contract(qD)).Dot(qD) / GeV^4"
      << "\n\t with pT = p(0) + p(1), qT = p(0) - p(1), pS = p(2) + p(3), qD = pT - qV;"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -989,7 +989,7 @@ void SF_DtoPseudoTP0_PseudoTtoVP1_VtoP2P3::printYourself(ostream& os) const{
      << "\n\t  pT = pV + p(1); qT = pV - p(1);"
      << "\n\t  pD = pT + p(0); qD = pT - p(0);"
      << "\n\t  return: ProT.Sandwich(qD, qD, qT, tV) / GeV^4"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -1090,7 +1090,7 @@ void SF_DtoPseudoTP0_PseudoTtoSP1_StoP2P3::printYourself(ostream& os) const{
      << "\n\t  pT = pV + p(1); qT = pV - p(1);"
      << "\n\t  pD = pT + p(0); qD = pT - p(0);"
      << "\n\t  (tT.Contract(qD)).Dot(qD) / GeV^4"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -1200,7 +1200,7 @@ void SF_DtoPseudoTP0_PseudoTtoTP1_TtoP2P3::printYourself(ostream& os) const{
      << "\n\t  pPT = pT + p(1); qPT = pT - p(1);"
      << "\n\t  pD = pPT + p(0); qD = pPT - p(0);"
      << "\n\t  tPT.Contract_2(tT)/ GeV^8"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -1310,7 +1310,7 @@ void SF_DtoAP0_AtoTP1_TtoP2P3::printYourself(ostream& os) const{
      << "\n\t  pA = pT + p(1); qA = pT - p(1);"
      << "\n\t  pD = pA + p(0); qD = pA - p(0);"
      << "\n\t  (tT.Contract(tA)).Dot(qD) / GeV^4"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }

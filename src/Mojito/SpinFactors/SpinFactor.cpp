@@ -28,6 +28,7 @@ TLorentzVector SpinFactor::p(int i, IDalitzEvent& evt){
       << fsPS[i]->getVal().asi(0)
       << ")" << std::endl;
     */
+    //theDecay(evt);
     TLorentzVector p4(evt.p(fsPS[i]->getVal().asi(0)));
     if (theDecay(evt).getVal().parityFactor() < 0){
       // if the mother is an anti-particle, we multiply all

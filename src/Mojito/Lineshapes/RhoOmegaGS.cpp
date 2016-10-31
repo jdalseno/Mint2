@@ -16,19 +16,14 @@ using namespace MINT;
 
 
 const ResonanceProperties* RhoOmegaGS::omegaProperties() const{
-    const ResonanceProperties* rp = resonancePropertiesList()->get(omega_pid);
-    if(0 == rp){
-        ResonanceProperties* rpnew= new ResonanceProperties(omega_pid);
-        resonancePropertiesList()->AddToList(rpnew);
-        rp=rpnew;
-    }
-    if(0 == rp){
-        cout << "ERROR in RhoOmegaGS::ResonanceProperties()"
-        << " can't find properties for first element"
-        << " in this decay tree\n" << _theDecay << endl;
-        throw "invalid decay tree in RhoOmegaGS::mumsFittableProperties()";
-    }
-    return rp;
+  const ResonanceProperties* rp = resonancePropertiesList()->AddToListIfMissing(omega_pid);
+  if(0 == rp){
+    cout << "ERROR in RhoOmegaGS::ResonanceProperties()"
+	 << " can't find properties for first element"
+	 << " in this decay tree\n" << _theDecay << endl;
+    throw "invalid decay tree in RhoOmegaGS::mumsFittableProperties()";
+  }
+  return rp;
 }
 
 ResonancePropertiesFitRef& RhoOmegaGS::omegaFittableProperties() const{

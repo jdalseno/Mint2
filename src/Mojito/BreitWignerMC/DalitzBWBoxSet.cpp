@@ -151,8 +151,15 @@ bool DalitzBWBoxSet::am_I_generating_what_I_think_I_am_generating(int Nevents){
   datWeight.save("generatedFlat_weighted_approxPDF_histos.root");
   datWeight.draw("generatedFlat_weighted_approxPDF_histos");
   datGen.drawWithFitNorm(datWeight, "genDotsWeightLine_", "eps", "E1 SAME");
+
+  DalitzHistoSet ratio(datGen);
+  ratio /= datWeight;
+  ratio.save("ratio_full_by_weight.root");
+  ratio.draw("ratio_full_by_weight");
+
   
-  cout << "am_I_generating_what_I_think_I_am_generating: all done" << endl;
+  cout << "DalitzBWBoxSet::am_I_generating_what_I_think_I_am_generating:"
+       << " all done" << endl;
 
   return true;
 }
@@ -199,7 +206,13 @@ bool DalitzBWBoxSet::compareGenerationMethodsForFullPDF(int Nevents){
   datWeight.draw("generated_fullPDF_efficient_weighted_events");
   datGen.drawWithFitNorm(datWeight, "efficientBlue_FlatRed_", "eps", "E1 SAME");
   
-  cout << "am_I_generating_what_I_think_I_am_generating: all done" << endl;
+  DalitzHistoSet ratio(datGen);
+  ratio /= datWeight;
+  ratio.save("ratio_full_by_weight.root");
+  ratio.draw("ratio_full_by_weight");
+
+  cout << "DalitzBWBoxSet::compareGenerationMethodsForFullPDF:"
+       << " all done" << endl;
 
   return true;
 }

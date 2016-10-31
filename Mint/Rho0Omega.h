@@ -4,6 +4,7 @@
 // status:  Mon 04 Feb 2014 19:17:59 GMT
 
 #include <complex>
+#include <string>
 
 #include "Mint/ILineshape.h"
 #include "Mint/BW_BW.h"
@@ -17,7 +18,7 @@ class Rho0Omega : public BW_BW, virtual public ILineshape{
      Default parameters taken from the Crystal Barrel Collaboration
      Phys. Lett. B 411, 354 (1997)
    */
-  Rho0Omega( const AssociatedDecayTree& tree);
+  Rho0Omega( const AssociatedDecayTree& tree, const std::string& namePrefix="");
 
   /**
      Evaluate rho0-omega lineshape from the Crystal Barrel measurement

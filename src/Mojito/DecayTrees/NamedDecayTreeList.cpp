@@ -156,8 +156,8 @@ void NamedDecayTreeList::add(const AmpInitialiser& ai, const std::string& opt){
 	AmpInitialiser DtoCPai(ai);
 	DtoCPai.setTree(dt);
 	addSimple(DtoCPai, opt);
-	if(! isBg) addSimple(DtoCPai, opt + "BgSpinZero");
-	if(! isCLEO2012)addSimple(DtoCPai, opt + "CLEO2012");
+	if(! isBg) addSimple(DtoCPai, "BgSpinZero" + opt);
+	if(! isCLEO2012)addSimple(DtoCPai, "CLEO2012" + opt);
 	if(dt.finalState().size()==4 && (dt.getDgtrTreePtr(0)->finalState().size()==3 || dt.getDgtrTreePtr(1)->finalState().size()==3))
 	{ 
 	addSimple(DtoCPai, "SBW_" + opt);    
@@ -191,8 +191,12 @@ void NamedDecayTreeList::addSimple(const AmpInitialiser& ai, const std::string& 
 
   //if(dbThis) cout << "adding tree with name " << name << endl;
   AmpInitialiser nai(ai);
-  // NOT sure why I'm doing this rather complicated option reading and writng, rather
+  // NOT sure why I was doing this rather complicated 
+  // option reading and writng, rather
   // than simply adding opt to nai.. but maybe there was a reason.
+  // kept below in case there was...
+  // figured it out: so the order in which
+  // these appear in the name is well-defined.
   if(A_is_in_B("CLEO2012",opt)){
       nai.addLopt("CLEO2012");
   }
@@ -207,7 +211,8 @@ void NamedDecayTreeList::addSimple(const AmpInitialiser& ai, const std::string& 
   }  
   if(A_is_in_B("SBW_",opt)){
         nai.addLopt("SBW_");
-  }  
+  } 
+
   std::string name = nai.uniqueName();
   if(dbThis) cout << "adding tree with name " << name << endl;
   _trees[name] = nai;
@@ -7331,11 +7336,12 @@ int NamedDecayTreeList::make4PiList() {
   dk = new DecayTree(421);
   dk->addDgtr(-211, 10215)->addDgtr(211, 225)->addDgtr(211, -211);
   add(*dk);
+  this->add(AmpInitialiser(*dk, "HistoPS_225"));    
   delete dk;
 
   // D -> pi2(1670) pi, pi2->f0(600) pi, f0(600)->pipi
   dk = new DecayTree(421);
-  dk->addDgtr(-211, 10215)->addDgtr(211, 9000221)->addDgtr(211, -211);
+  dk->addDgtr(-211, 10215)->addDgtr(211, 999001)->addDgtr(211, -211);
   this->add(AmpInitialiser(*dk, "Bugg"));
   add(*dk);
   delete dk;

@@ -15,8 +15,10 @@ class NonRes : public BW_BW, virtual public ILineshape{
   /**
      Constructor
    */
-  NonRes( const AssociatedDecayTree& tree, 
-	  const std::string& type="" );
+  NonRes( const AssociatedDecayTree& tree
+	  , const std::string& type=""
+	  , const std::string& namePrefix=""
+	  );
 
   /**
      Evaluate non-res lineshape

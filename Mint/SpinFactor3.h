@@ -29,7 +29,7 @@ class SpinFactor3 : public SpinFactor{
   bool setSpin();
 
  public:
-  SpinFactor3(const DecayTree& theDecay)
+  SpinFactor3(const AssociatedDecayTree& theDecay)
     : SpinFactor(theDecay, 3)
     , R(0)
     , _spin(-1)
@@ -45,7 +45,7 @@ class SpinFactor3 : public SpinFactor{
   static const DecayTree& getExampleDecay();
   virtual const DecayTree& exampleDecay();
   virtual std::string name() const{
-    return "SpinFactor3(" + theBareDecay().oneLiner() + ")";
+    return "SpinFactor3(" + theDecay().oneLiner() + ")";
   }
   virtual void printYourself(std::ostream& os = std::cout)const;
   virtual ~SpinFactor3(){}

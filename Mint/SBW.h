@@ -4,6 +4,7 @@
 // status: 19 March 2015 GMT
 
 #include <complex>
+#include <string>
 
 #include "Mint/ILineshape.h"
 #include "Mint/BW_BW.h"
@@ -13,10 +14,10 @@
 class SBW : public BW_BW, virtual public ILineshape{
  public:
   
-  SBW( const AssociatedDecayTree& tree): BW_BW(tree){}
+ SBW( const AssociatedDecayTree& tree, const std::string& namePrefix): BW_BW(tree, namePrefix){}
 
   virtual std::string name() const{
-    return "SBW("+_theDecay.oneLiner() +")";
+    return "SBW("+prefix()+_theDecay.oneLiner() +")";
   }
 
   virtual ~SBW(){}

@@ -7,6 +7,8 @@
 #include "Mint/IReturnComplexForEvent.h"
 #include "Mint/IDalitzEvent.h"
 
+#include "TLorentzVector.h"
+
 #include <string>
 
 class ISpinFactor : virtual public MINT::IReturnRealForEvent<IDalitzEvent>,virtual public MINT::IReturnComplexForEvent<IDalitzEvent> {
@@ -16,6 +18,7 @@ class ISpinFactor : virtual public MINT::IReturnRealForEvent<IDalitzEvent>,virtu
   virtual double getVal(IDalitzEvent& evt)=0;
   virtual double RealVal(IDalitzEvent& evt)=0;
   virtual std::complex<double> ComplexVal(IDalitzEvent& evt)=0;
+  //  virtual TLorentzVector p(int i, IDalitzEvent& evt)=0;
 
   virtual std::string name() const=0;
   virtual ~ISpinFactor(){}

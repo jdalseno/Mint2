@@ -46,6 +46,8 @@ class Amplitude
  protected:
   AssociatingDecayTree _associatingDecayTree;
   ISpinFactor* _spinFactor;
+  std::string _prefix;
+  std::string _lsPrefix;
   char _spd;
   std::string _lopt;
   std::vector<double> _numOpts;
@@ -54,6 +56,12 @@ class Amplitude
   bool _init;
 
   std::vector<ILineshape*> _LineshapeList;
+
+  const std::string& prefix() const{return _prefix;}
+  std::string& prefix(){return _prefix;}
+  const std::string& lsPrefix() const{return _lsPrefix;}
+  std::string& lsPrefix(){return _lsPrefix;}
+
 
   bool addLineshape(ILineshape* ls);
 
@@ -89,7 +97,9 @@ class Amplitude
   std::complex<double> getOnePermutationsVal(IDalitzEvent& evt);
  public:
   Amplitude( const DecayTree& decay
-	     , char SPD_Wave='?'
+	     , const std::string& namePrefix=""
+	     , const std::string& lineshapePrefix=""
+	     , char SPD_Wave='?' // not really in use anymore
 	     , const std::string& opt=""
 	     , const std::vector<double>& numOpt = std::vector<double>()
 	     , IFitParRegister* daddy=0
@@ -129,12 +139,19 @@ class Amplitude
   //  virtual double RealVal(IDalitzEvent& evt){return Prob(evt);}
   virtual std::complex<double> ComplexVal(IDalitzEvent& evt){return getVal(evt);}
 
-  const AssociatedDecayTree& theDecay(const DalitzEventPattern& pat){
+  const AssociatedDecayTree& theDecay(const DalitzEventPattern& pat) const{
     return _associatingDecayTree.getTree(pat);
   }
   const AssociatedDecayTree& theDecay(IDalitzEvent& evt) const{
     return _associatingDecayTree.getTree(evt.eventPattern());
   }
+  void CheckAndMatchPattern(const DalitzEventPattern& pat) const{
+    theDecay(pat);// happens automatically, here.
+  }
+  void CheckAndMatchPattern(IDalitzEvent& evt) const{
+    CheckAndMatchPattern(evt.eventPattern());
+  }
+
 
   DecayTree theBareDecay() const{
     return _associatingDecayTree.getBareTree();

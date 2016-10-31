@@ -13,6 +13,8 @@ using namespace std;
 using namespace MINT;
 
 Amplitude::Amplitude( const DecayTree& decay
+		      , const std::string& namePrefix
+		      , const std::string& lineshapePrefix
 		      , char SPD_Wave
 		      , const std::string& lopt
 		      , const std::vector<double>& numOpts
@@ -21,6 +23,8 @@ Amplitude::Amplitude( const DecayTree& decay
   : FitParDependent(daddy)
   , _associatingDecayTree(decay)
   , _spinFactor(0)
+  , _prefix(namePrefix)
+  , _lsPrefix(lineshapePrefix)
   , _spd(SPD_Wave)
   , _lopt(lopt)
   , _numOpts(numOpts)
@@ -36,6 +40,8 @@ Amplitude::Amplitude( const AmpInitialiser& ampInit
   : FitParDependent(daddy)
   , _associatingDecayTree(ampInit.tree())
   , _spinFactor(0)
+  , _prefix(ampInit.prefix())
+  , _lsPrefix(ampInit.lsPrefix())
   , _spd(ampInit.SPD())
   , _lopt(ampInit.lopt())
   , _numOpts(ampInit.numOpts())
@@ -53,6 +59,8 @@ Amplitude::Amplitude( const Amplitude& other
   , FitParDependent(other, newDaddy)
   , _associatingDecayTree(other._associatingDecayTree)
   , _spinFactor(0)
+  , _prefix(other._prefix)
+  , _lsPrefix(other._lsPrefix)
   , _spd(other._spd)
   , _lopt(other._lopt)
   , _numOpts(other._numOpts)
@@ -85,7 +93,8 @@ bool Amplitude::createDependants(){
 	 << ". Calling SpinFactorMake with _spd = " << _spd
 	 << " and _lopt = " << _lopt << endl;
       }
-  _spinFactor = SpinFactorMaker(theBareDecay(), _spd, _lopt);
+  //_spinFactor = SpinFactorMaker(theBareDecay(), _spd, _lopt);
+  _spinFactor = SpinFactorMaker(theDecay(_pat), _spd, _lopt);
   if(dbThis) cout << "got this spin factor: " << _spinFactor->name() << endl;
   if(0 == _spinFactor) return false;
   bool cl = createLineshapes();
@@ -161,7 +170,7 @@ bool Amplitude::createLineshapes(const AssociatedDecayTree* treePtr){
 
   bool success=true;
   if(treePtr->nDgtr() >= 2){
-    addLineshape(LineshapeMaker(treePtr, _lopt, _numOpts));
+    addLineshape(LineshapeMaker(treePtr, lsPrefix(), _lopt, _numOpts));
     //    LineshapeList.push_back(LineshapeMaker(treePtr, _lopt));
     if(dbThis){
       cout << "Amplitude::createLineshapes: just added lineshape: ";
@@ -188,7 +197,7 @@ bool Amplitude::deleteLineshapes(){
 }
 
 std::complex<double> Amplitude::SpinFactorValue(IDalitzEvent& evt){
-  //bool dbThis=false;
+  //  bool dbThis=true;
   /*
    if(dbThis) {
     cout << "amplitude " << name()
@@ -384,30 +393,32 @@ std::complex<double> Amplitude::getVal(IDalitzEvent* evt){
 }
 
 std::complex<double> Amplitude::getNewVal(IDalitzEvent& evt){
-  //bool dbThis=false;
+  bool dbThis=false;
 
   //initialiseIfNeeded(evt.eventPattern());
-
+  CheckAndMatchPattern(evt);
   complex<double> sum=0;
 
   //if(! evt.eventPattern().compatibleWithFinalState(getTreePattern())) return 0;
 
+  if(dbThis) cout << "num permutations: " << evt.numPermutations() << endl;
   for(int i=0; i < evt.numPermutations(); i++){
     evt.setPermutationIndex(i);
     complex<double> thisVal= getOnePermutationsVal(evt);
-    /*
+    
     if(dbThis){
       cout << " permutation " << i
 	   << " makes event look like this: ";
-      getEvent()->print();
+      evt.print();
       cout << "\n gets thisVal " << thisVal << endl;
     }
-    */
+    
     sum += thisVal;
   }
   evt.setPermutationIndex(0);
   sum /= sqrt((double) evt.numPermutations());
 
+  if(dbThis) cout << "returning " << sum << endl;
   /*
   if(dbThis && abs(sum) > sqrt((double) 1000)){
     cout << " Amplitude : " << (*this)

@@ -5,7 +5,7 @@
 
 #include "Mint/DalitzEventPattern.h"
 #include "Mint/IDalitzEvent.h"
-#include "Mint/DecayTree.h"
+#include "Mint/AssociatedDecayTree.h"
 #include "Mint/SpinFactor.h"
 #include "Mint/counted_ptr.h"
 #include <iostream>
@@ -22,7 +22,7 @@ protected:
     
 public:
     virtual void printYourself(std::ostream& os=std::cout) const=0;
-    SF_AtoVP1_VtoP2P3_BASE(const DecayTree& theDecay) 
+    SF_AtoVP1_VtoP2P3_BASE(const AssociatedDecayTree& theDecay) 
     : SpinFactor(theDecay, 3)
     , V(0)
     {}
@@ -34,7 +34,7 @@ public:
     virtual const DecayTree& exampleDecay()=0;
     virtual std::string name() const{
         return "SpinFactor3:SF_AtoVP1_VtoP2P3_BASE(" 
-        + theBareDecay().oneLiner() + ")";
+        + theDecay().oneLiner() + ")";
     }
     
 };
@@ -45,7 +45,7 @@ protected:
   static DecayTree* _exampleDecay;
  public:
   virtual void printYourself(std::ostream& os=std::cout) const;
-  SF_AtoVP1_VtoP2P3(const DecayTree& theDecay, const int pol) 
+  SF_AtoVP1_VtoP2P3(const AssociatedDecayTree& theDecay, const int pol) 
     : SF_AtoVP1_VtoP2P3_BASE(theDecay), _pol(pol)
     {}
 
@@ -57,7 +57,7 @@ protected:
   virtual const DecayTree& exampleDecay();
   virtual std::string name() const{
     return "SpinFactor3:SF_AtoVP1_VtoP2P3(" 
-      + theBareDecay().oneLiner() + ")";
+      + theDecay().oneLiner() + ")";
   }
   int getPolarisation() {return _pol;}
 };
@@ -68,7 +68,7 @@ protected:
     static DecayTree* _exampleDecay;
 public:
     virtual void printYourself(std::ostream& os=std::cout) const;
-    SF_AtoVP1_VtoP2P3_D(const DecayTree& theDecay, const int pol) 
+    SF_AtoVP1_VtoP2P3_D(const AssociatedDecayTree& theDecay, const int pol) 
     : SF_AtoVP1_VtoP2P3_BASE(theDecay), _pol(pol)
     {}
     
@@ -80,7 +80,7 @@ public:
     virtual const DecayTree& exampleDecay();
     virtual std::string name() const{
         return "SpinFactor3:SF_AtoVP1_VtoP2P3_D(" 
-        + theBareDecay().oneLiner() + ")";
+        + theDecay().oneLiner() + ")";
     }
     int getPolarisation() {return _pol;}
 };
@@ -107,7 +107,7 @@ public:
     virtual const DecayTree& exampleDecay()=0;
     virtual std::string name() const{
         return "SpinFactor3:SF_AtoSP1_StoP2P3_BASE(" 
-        + theBareDecay().oneLiner() + ")";
+        + theDecay().oneLiner() + ")";
     }
     
 };
@@ -118,7 +118,7 @@ protected:
     static DecayTree* _exampleDecay;
 public:
     virtual void printYourself(std::ostream& os=std::cout) const;
-    SF_AtoSP1_StoP2P3(const DecayTree& theDecay, const int pol) 
+    SF_AtoSP1_StoP2P3(const AssociatedDecayTree& theDecay, const int pol) 
     : SF_AtoSP1_StoP2P3_BASE(theDecay), _pol(pol)
     {}
     
@@ -130,7 +130,7 @@ public:
     virtual const DecayTree& exampleDecay();
     virtual std::string name() const{
         return "SpinFactor3:SF_AtoSP1_StoP2P3(" 
-        + theBareDecay().oneLiner() + ")";
+        + theDecay().oneLiner() + ")";
     }
     int getPolarisation() {return _pol;}
 };
@@ -145,7 +145,7 @@ protected:
     
 public:
     virtual void printYourself(std::ostream& os=std::cout) const=0;
-    SF_VtoV0P1_V0toP2P3_BASE(const DecayTree& theDecay) 
+    SF_VtoV0P1_V0toP2P3_BASE(const AssociatedDecayTree& theDecay) 
     : SpinFactor(theDecay, 3)
     , V0(0)
     {}
@@ -157,7 +157,7 @@ public:
     virtual const DecayTree& exampleDecay()=0;
     virtual std::string name() const{
         return "SpinFactor3:SF_VtoV0P1_V0toP2P3_BASE(" 
-        + theBareDecay().oneLiner() + ")";
+        + theDecay().oneLiner() + ")";
     }
     
 };
@@ -168,7 +168,7 @@ protected:
     static DecayTree* _exampleDecay;
 public:
     virtual void printYourself(std::ostream& os=std::cout) const;
-    SF_VtoV0P1_V0toP2P3(const DecayTree& theDecay, const int pol) 
+    SF_VtoV0P1_V0toP2P3(const AssociatedDecayTree& theDecay, const int pol) 
     : SF_VtoV0P1_V0toP2P3_BASE(theDecay), _pol(pol)
     {}
     
@@ -180,7 +180,7 @@ public:
     virtual const DecayTree& exampleDecay();
     virtual std::string name() const{
         return "SpinFactor3:SF_VtoV0P1_V0toP2P3(" 
-        + theBareDecay().oneLiner() + ")";
+        + theDecay().oneLiner() + ")";
     }
     int getPolarisation() {return _pol;}
 };
@@ -196,7 +196,7 @@ protected:
     
 public:
     virtual void printYourself(std::ostream& os=std::cout) const=0;
-    SF_VtoSV0_StoP2P3_BASE(const DecayTree& theDecay) 
+    SF_VtoSV0_StoP2P3_BASE(const AssociatedDecayTree& theDecay) 
     : SpinFactor(theDecay, 3)
     , S(0)
     {}
@@ -208,7 +208,7 @@ public:
     virtual const DecayTree& exampleDecay()=0;
     virtual std::string name() const{
         return "SpinFactor3:SF_VtoSV0_StoP2P3_BASE(" 
-        + theBareDecay().oneLiner() + ")";
+        + theDecay().oneLiner() + ")";
     }
     
 };
@@ -219,7 +219,7 @@ protected:
     static DecayTree* _exampleDecay;
 public:
     virtual void printYourself(std::ostream& os=std::cout) const;
-    SF_VtoSV0_StoP2P3(const DecayTree& theDecay, const int pol) 
+    SF_VtoSV0_StoP2P3(const AssociatedDecayTree& theDecay, const int pol) 
     : SF_VtoSV0_StoP2P3_BASE(theDecay), _pol(pol)
     {}
     
@@ -231,7 +231,7 @@ public:
     virtual const DecayTree& exampleDecay();
     virtual std::string name() const{
         return "SpinFactor3:SF_VtoSV0_StoP2P3(" 
-        + theBareDecay().oneLiner() + ")";
+        + theDecay().oneLiner() + ")";
     }
     int getPolarisation() {return _pol;}
 };
@@ -246,7 +246,7 @@ protected:
     
 public:
     virtual void printYourself(std::ostream& os=std::cout) const=0;
-    SF_VtoAP1_AtoV0P2_BASE(const DecayTree& theDecay) 
+    SF_VtoAP1_AtoV0P2_BASE(const AssociatedDecayTree& theDecay) 
     : SpinFactor(theDecay, 3)
     , A(0)
     {}
@@ -258,7 +258,7 @@ public:
     virtual const DecayTree& exampleDecay()=0;
     virtual std::string name() const{
         return "SpinFactor3:SF_VtoAP1_AtoV0P2_BASE(" 
-        + theBareDecay().oneLiner() + ")";
+        + theDecay().oneLiner() + ")";
     }
     
 };
@@ -269,7 +269,7 @@ protected:
     static DecayTree* _exampleDecay;
 public:
     virtual void printYourself(std::ostream& os=std::cout) const;
-    SF_VtoAP1_AtoV0P2(const DecayTree& theDecay, const int pol) 
+    SF_VtoAP1_AtoV0P2(const AssociatedDecayTree& theDecay, const int pol) 
     : SF_VtoAP1_AtoV0P2_BASE(theDecay), _pol(pol)
     {}
     
@@ -281,7 +281,7 @@ public:
     virtual const DecayTree& exampleDecay();
     virtual std::string name() const{
         return "SpinFactor3:SF_VtoAP1_AtoV0P2(" 
-        + theBareDecay().oneLiner() + ")";
+        + theDecay().oneLiner() + ")";
     }
     int getPolarisation() {return _pol;}
 };

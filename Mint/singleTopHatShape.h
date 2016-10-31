@@ -21,7 +21,6 @@ class singleTopHatShape : virtual public ILineshape, public MINT::FitParDependen
  private:
   mutable MINT::counted_ptr<IGenFct> _genFct;
   void makeGeneratingFunction() const;
-  
  protected:
 
   const AssociatedDecayTree& _theDecay; 
@@ -32,10 +31,13 @@ class singleTopHatShape : virtual public ILineshape, public MINT::FitParDependen
 
   bool startOfDecayChain() const{return !(_theDecay.hasParent());}
   double mumsRecoMass2(IDalitzEvent& evt) const;
-  
+
+  std::string _prefix;  
+  const std::string& prefix() const{return _prefix;}
+
  public:
   singleTopHatShape( const AssociatedDecayTree& decay
-		     , double mini, double maxi);
+		     , double mini, double maxi, const std::string& namePrefix="");
   singleTopHatShape(const singleTopHatShape& other);
 
   virtual std::complex<double> getVal(IDalitzEvent& evt);

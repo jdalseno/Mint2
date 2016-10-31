@@ -122,11 +122,11 @@ void PrintAllSpinFactors(std::ostream& out){
 }
 
 
-ISpinFactor* SpinFactorMaker(const DecayTree& thisDcy
+ISpinFactor* SpinFactorMaker(const AssociatedDecayTree& thisDcy
 			     , char SPD_Wave
 			     , const std::string& lopt
 			     ){
-  bool dbThis=false;
+  bool dbThis=true;
 
   ISpinFactor *sf;
 
@@ -143,7 +143,7 @@ ISpinFactor* SpinFactorMaker(const DecayTree& thisDcy
     sf = new SpinFactorTrivial;
   }else if( 3 == nFinalStates){
     cout << " calling  SpinFactorMaker3Body " << endl;
-    sf = SpinFactorMaker3Body(thisDcy, SPD_Wave,lopt);
+    sf = SpinFactorMaker3Body(thisDcy, SPD_Wave,lopt); // new SpinFactor3(thisDcy);
   }else if( 4 == nFinalStates){
     sf = SpinFactorMaker4Body(thisDcy, SPD_Wave,lopt);
   }else{
@@ -165,7 +165,7 @@ ISpinFactor* SpinFactorMaker(const DecayTree& thisDcy
 
 
 
-ISpinFactor* SpinFactorMaker3Body(const DecayTree& thisDcy, char SPD_Wave, const std::string& lopt){
+ISpinFactor* SpinFactorMaker3Body(const AssociatedDecayTree& thisDcy, char SPD_Wave, const std::string& lopt){
     bool dbThis=true;
     
     if(dbThis){
@@ -237,7 +237,7 @@ ISpinFactor* SpinFactorMaker3Body(const DecayTree& thisDcy, char SPD_Wave, const
 }
 
 
-ISpinFactor* SpinFactorMaker4Body(const DecayTree& thisDcy, char SPD_Wave, const std::string& lopt){
+ISpinFactor* SpinFactorMaker4Body(const AssociatedDecayTree& thisDcy, char SPD_Wave, const std::string& lopt){
     bool dbThis=false;
 
     if(dbThis){

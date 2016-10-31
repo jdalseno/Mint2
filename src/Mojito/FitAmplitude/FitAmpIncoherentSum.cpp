@@ -22,9 +22,10 @@ FitAmpIncoherentSum::FitAmpIncoherentSum(const DalitzEventPattern& pat
 		     , const char* fname
 		     , MinuitParameterSet* pset
 		     , const std::string& prefix
+		     , const std::string& lineshapePrefix
 		     , const std::string& opt
 		     )
-  : FitAmpList(pat, fname, pset, FitAmpIncoherentSum::IncPrefix()+ prefix, opt)
+  : FitAmpList(pat, fname, pset, FitAmpIncoherentSum::IncPrefix()+ prefix, lineshapePrefix, opt)
   , _useAnalyticGradient("useAnalyticGradient",0)
 {
   /*
@@ -38,9 +39,10 @@ FitAmpIncoherentSum::FitAmpIncoherentSum(const DalitzEventPattern& pat
 FitAmpIncoherentSum::FitAmpIncoherentSum(const DalitzEventPattern& pat
 		     , MinuitParameterSet* pset
 		     , const std::string& prefix
+		     , const std::string& lineshapePrefix
 		     , const std::string& opt
 		     )
-  : FitAmpList(pat, pset, FitAmpIncoherentSum::IncPrefix() + prefix, opt)
+  : FitAmpList(pat, pset, FitAmpIncoherentSum::IncPrefix() + prefix, lineshapePrefix, opt)
   , _useAnalyticGradient("useAnalyticGradient",0)
 {
   /*
@@ -52,9 +54,10 @@ FitAmpIncoherentSum::FitAmpIncoherentSum(const DalitzEventPattern& pat
 }
 FitAmpIncoherentSum::FitAmpIncoherentSum(const DalitzEventPattern& pat
 		     , const std::string& prefix
+		     , const std::string& lineshapePrefix
 		     , const std::string& opt
 		     )
-  : FitAmpList(pat, FitAmpIncoherentSum::IncPrefix() + prefix, opt)
+  : FitAmpList(pat, FitAmpIncoherentSum::IncPrefix() + prefix, lineshapePrefix, opt)
   , _useAnalyticGradient("useAnalyticGradient",0)
 {
   /*

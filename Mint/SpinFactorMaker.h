@@ -4,22 +4,23 @@
 #define SPINFACTOR_MAKER
 
 #include <iostream>
-#include "Mint/DecayTree.h"
+//#include "Mint/DecayTree.h"
+#include "Mint/AssociatedDecayTree.h"
 #include "Mint/ISpinFactor.h"
 
 void PrintAllSpinFactors(std::ostream& out = std::cout);
 
-ISpinFactor* SpinFactorMaker(const DecayTree& thisDcy
+ISpinFactor* SpinFactorMaker(const AssociatedDecayTree& thisDcy
 			     , char SPD_Wave='?'
 			     , const std::string& lopt=""
 			    );
 
-ISpinFactor* SpinFactorMaker3Body(const DecayTree& thisDcy
+ISpinFactor* SpinFactorMaker3Body(const AssociatedDecayTree& thisDcy
                                   , char SPD_Wave='?'
                                   , const std::string& lopt=""
                                   );
 
-ISpinFactor* SpinFactorMaker4Body(const DecayTree& thisDcy
+ISpinFactor* SpinFactorMaker4Body(const AssociatedDecayTree& thisDcy
 				  , char SPD_Wave='?'
 				  , const std::string& lopt=""
 				  );

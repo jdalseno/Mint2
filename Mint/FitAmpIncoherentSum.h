@@ -32,22 +32,25 @@ class FitAmpIncoherentSum
   static std::string IncPrefix();
  public:
   FitAmpIncoherentSum(const DalitzEventPattern& pat
-	    , const char* fname=0
-	    , MINT::MinuitParameterSet* pset=0
-	    , const std::string& prefix=""
-	    , const std::string& opt=""
-	    );
+		      , const char* fname=0
+		      , MINT::MinuitParameterSet* pset=0
+		      , const std::string& prefix=""
+		      , const std::string& lineshapePrefix=""
+		      , const std::string& opt=""
+		      );
 
   FitAmpIncoherentSum(const DalitzEventPattern& pat
-	    , MINT::MinuitParameterSet* pset
-	    , const std::string& prefix=""
-	    , const std::string& opt=""
-	    );
+		      , MINT::MinuitParameterSet* pset
+		      , const std::string& prefix=""
+		      , const std::string& lineshapePrefix=""
+		      , const std::string& opt=""
+		      );
   FitAmpIncoherentSum(const DalitzEventPattern& pat
-	    , const std::string& prefix
-	    , const std::string& opt=""
-	    );
-
+		      , const std::string& prefix
+		      , const std::string& lineshapePrefix=""
+		      , const std::string& opt=""
+		      );
+  
   FitAmpIncoherentSum(const FitAmpIncoherentSum& other);
   FitAmpIncoherentSum(const FitAmpList& other);
   /* 

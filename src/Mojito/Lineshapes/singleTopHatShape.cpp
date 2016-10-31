@@ -8,11 +8,13 @@ using namespace std;
 using namespace MINT;
 
 singleTopHatShape::singleTopHatShape( const AssociatedDecayTree& decay
-				      , double mini, double maxi)
+				      , double mini, double maxi
+				      , const std::string& namePrefix)
   : _genFct(0)
   , _theDecay(decay)
   , _min_sij(mini)
   , _max_sij(maxi)
+  , _prefix(namePrefix)
 {
   if(_theDecay.nDgtr() > 2 && ! (startOfDecayChain())){
     std::cout << "WARNING: singleTopHatShape can only properly handle"
@@ -32,6 +34,7 @@ singleTopHatShape::singleTopHatShape(const singleTopHatShape& other)
   , _theDecay(other._theDecay)
   , _min_sij(other._min_sij)
   , _max_sij(other._max_sij)
+  , _prefix(other._prefix)
 {
 }
 
@@ -85,6 +88,7 @@ std::string singleTopHatShape::name() const{
   std::stringstream strm;
   strm << "singleTopHatShape[" 
        << min() << "," << max() << "]("
+       << prefix()
        << _theDecay.oneLiner() << ")";
   std::string ing;
   strm >> ing;
@@ -97,7 +101,7 @@ void singleTopHatShape::print(IDalitzEvent& evt, std::ostream& out) const{
       << "\n\t> min, max sij: " << min() << ", " << max()
       << "\n\t> sij: " << mumsRecoMass2(evt)
       << "\n\t> This is the decay I'm looking at:"
-      << "\n" << _theDecay
+      << "\n" << prefix() << ", " << _theDecay
       << " startOfDecayChain? " << startOfDecayChain()
       << ", getValue " << getValue(evt);
 }
@@ -106,7 +110,7 @@ void singleTopHatShape::print(std::ostream& out) const{
       << "\n\t> co-ordinate: " << getDalitzCoordinate()
       << "\n\t> min, max sij: " << min() << ", " << max()
       << "\n\t> This is the decay I'm looking at:"
-      << "\n" << _theDecay
+      << "\n" << prefix() << ", "<< _theDecay
       << " startOfDecayChain? " << startOfDecayChain();
 }
 

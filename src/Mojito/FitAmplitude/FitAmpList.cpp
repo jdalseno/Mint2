@@ -20,6 +20,7 @@ FitAmpList::FitAmpList(const DalitzEventPattern& pat
 		       , const char* fname
 		       , MinuitParameterSet* pset
 		       , const std::string& prefix
+		       , const std::string& lineshapePrefix
 		       , const std::string& opt
 		     )
   : FitAmpListBase()
@@ -33,12 +34,13 @@ FitAmpList::FitAmpList(const DalitzEventPattern& pat
     _paraFName.clear();
   }
   
-  createAllAmps(pat, prefix);
+  createAllAmps(pat, prefix, lineshapePrefix);
 }
 
 FitAmpList::FitAmpList(const DalitzEventPattern& pat
 		       , MinuitParameterSet* pset
 		       , const std::string& prefix
+		       , const std::string& lineshapePrefix
 		       , const std::string& opt
 		     )
   : FitAmpListBase()
@@ -51,10 +53,11 @@ FitAmpList::FitAmpList(const DalitzEventPattern& pat
   
   _paraFName.clear();
   
-  createAllAmps(pat, prefix);
+  createAllAmps(pat, prefix, lineshapePrefix);
 }
 FitAmpList::FitAmpList(const DalitzEventPattern& pat
 		       , const std::string& prefix
+		       , const std::string& lineshapePrefix
 		       , const std::string& opt
 		       )
   : FitAmpListBase()
@@ -65,7 +68,7 @@ FitAmpList::FitAmpList(const DalitzEventPattern& pat
   
   _paraFName.clear();
   
-  createAllAmps(pat, prefix);
+  createAllAmps(pat, prefix, lineshapePrefix);
 }
 
 FitAmpList::FitAmpList(const FitAmpList& other)
@@ -120,7 +123,9 @@ counted_ptr<FitAmpListBase> FitAmpList::GetCPConjugateSameFitParameters() const{
 }
 
 bool FitAmpList::createAllAmps(const DalitzEventPattern& thePattern
-			      , const std::string& prefix){
+			       , const std::string& prefix
+			       , const std::string& lineshapePrefix
+			       ){
   bool dbThis=false;
 
   //  cout << "pset pointer in FitAmpList::createAllAmps " << getMPS() << endl;
@@ -158,49 +163,51 @@ bool FitAmpList::createAllAmps(const DalitzEventPattern& thePattern
       cout << "making TopHats" << endl;
       NamedParameter<double> TopHatsLimits("TopHatsLimits");
       if(TopHatsLimits.size() < 2){
-	cout << "error when setting TopHatsLimits: need at least 2 limits, have "
-	     << TopHatsLimits.size() << endl;
-	continue;
+        cout << "error when setting TopHatsLimits: need at least 2 limits, have "
+             << TopHatsLimits.size() << endl;
+        continue;
       }
       MultiTopHat mth;
-      for( unsigned int i=1; i<static_cast<unsigned int>(TopHatsLimits.size());
-	   ++i){
-	double lo = TopHatsLimits.getVal(i-1);
-	double hi = TopHatsLimits.getVal(i);
-	
-	cout << "TopHatLimits: " << lo << ", " << hi << endl;
-	AmpInitialiser ai(it->second);
-	ai.setNumOpts(lo, hi);
-	cout << "ai set " << endl;
-	//success &= addAmplitude(new FitAmplitude(prefix + it->first + "_" + anythingToString(i)
+      for( int i=1; i < TopHatsLimits.size(); i++){
+        double lo = TopHatsLimits.getVal(i-1);
+        double hi = TopHatsLimits.getVal(i);
+        
+        cout << "TopHatLimits: " << lo << ", " << hi << endl;
+        AmpInitialiser ai(it->second, prefix, lineshapePrefix);
+        ai.setNumOpts(lo, hi);
+        ai.setIndex(i);
 
-	FitAmplitude* famp(new FitAmplitude((prefix 
-					     + it->first + "_" 
-					     + anythingToString((int) i)).c_str()
-					    , ai
-					    , fnamePtr
-					    , getMPS()
-					    )
-			   );
-	if(! famp->canBeIgnored()){
-	  if(dbThis) cout << "adding this: " << *famp << endl;
-	  success &= mth.addAmplitude(famp);
-	}else{
-	  if(dbThis) cout << "ignoring this: " << *famp << endl;
-	  delete famp;
-	}
+        cout << "ai set " << endl;
+        //success &= addAmplitude(new FitAmplitude(prefix + it->first + "_" + anythingToString(i)
+        
+        FitAmplitude* famp(new FitAmplitude(ai
+                                            , fnamePtr
+                                            , getMPS()
+                                            )
+                           );
+        if(! famp->canBeIgnored()){
+          if(dbThis) cout << "adding this: " << *famp << endl;
+          success &= mth.addAmplitude(famp);
+        }else{
+          if(dbThis) cout << "ignoring this: " << *famp << endl;
+          delete famp;
+        }
       }
       addAsList(mth);
     }else{
-      //cout << "making a normal amplitude " << it->first << endl;
-      FitAmplitude* famp(new FitAmplitude(prefix + it->first
-					  , it->second
-					  , fnamePtr
-					  , getMPS()
-					  )
+      if(dbThis)cout << "making a normal amplitude " << it->first << endl;
+      if(dbThis)cout << "with prefix: " << prefix << endl;
+      if(dbThis)cout << "lopt: " << it->second.lopt() << endl;
+      AmpInitialiser ai(it->second, prefix, lineshapePrefix);
+      if(dbThis)cout << "lopt2 " << ai.lopt() <<endl;
+      if(dbThis)cout << "at FitAmpList: lineshapePrefix " << lineshapePrefix << endl;
+      FitAmplitude* famp(new FitAmplitude( ai
+                                          , fnamePtr
+                                          , getMPS()
+                                          )
 			 );
       if(! famp->canBeIgnored()){
-	if(dbThis) cout << "adding this: " << *famp << endl;
+	if(dbThis)cout << "adding this: " << *famp << endl;
 	success &= this->addAmplitude(famp);
       }else{
 	if(dbThis) cout << "ignoring this: " << *famp << endl;
@@ -222,10 +229,10 @@ bool FitAmpList::createAllAmps(const DalitzEventPattern& thePattern
 }
 
 void FitAmpList::printLargestAmp(IDalitzEvent& evt, std::ostream& os){
-  bool dbThis=false;
+  bool dbthis=false;
   if(_fitAmps.empty()) createAllAmps(evt.eventPattern());
   FitAmpListBase::printLargestAmp(evt, os);
-  (void)dbThis;
+  (void)dbthis;
 }
 
 

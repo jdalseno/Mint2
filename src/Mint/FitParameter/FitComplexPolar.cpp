@@ -50,6 +50,8 @@ FitComplexPolar::FitComplexPolar(const std::string& varName
   , _amp  (makeAmpName(  varName), fname, pset, fow, vb)
   , _phase(makePhaseName(varName), fname, pset, fow, vb)
 {
+  //cout << "FitComplexPolar, just made: " << _amp
+  //     << " and " << _phase << endl;
 }
 FitComplexPolar::FitComplexPolar(const std::string& varName
 				 , MinuitParameterSet* pset

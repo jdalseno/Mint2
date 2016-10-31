@@ -260,7 +260,7 @@ void SF_BtoAV0_AtoVP1_VtoP2P3::printYourself(ostream& os) const{
   os << "spin factor SF_BtoAV0_AtoVP1_VtoP2P3"
      << "\n\t P.Sandwich(e_c,Z)"
      << "\n\t /GeV"
-     << "\n\t    parsed tree " << theBareDecay().oneLiner()
+     << "\n\t    parsed tree " << theDecay().oneLiner()
      << "\n      like this:" << endl;
   this->printParsing(os);
 }
@@ -302,7 +302,7 @@ void SF_BtoAV0_AtoVP1Dwave_VtoP2P3::printYourself(ostream& os) const{
     os << "spin factor SF_BtoAV0Dwave_AtoVP1_VtoP2P3"
     << "\n\t e_c.Dot(ZA) * ZV.Dot(qA)"
     << "\n\t /GeV^3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -340,7 +340,7 @@ complex<double> SF_BtoAV0_AtoVP1Dwave_VtoP2P3_P::getNewVal(IDalitzEvent& evt){
 void SF_BtoAV0_AtoVP1Dwave_VtoP2P3_P::printYourself(ostream& os) const{    
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoAV0Dwave_AtoVP1_VtoP2P3_P"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -378,7 +378,7 @@ complex<double> SF_BtoAV0_AtoVP1Dwave_VtoP2P3_D::getNewVal(IDalitzEvent& evt){
 void SF_BtoAV0_AtoVP1Dwave_VtoP2P3_D::printYourself(ostream& os) const{    
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoAV0Dwave_AtoVP1_VtoP2P3_D"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -426,7 +426,7 @@ void SF_BtoAV0_AtoVP1_VtoP2P3_P::printYourself(ostream& os) const{
     os << "spin factor SF_BtoAV0_AtoVP1_VtoP2P3_P"
     << "\n\t LeviCivita(e_c,PA.Dot(ZV),pB,qB)"
     << "\n\t /GeV^3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -473,7 +473,7 @@ void SF_BtoAV0_AtoVP1_VtoP2P3_D::printYourself(ostream& os) const{
     os << "spin factor SF_BtoAV0_AtoVP1_VtoP2P3_D"
     << "\n\t e_c.Dot(pA) * ZA.Dot(ZV)"
     << "\n\t /GeV^3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -608,7 +608,7 @@ void SF_BtoAV0_AtoSP1_StoP2P3::printYourself(ostream& os) const{
     os << "spin factor SF_BtoAV0_AtoSP1_StoP2P3"
     << "\n\t ZA.Dot(e_c)"
     << "\n\t /GeV"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -638,7 +638,7 @@ complex<double> SF_BtoAV0_AtoSP1_StoP2P3_P::getNewVal(IDalitzEvent& evt){
 void SF_BtoAV0_AtoSP1_StoP2P3_P::printYourself(ostream& os) const{    
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoAV0_AtoSP1_StoP2P3_P"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -669,7 +669,7 @@ complex<double> SF_BtoAV0_AtoSP1_StoP2P3_D::getNewVal(IDalitzEvent& evt){
 void SF_BtoAV0_AtoSP1_StoP2P3_D::printYourself(ostream& os) const{    
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoAV0_AtoSP1_StoP2P3_P"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -779,7 +779,7 @@ void SF_BtoV1V0_V1toV2P1_V2toP2P3::printYourself(ostream& os) const{
     os << "spin factor SF_BtoV1V0_V1toV2P1_V2toP2P3"
     << "\n\t PV1.Contract(e_c),ZV2,qB,pB)"
     << "\n\t /GeV^3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -829,7 +829,7 @@ complex<double> SF_BtoV1V0_V1toV2P1_V2toP2P3_P::getNewVal(IDalitzEvent& evt){
 void SF_BtoV1V0_V1toV2P1_V2toP2P3_P::printYourself(ostream& os) const{
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoV1V0_V1toV2P1_V2toP2P3_P"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -880,7 +880,7 @@ complex<double> SF_BtoV1V0_V1toV2P1_V2toP2P3_D::getNewVal(IDalitzEvent& evt){
 void SF_BtoV1V0_V1toV2P1_V2toP2P3_D::printYourself(ostream& os) const{
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoV1V0_V1toV2P1_V2toP2P3_D"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -1018,7 +1018,7 @@ void SF_BtoPseudoTV0_PseudoTtoVP1_VtoP2P3_P::printYourself(ostream& os) const{
     os << "spin factor SF_BtoPseudoTV0_PseudoTtoVP1_VtoP2P3_P"
     << "\n\t e_c.Dot(ZT.Contract(ZV))"
     << "\n\t /GeV^3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -1063,7 +1063,7 @@ void SF_BtoPseudoTV0_PseudoTtoVP1_VtoP2P3_D::printYourself(ostream& os) const{
     os << "spin factor SF_BtoPseudoTV0_PseudoTtoVP1_VtoP2P3_D"
     << "\n\t LeviCivita(e_c,ZT.Contract(ZV),pB,qB)"
     << "\n\t /GeV^5"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -1173,7 +1173,7 @@ void SF_BtoPseudoTV0_PseudoTtoSP1_StoP2P3_P::printYourself(ostream& os) const{
     os << "spin factor SF_BtoPseudoTV0_PseudoTtoSP1_StoP2P3_P"
     << "\n\t e_c.Dot(ZT.Contract(qB))"
     << "\n\t /GeV^3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -1291,7 +1291,7 @@ void SF_BtoPseudoTV0_PseudoTtoTP1_TtoP2P3_P::printYourself(ostream& os) const{
     os << "spin factor SF_BtoPseudoTV0_PseudoTtoTP1_TtoP2P3_P"
     << "\n\t e_c.Dot(ZT.Contract(qB))"
     << "\n\t /GeV^3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -1431,7 +1431,7 @@ void SF_BtoTV0_TtoVP1_VtoP2P3_P::printYourself(ostream& os) const{
     os << "spin factor SF_BtoTV0_TtoVP1_VtoP2P3_P"
     << "\n\t LeviCivita(ZT.Contract(e_c),ZV,pB,qB)"
     << "\n\t /GeV^5"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -1545,7 +1545,7 @@ void SF_BtoVP1_VtoV0S_StoP2P3::printYourself(ostream& os) const{
     os << "spin factor SF_BtoVP1_VtoV0S_StoP2P3"
     << "\n\t Z.Dot(e_c)"
     << "\n\t /GeV"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -1672,7 +1672,7 @@ void SF_BtoV1P1_V1toV2V0_V2toP2P3::printYourself(ostream& os) const{
     
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoV1P1_V1toV2V0_V2toP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -1798,7 +1798,7 @@ void SF_BtoAP1_AtoVV0_VtoP2P3::printYourself(ostream& os) const{
     
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoAP1_AtoVV0_VtoP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -1924,7 +1924,7 @@ void SF_BtoV1V2_V1toP1V0_V2toP2P3::printYourself(ostream& os) const{
     
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoV1V2_V1toP1V0_V2toP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -2042,7 +2042,7 @@ void SF_BtoAV_AtoP1V0_VtoP2P3::printYourself(ostream& os) const{
     
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoAV_AtoP1V0_VtoP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -2094,7 +2094,7 @@ complex<double> SF_BtoAV_AtoP1V0_VtoP2P3_P::getNewVal(IDalitzEvent& evt){
 void SF_BtoAV_AtoP1V0_VtoP2P3_P::printYourself(ostream& os) const{    
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoAV_AtoP1V0_VtoP2P3_P"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -2148,7 +2148,7 @@ complex<double> SF_BtoAV_AtoP1V0_VtoP2P3_D::getNewVal(IDalitzEvent& evt){
 void SF_BtoAV_AtoP1V0_VtoP2P3_D::printYourself(ostream& os) const{    
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoAV_AtoP1V0_VtoP2P3_D"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -2260,7 +2260,7 @@ void SF_BtoAS_AtoP1V0_StoP2P3::printYourself(ostream& os) const{
     
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoAS_AtoP1V0_StoP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -2372,7 +2372,7 @@ void SF_BtoPS_PtoP1V0_StoP2P3::printYourself(ostream& os) const{
     
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoPS_PtoP1V0_StoP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -2495,7 +2495,7 @@ void SF_BtoPV_PtoP1V0_VtoP2P3::printYourself(ostream& os) const{
     
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoPV_PtoP1V0_VtoP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -2602,7 +2602,7 @@ void SF_BtoPV0_PtoS_StoP2P3::printYourself(ostream& os) const{
     
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoPV0_PtoS_StoP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -2714,7 +2714,7 @@ void SF_BtoVP1_VtoAP2_AtoV0P3::printYourself(ostream& os) const{
     
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoVP1_VtoAP2_AtoV0P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -2819,7 +2819,7 @@ void SF_BtoVP1_VtoSV0_StoP2P3::printYourself(ostream& os) const{
     
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoVP1_VtoSV0_StoP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -2929,7 +2929,7 @@ complex<double> SF_BtoPV0_PtoP1V1_V1toP2P3::getNewVal(IDalitzEvent& evt){
 void SF_BtoPV0_PtoP1V1_V1toP2P3::printYourself(ostream& os) const{    
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoPV0_PtoP1V1_V1toP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -3023,7 +3023,7 @@ complex<double> SF_BtoSP1_StoVV0_VtoP2P3::getNewVal(IDalitzEvent& evt){
 void SF_BtoSP1_StoVV0_VtoP2P3::printYourself(ostream& os) const{    
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoSP1_StoVV0_VtoP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
     this->printParsing(os);
 }
@@ -3121,7 +3121,7 @@ complex<double> SF_BtoPP1_PtoVV0_VtoP2P3::getNewVal(IDalitzEvent& evt){
 void SF_BtoPP1_PtoVV0_VtoP2P3::printYourself(ostream& os) const{    
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoPP1_PtoVV0_VtoP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
 } 
 
@@ -3224,7 +3224,7 @@ complex<double> SF_BtoVP1_VtoTV0_TtoP2P3::getNewVal(IDalitzEvent& evt){
 void SF_BtoVP1_VtoTV0_TtoP2P3::printYourself(ostream& os) const{    
     if(! ( fsPS[0] && fsPS[1] && fsPS[2] && fsPS[3]) ) return;
     os << "spin factor SF_BtoVP1_VtoTV0_TtoP2P3"
-    << "\n\t    parsed tree " << theBareDecay().oneLiner()
+    << "\n\t    parsed tree " << theDecay().oneLiner()
     << "\n      like this:" << endl;
 } 
 

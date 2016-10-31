@@ -19,11 +19,18 @@ class ResonanceProperties{
   static double widthInit(int pdg_id);
   static double radiusInit(int pdg_id);
 
+  std::string _prefix;
+
   int _pid;
   mutable MINT::FitParameter _fitMass;
   MINT::FitParameter _fitWidth;
   MINT::FitParameter _fitRadius;
   MINT::FitParameter _fitAlpha;
+  MINT::FitParameter _fitc1;
+  MINT::FitParameter _fitc2;
+  MINT::FitParameter _fitc3;
+  MINT::FitParameter _fitc4; 
+  MINT::FitParameter _fitc5;
   MINT::FitParameter _fitFermiLambda;
   MINT::FitParameter _fitFermiS0;
   MINT::FitParameter _fitRhoOmegaDelta_Re;
@@ -39,13 +46,8 @@ class ResonanceProperties{
   MINT::FitParameter _fitBugg_g_etaeta;
   MINT::FitParameter _fitBugg_alpha;
   MINT::FitParameter _fitBugg_sA;
-  MINT::FitParameter _fitBugg_4pi_lambda;
   MINT::FitParameter _fitBugg_4pi_s0;
-  MINT::FitParameter _fitc1;
-  MINT::FitParameter _fitc2;
-  MINT::FitParameter _fitc3;
-  MINT::FitParameter _fitc4; 
-  MINT::FitParameter _fitc5;
+  MINT::FitParameter _fitBugg_4pi_lambda;
 
   MINT::FitParameter _fitModel_independent_Bin_1_Re;
   MINT::FitParameter _fitModel_independent_Bin_1_Im;
@@ -67,13 +69,15 @@ class ResonanceProperties{
   MINT::FitParameter _fitModel_independent_Bin_9_Im;
   MINT::FitParameter _fitModel_independent_Bin_10_Re;
   MINT::FitParameter _fitModel_independent_Bin_10_Im;
-    
+   
+  const std::string& prefix()const{return _prefix;}
+  std::string makeFitParName(const std::string& propertyName, int pdg_id) const;
  public:
   static std::string nameFromPid(int pdg_id);
   static int pidFromName(const std::string& name);
   static std::string nameFromName(const std::string& name);
-  ResonanceProperties(int pid, MINT::MinuitParameterSet* mps=0);
-  ResonanceProperties(const std::string& name, MINT::MinuitParameterSet* mps=0);
+  ResonanceProperties(int pid, MINT::MinuitParameterSet* mps=0, const std::string& namePrefix="");
+  ResonanceProperties(const std::string& name, MINT::MinuitParameterSet* mps=0, const std::string& namePrefix="");
   double mass() const{return _fitMass;}
   double width() const{return _fitWidth;}
   double radius() const{return _fitRadius;}

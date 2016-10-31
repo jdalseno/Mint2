@@ -24,7 +24,7 @@ class SF_DtoVT_VtoP0P1_TtoP2P3_BASE : public SpinFactor{
 
  public:
   virtual void printYourself(std::ostream& os=std::cout) const=0;
- SF_DtoVT_VtoP0P1_TtoP2P3_BASE(const DecayTree& theDecay) 
+ SF_DtoVT_VtoP0P1_TtoP2P3_BASE(const AssociatedDecayTree& theDecay) 
    : SpinFactor(theDecay, 4)
     , V(0), T(0)
     {
@@ -36,7 +36,7 @@ class SF_DtoVT_VtoP0P1_TtoP2P3_BASE : public SpinFactor{
   virtual const DecayTree& exampleDecay()=0;
   virtual std::string name() const{
     return "SpinFactor4:SF_DtoVT_VtoP0P1_TtoP2P3_BASE("
-      + theBareDecay().oneLiner() + ")";
+      + theDecay().oneLiner() + ")";
   }
 
 };
@@ -47,7 +47,7 @@ class SF_DtoVT_VtoP0P1_TtoP2P3_P : public SF_DtoVT_VtoP0P1_TtoP2P3_BASE{
  public:
   virtual void printYourself(std::ostream& os=std::cout) const;
   
- SF_DtoVT_VtoP0P1_TtoP2P3_P(const DecayTree& theDecay)
+ SF_DtoVT_VtoP0P1_TtoP2P3_P(const AssociatedDecayTree& theDecay)
    : SF_DtoVT_VtoP0P1_TtoP2P3_BASE(theDecay)
     {
 //      printYourself();
@@ -60,7 +60,7 @@ class SF_DtoVT_VtoP0P1_TtoP2P3_P : public SF_DtoVT_VtoP0P1_TtoP2P3_BASE{
   virtual const DecayTree& exampleDecay();
   virtual std::string name() const{
     return "SpinFactor4:SF_DtoVT_VtoP0P1_TtoP2P3_P(" 
-      + theBareDecay().oneLiner() + ")";
+      + theDecay().oneLiner() + ")";
   }
 };
 
@@ -71,7 +71,7 @@ class SF_DtoVT_VtoP0P1_TtoP2P3_D : public SF_DtoVT_VtoP0P1_TtoP2P3_BASE{
  public:
   virtual void printYourself(std::ostream& os=std::cout) const;
   
- SF_DtoVT_VtoP0P1_TtoP2P3_D(const DecayTree& theDecay)
+ SF_DtoVT_VtoP0P1_TtoP2P3_D(const AssociatedDecayTree& theDecay)
    : SF_DtoVT_VtoP0P1_TtoP2P3_BASE(theDecay)
     {
 //      printYourself();
@@ -84,7 +84,7 @@ class SF_DtoVT_VtoP0P1_TtoP2P3_D : public SF_DtoVT_VtoP0P1_TtoP2P3_BASE{
   virtual const DecayTree& exampleDecay();
   virtual std::string name() const{
     return "SpinFactor4:SF_DtoVT_VtoP0P1_TtoP2P3_D(" 
-      + theBareDecay().oneLiner() + ")";
+      + theDecay().oneLiner() + ")";
   }
 };
 
@@ -99,7 +99,7 @@ class SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE : public SpinFactor{
 
  public:
   virtual void printYourself(std::ostream& os=std::cout) const=0;
- SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE(const DecayTree& theDecay) 
+ SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE(const AssociatedDecayTree& theDecay) 
    : SpinFactor(theDecay, 4)
     {
       T[0]=T[1]=0;
@@ -111,7 +111,7 @@ class SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE : public SpinFactor{
   virtual const DecayTree& exampleDecay()=0;
   virtual std::string name() const{
     return "SpinFactor4:SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE("
-      + theBareDecay().oneLiner() + ")";
+      + theDecay().oneLiner() + ")";
   }
 
 };
@@ -124,7 +124,7 @@ class SF_DtoT1T2_T1toP0P1_T2toP2P3_S : public SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE{
 
  public:
   virtual void printYourself(std::ostream& os=std::cout) const;
- SF_DtoT1T2_T1toP0P1_T2toP2P3_S(const DecayTree& theDecay) 
+ SF_DtoT1T2_T1toP0P1_T2toP2P3_S(const AssociatedDecayTree& theDecay) 
    : SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE(theDecay)
     {
       //printYourself();
@@ -137,7 +137,7 @@ class SF_DtoT1T2_T1toP0P1_T2toP2P3_S : public SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE{
   virtual const DecayTree& exampleDecay();
   virtual std::string name() const{
     return "SpinFactor4:SF_DtoT1T2_T1toP0P1_T2toP2P3_S("
-      + theBareDecay().oneLiner() + ")";
+      + theDecay().oneLiner() + ")";
   }
 
 };
@@ -149,7 +149,7 @@ class SF_DtoT1T2_T1toP0P1_T2toP2P3_P : public SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE{
 
  public:
   virtual void printYourself(std::ostream& os=std::cout) const;
- SF_DtoT1T2_T1toP0P1_T2toP2P3_P(const DecayTree& theDecay) 
+ SF_DtoT1T2_T1toP0P1_T2toP2P3_P(const AssociatedDecayTree& theDecay) 
    : SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE(theDecay)
     {
       //printYourself();
@@ -162,7 +162,7 @@ class SF_DtoT1T2_T1toP0P1_T2toP2P3_P : public SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE{
   virtual const DecayTree& exampleDecay();
   virtual std::string name() const{
     return "SpinFactor4:SF_DtoT1T2_T1toP0P1_T2toP2P3_P("
-      + theBareDecay().oneLiner() + ")";
+      + theDecay().oneLiner() + ")";
   }
 
 };
@@ -174,7 +174,7 @@ class SF_DtoT1T2_T1toP0P1_T2toP2P3_D : public SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE{
 
  public:
   virtual void printYourself(std::ostream& os=std::cout) const;
- SF_DtoT1T2_T1toP0P1_T2toP2P3_D(const DecayTree& theDecay) 
+ SF_DtoT1T2_T1toP0P1_T2toP2P3_D(const AssociatedDecayTree& theDecay) 
    : SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE(theDecay)
     {
       //printYourself();
@@ -187,7 +187,7 @@ class SF_DtoT1T2_T1toP0P1_T2toP2P3_D : public SF_DtoT1T2_T1toP0P1_T2toP2P3_BASE{
   virtual const DecayTree& exampleDecay();
   virtual std::string name() const{
     return "SpinFactor4:SF_DtoT1T2_T1toP0P1_T2toP2P3_D("
-      + theBareDecay().oneLiner() + ")";
+      + theDecay().oneLiner() + ")";
   }
 
 };
@@ -207,7 +207,7 @@ class SF_DtoTP0_TtoVP1_VtoP2P3 : public SpinFactor{
 
  public:
    virtual void printYourself(std::ostream& os=std::cout) const;
-   SF_DtoTP0_TtoVP1_VtoP2P3(const DecayTree& theDecay) 
+   SF_DtoTP0_TtoVP1_VtoP2P3(const AssociatedDecayTree& theDecay) 
      : SpinFactor(theDecay, 4)
      , T(0), V(0)
      {
@@ -220,7 +220,7 @@ class SF_DtoTP0_TtoVP1_VtoP2P3 : public SpinFactor{
    virtual const DecayTree& exampleDecay();
    virtual std::string name() const{
      return "SpinFactor4:SF_DtoTP0_TtoVP1_VtoP2P3("
-       + theBareDecay().oneLiner() + ")";
+       + theDecay().oneLiner() + ")";
    }
    
 };
@@ -235,7 +235,7 @@ class SF_DtoT1P0_T1toT2P1_T2toP2P3 : public SpinFactor{
 
  public:
    virtual void printYourself(std::ostream& os=std::cout) const;
-   SF_DtoT1P0_T1toT2P1_T2toP2P3(const DecayTree& theDecay) 
+   SF_DtoT1P0_T1toT2P1_T2toP2P3(const AssociatedDecayTree& theDecay) 
      : SpinFactor(theDecay, 4)
      , T1(0), T2(0)
      {
@@ -248,7 +248,7 @@ class SF_DtoT1P0_T1toT2P1_T2toP2P3 : public SpinFactor{
    virtual const DecayTree& exampleDecay();
    virtual std::string name() const{
      return "SpinFactor4:SF_DtoT1P0_T1toT2P1_T2toP2P3("
-       + theBareDecay().oneLiner() + ")";
+       + theDecay().oneLiner() + ")";
    }
    
 };
@@ -264,7 +264,7 @@ class SF_DtoTS_TtoP0P1_StoP2P3 : public SpinFactor{
 
  public:
   virtual void printYourself(std::ostream& os=std::cout) const;
- SF_DtoTS_TtoP0P1_StoP2P3(const DecayTree& theDecay) 
+ SF_DtoTS_TtoP0P1_StoP2P3(const AssociatedDecayTree& theDecay) 
    : SpinFactor(theDecay, 4)
     , T(0), S(0)
     {
@@ -277,7 +277,7 @@ class SF_DtoTS_TtoP0P1_StoP2P3 : public SpinFactor{
   virtual const DecayTree& exampleDecay();
   virtual std::string name() const{
     return "SpinFactor4:SF_DtoTS_TtoP0P1_StoP2P3("
-      + theBareDecay().oneLiner() + ")";
+      + theDecay().oneLiner() + ")";
   }
 
 };
@@ -295,7 +295,7 @@ class SF_DtoPseudoTP0_PseudoTtoVP1_VtoP2P3 : public SpinFactor{
 
  public:
    virtual void printYourself(std::ostream& os=std::cout) const;
-   SF_DtoPseudoTP0_PseudoTtoVP1_VtoP2P3(const DecayTree& theDecay) 
+   SF_DtoPseudoTP0_PseudoTtoVP1_VtoP2P3(const AssociatedDecayTree& theDecay) 
      : SpinFactor(theDecay, 4)
      , PT(0), V(0)
      {
@@ -308,7 +308,7 @@ class SF_DtoPseudoTP0_PseudoTtoVP1_VtoP2P3 : public SpinFactor{
    virtual const DecayTree& exampleDecay();
    virtual std::string name() const{
      return "SpinFactor4:SF_DtoPseudoTP0_PseudoTtoVP1_VtoP2P3("
-       + theBareDecay().oneLiner() + ")";
+       + theDecay().oneLiner() + ")";
    }
    
 };
@@ -323,7 +323,7 @@ class SF_DtoPseudoTP0_PseudoTtoSP1_StoP2P3 : public SpinFactor{
 
  public:
    virtual void printYourself(std::ostream& os=std::cout) const;
-   SF_DtoPseudoTP0_PseudoTtoSP1_StoP2P3(const DecayTree& theDecay) 
+   SF_DtoPseudoTP0_PseudoTtoSP1_StoP2P3(const AssociatedDecayTree& theDecay) 
      : SpinFactor(theDecay, 4)
      , PT(0), S(0)
      {
@@ -336,7 +336,7 @@ class SF_DtoPseudoTP0_PseudoTtoSP1_StoP2P3 : public SpinFactor{
    virtual const DecayTree& exampleDecay();
    virtual std::string name() const{
      return "SpinFactor4:SF_DtoPseudoTP0_PseudoTtoSP1_StoP2P3("
-       + theBareDecay().oneLiner() + ")";
+       + theDecay().oneLiner() + ")";
    }
    
 };
@@ -350,7 +350,7 @@ class SF_DtoPseudoTP0_PseudoTtoTP1_TtoP2P3 : public SpinFactor{
 
  public:
    virtual void printYourself(std::ostream& os=std::cout) const;
-   SF_DtoPseudoTP0_PseudoTtoTP1_TtoP2P3(const DecayTree& theDecay) 
+   SF_DtoPseudoTP0_PseudoTtoTP1_TtoP2P3(const AssociatedDecayTree& theDecay) 
      : SpinFactor(theDecay, 4)
      , PT(0), T(0)
      {
@@ -363,7 +363,7 @@ class SF_DtoPseudoTP0_PseudoTtoTP1_TtoP2P3 : public SpinFactor{
    virtual const DecayTree& exampleDecay();
    virtual std::string name() const{
      return "SpinFactor4:SF_DtoPseudoTP0_PseudoTtoTP1_TtoP2P3("
-       + theBareDecay().oneLiner() + ")";
+       + theDecay().oneLiner() + ")";
    }
    
 };
@@ -381,7 +381,7 @@ class SF_DtoAP0_AtoTP1_TtoP2P3 : public SpinFactor{
 
  public:
    virtual void printYourself(std::ostream& os=std::cout) const;
-   SF_DtoAP0_AtoTP1_TtoP2P3(const DecayTree& theDecay) 
+   SF_DtoAP0_AtoTP1_TtoP2P3(const AssociatedDecayTree& theDecay) 
      : SpinFactor(theDecay, 4)
      , A(0), T(0)
      {
@@ -394,7 +394,7 @@ class SF_DtoAP0_AtoTP1_TtoP2P3 : public SpinFactor{
    virtual const DecayTree& exampleDecay();
    virtual std::string name() const{
      return "SpinFactor4:SF_DtoAP0_AtoTP1_TtoP2P3("
-       + theBareDecay().oneLiner() + ")";
+       + theDecay().oneLiner() + ")";
    }
    
 };

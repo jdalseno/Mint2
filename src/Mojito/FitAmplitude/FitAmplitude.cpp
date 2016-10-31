@@ -86,46 +86,46 @@ void FitAmplitude::AutogenerateFitFile(const std::string& fname, const DalitzEve
   os.close();
 }
 
-FitAmplitude::FitAmplitude(const std::string& yourOwnName
+FitAmplitude::FitAmplitude(const std::string& yourOwnNameWithoutPrefix
 			   , const AmpInitialiser& treeWithOpts
 			   , const char* fname
 			   , MinuitParameterSet* pset
-			   , STRING_USAGE useStringAs
+			   //			   , STRING_USAGE useStringAs
 			   )
   : _amp(treeWithOpts, this)
-  , _FitAmpPhase(FitComplexMaker(yourOwnName, fname, pset, this
+  , _FitAmpPhase(FitComplexMaker(treeWithOpts.prefix() + yourOwnNameWithoutPrefix, fname, pset, this
 			      , FitParameter::HIDE
 			      , NamedParameterBase::QUIET
 			      ))
-  , _fitFraction(yourOwnName + "_Frac", (double) 0, fname
+  , _fitFraction(treeWithOpts.prefix() + yourOwnNameWithoutPrefix + "_Frac", (double) 0, fname
 		 , NamedParameterBase::QUIET)
   , _preFactors(1)
-  , _name(yourOwnName)
+  , _name(treeWithOpts.prefix() + yourOwnNameWithoutPrefix)
 {
-  if(useStringAs == FitAmplitude::PREFIX){
-    _name += treeWithOpts.uniqueName();
-  }
+  //  if(useStringAs == FitAmplitude::PREFIX){
+  //    _name += treeWithOpts.uniqueName();
+  //  }
   //cout << "pset pointer in FitAmplitude " << pset << endl;
 }
 
-FitAmplitude::FitAmplitude(const std::string& yourOwnName
+FitAmplitude::FitAmplitude(const std::string& yourOwnNameWithoutPrefix
 			   , const AmpInitialiser& treeWithOpts
 			   , MinuitParameterSet* pset
-			   , STRING_USAGE useStringAs
+			   //			   , STRING_USAGE useStringAs
 			   )
   : _amp(treeWithOpts, this)
-  , _FitAmpPhase(FitComplexMaker(yourOwnName, (char*) 0, pset, this
+  , _FitAmpPhase(FitComplexMaker(treeWithOpts.prefix() + yourOwnNameWithoutPrefix, (char*) 0, pset, this
 			      , FitParameter::HIDE
 			      , NamedParameterBase::QUIET
 			      ))
-  , _fitFraction(yourOwnName + "_Frac", (double) 0, (char*) 0
+  , _fitFraction(treeWithOpts.prefix() + yourOwnNameWithoutPrefix + "_Frac", (double) 0, (char*) 0
 		 		 , NamedParameterBase::QUIET)
   , _preFactors(1)
-  , _name(yourOwnName)
+  , _name(treeWithOpts.prefix() + yourOwnNameWithoutPrefix)
 {
-  if(useStringAs == FitAmplitude::PREFIX){
-    _name += treeWithOpts.uniqueName();
-  }    
+  //  if(useStringAs == FitAmplitude::PREFIX){
+  //   _name += treeWithOpts.uniqueName();
+  //}    
 }
 
 FitAmplitude::FitAmplitude(const AmpInitialiser& treeWithOpts
@@ -160,34 +160,38 @@ FitAmplitude::FitAmplitude(const AmpInitialiser& treeWithOpts
 }
 
 FitAmplitude::FitAmplitude(const std::string& StandardisedDecayTreeName
+			   , const std::string& prefix
+			   , const std::string& lineshapePrefix
 			   , const char* fname
 			   , MinuitParameterSet* pset
 			   )
-  : _amp(AmpInitialiser(StandardisedDecayTreeName), this)
-  , _FitAmpPhase(FitComplexMaker(StandardisedDecayTreeName, fname, pset, this
+  : _amp(AmpInitialiser(StandardisedDecayTreeName, prefix, lineshapePrefix), this)
+  , _FitAmpPhase(FitComplexMaker(prefix+StandardisedDecayTreeName, fname, pset, this
 			      , FitParameter::HIDE
 			      , NamedParameterBase::QUIET
 			      ))
-  , _fitFraction(StandardisedDecayTreeName + "_Frac", (double) 0
+  , _fitFraction(prefix+StandardisedDecayTreeName + "_Frac", (double) 0
 		 , NamedParameterBase::QUIET)
   , _preFactors(1)
-  , _name(StandardisedDecayTreeName)
+  , _name(prefix+StandardisedDecayTreeName)
 {
   
 }
 
 FitAmplitude::FitAmplitude(const std::string& StandardisedDecayTreeName
+			   , const std::string& prefix
+			   , const std::string& lineshapePrefix
 			   , MinuitParameterSet* pset
 			   )
-  : _amp(AmpInitialiser(StandardisedDecayTreeName), this)
-  , _FitAmpPhase(FitComplexMaker(StandardisedDecayTreeName, (char*) 0, pset, this
+  : _amp(AmpInitialiser(StandardisedDecayTreeName, prefix, lineshapePrefix), this)
+  , _FitAmpPhase(FitComplexMaker(prefix+StandardisedDecayTreeName, (char*) 0, pset, this
 			      , FitParameter::HIDE
 			      , NamedParameterBase::QUIET
 			      ))
-  , _fitFraction(StandardisedDecayTreeName + "_Frac", (double) 0
+  , _fitFraction(prefix+StandardisedDecayTreeName + "_Frac", (double) 0
 		 , NamedParameterBase::QUIET)
   , _preFactors(1)
-  , _name(StandardisedDecayTreeName)
+  , _name(prefix+StandardisedDecayTreeName)
 {
   
 }

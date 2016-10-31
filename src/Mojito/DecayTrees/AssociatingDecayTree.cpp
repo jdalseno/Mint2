@@ -24,33 +24,32 @@ bool AssociatingDecayTree::associateFinalStates(const IDalitzEvent& evt) const{
   return associateFinalStates(evt.eventPattern());
 }
 bool AssociatingDecayTree::associateFinalStates(const DalitzEventPattern& pat) const{
-  //  cout << "associateFinalStates was called " << endl;
+  bool dbThis=false;
+  if(dbThis) cout << "associateFinalStates was called " << endl;
   if(pat.empty())return false;
   vector<int> fs_pat= pat.finalStates();
 
-  //cout << "got pattern of size " << pat.size() << endl;
+  if(dbThis) cout << "got pattern of size " << pat.size() << endl;
   if(fs_pat.empty()) return false;
-  //  cout << "pattern not empty" << endl;
+  if(dbThis) cout << "pattern not empty" << endl;
   std::vector<AssociatedDecayTreeItem*> sorted 
     = _theDecay.finalStateInThisOrder(fs_pat);
-  //  cout << "sorted" << endl;
+  if(dbThis) cout << "sorted" << endl;
   if(sorted.size() != fs_pat.size()){
-	  cout << "Sizes: " << sorted.size() << " " << fs_pat.size() << endl;
-
+    cout << "Sizes: " << sorted.size() << " " << fs_pat.size() << endl;
+    
     std::cout << "ERROR in AssociatingDecayTree::associate!"
 	      << " fs_pattern : ";
     for(unsigned int i=0; i<fs_pat.size(); i++){
       std::cout << "(" << i << ") " << fs_pat[i] << ", ";
     }
     std::cout << std::endl;
-
-    for(unsigned int i=0; i<sorted.size(); i++){
-          std::cout << "(" << i << ") " << *(sorted[i]) << ", ";
-        }
-    std::cout << std::endl;
-
-//       std::cout << "\n does not match decay:\n" << _theDecay << std::endl;
     
+    for(unsigned int i=0; i<sorted.size(); i++){
+      std::cout << "(" << i << ") " << *(sorted[i]) << ", ";
+    }
+    std::cout << std::endl;
+    //       std::cout << "\n does not match decay:\n" << _theDecay << std::endl; 
     return false;
   }
   //  cout << "now putting it all in" << endl;
@@ -58,6 +57,13 @@ bool AssociatingDecayTree::associateFinalStates(const DalitzEventPattern& pat) c
     sorted[i]->_asi.clear();
     sorted[i]->_asi.push_back(i+1);
   }
+  if(dbThis){
+    std::cout << "the new sorted thing" << std::endl;
+    for(unsigned int i=0; i<sorted.size(); i++){
+      std::cout << "(" << i << ") " << *(sorted[i]) << ", ";
+    }
+  }
+ 
   //  cout << "associateFinalStates returning true" << endl;
   return true;
 }
@@ -110,6 +116,7 @@ bool AssociatingDecayTree::patternHasChanged(const DalitzEventPattern& pat) cons
 }
 
 const AssociatedDecayTree* AssociatingDecayTree::getTreePtr(const IDalitzEvent& evt) const{
+  if(patternHasChanged(evt)) associate(evt);
   return getTreePtr(evt.eventPattern());
 }
 const AssociatedDecayTree* AssociatingDecayTree::getTreePtr(const DalitzEventPattern& pat) const{
@@ -118,6 +125,7 @@ const AssociatedDecayTree* AssociatingDecayTree::getTreePtr(const DalitzEventPat
 }
 
 const AssociatedDecayTree& AssociatingDecayTree::getTree(const IDalitzEvent& evt) const{
+  if(patternHasChanged(evt)) associate(evt);
   return getTree(evt.eventPattern());
 }
 const AssociatedDecayTree& AssociatingDecayTree::getTree(const DalitzEventPattern& pat) const{

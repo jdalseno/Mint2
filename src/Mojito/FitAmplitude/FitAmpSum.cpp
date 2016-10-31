@@ -21,10 +21,11 @@ FitAmpSum::FitAmpSum(const DalitzEventPattern& pat
 		     , const char* fname
 		     , MinuitParameterSet* pset
 		     , const std::string& prefix
+		     , const std::string& lineshapePrefix
 		     , const std::string& opt
 		     )
-: FitAmpList(pat, fname, pset, prefix, opt)
-, _useAnalyticGradient("useAnalyticGradient",0)  
+  : FitAmpList(pat, fname, pset, prefix, lineshapePrefix, opt)
+  , _useAnalyticGradient("useAnalyticGradient",0)  
 {
   /*
     //Important! Ensures everything is initialised
@@ -37,10 +38,11 @@ FitAmpSum::FitAmpSum(const DalitzEventPattern& pat
 FitAmpSum::FitAmpSum(const DalitzEventPattern& pat
 		     , MinuitParameterSet* pset
 		     , const std::string& prefix
+		     , const std::string& lineshapePrefix
 		     , const std::string& opt
 		     )
-: FitAmpList(pat, pset, prefix, opt)
-, _useAnalyticGradient("useAnalyticGradient",0)  
+  : FitAmpList(pat, pset, prefix, lineshapePrefix, opt)
+  , _useAnalyticGradient("useAnalyticGradient",0)  
 {
 
   // cout << "pset pointer in FitAmpSum::FitAmpSum " << pset << " = " << getMPS() << endl;
@@ -54,9 +56,10 @@ FitAmpSum::FitAmpSum(const DalitzEventPattern& pat
 }
 FitAmpSum::FitAmpSum(const DalitzEventPattern& pat
 		     , const std::string& prefix
+		     , const std::string& lineshapePrefix
 		     , const std::string& opt
 		     )
-  : FitAmpList(pat, prefix, opt)
+  : FitAmpList(pat, prefix, lineshapePrefix, opt)
   , _useAnalyticGradient("useAnalyticGradient",0)
 {
   /*

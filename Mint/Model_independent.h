@@ -4,6 +4,7 @@
 // status: 30.10.2015 
 
 #include <complex>
+#include <string>
 
 #include "Mint/ILineshape.h"
 #include "Mint/BW_BW.h"
@@ -20,7 +21,7 @@ using namespace MINT;
 class Model_independent : public BW_BW, virtual public ILineshape{
  public:
   
-  Model_independent( const AssociatedDecayTree& tree);
+  Model_independent( const AssociatedDecayTree& tree, const std::string& namePrefix="");
 
   virtual std::string name() const{
     return "Model_independent("+_theDecay.oneLiner() +")";
@@ -43,10 +44,10 @@ class Model_independent : public BW_BW, virtual public ILineshape{
     
   std::vector<double> getBinCenterValues_Re(); 
   std::vector<double> getBinCenterValues_Im();   
-
-  ROOT::Math::Interpolation::Type _interpolationType;
+  
   NamedParameter<std::string> _interpolationTypeString;
-
+  ROOT::Math::Interpolation::Type _interpolationType;  
+    
   ROOT::Math::Interpolator* _interpolator_Re;
   ROOT::Math::Interpolator* _interpolator_Im;
     

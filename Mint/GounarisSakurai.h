@@ -3,6 +3,9 @@
 // author: Jonas Rademacker (Jonas.Rademacker@bristol.ac.uk)
 // status:  Mon 9 Feb 2009 19:18:04 GMT
 
+#include <string>
+#include <complex>
+
 #include "Mint/ILineshape.h"
 #include "Mint/BW_BW.h"
 #include "Mint/AssociatedDecayTree.h"
@@ -36,13 +39,13 @@ class GounarisSakurai : public BW_BW, virtual public ILineshape{
     
  public:
   
-  GounarisSakurai( const AssociatedDecayTree& decay)
-    : BW_BW(decay){}
+ GounarisSakurai( const AssociatedDecayTree& decay, const std::string& namePrefix="")
+   : BW_BW(decay, namePrefix){}
 
   virtual std::complex<double> getVal(IDalitzEvent& evt);
 
   virtual std::string name() const{
-    return "GounarisSakurai("+_theDecay.oneLiner() +")";
+    return "GounarisSakurai("+ prefix() + _theDecay.oneLiner() +")";
   }
 
   virtual ~GounarisSakurai(){}
