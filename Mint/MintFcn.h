@@ -1,6 +1,8 @@
 #ifndef MINTFCN_HH
 #define MINTFCN_HH
 
+#include <iomanip>
+
 #include "Minuit2/FCNBase.h"
 
 #include "Mint/IMinimisable.h"
