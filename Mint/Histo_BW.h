@@ -34,7 +34,8 @@ class Histo_BW  : public BW_BW, virtual public ILineshape
       exit(1);
     }
 
-    const std::string hist_path = std::string(std::getenv("MINT2"))+"/share/";
+    const std::string hist_path =
+      static_cast<std::string>(std::getenv("MINT2"))+"/share/";
 
     NamedParameter<string> fileNameMass(("RunningMass_"+ namePrefix+ (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID())))),(hist_path+"running_mass/"+"RunningMass_"+ (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID()))) + ".root"));
     NamedParameter<string> fileNameWidth(("RunningWidth_"+ namePrefix + (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID())))),(hist_path+"running_width/"+"RunningWidth_"+ (BW_BW::resonanceProperties()->nameFromPid(abs(mumsPID()))) + ".root"));
