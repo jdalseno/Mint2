@@ -5,7 +5,7 @@ env = Environment(ENV=os.environ)
 QFT_INC = os.environ['QFT_PATH'] + '/include'
 QFT_LIB = os.environ['QFT_PATH'] + '/lib'
 
-MINT = '/home/jdalseno/Mint2/'
+MINT = os.environ['MINT2'] + '/'
 MINT_LIB = MINT + 'lib/'
 
 env.Append(CPPPATH = ['.', QFT_INC, MINT])
