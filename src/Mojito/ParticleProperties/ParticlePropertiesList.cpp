@@ -103,9 +103,10 @@ void ParticlePropertiesList::fillDirList()
 
   //Mint2-defined directory
   if( !std::getenv("MINT2") ){
-    std::cout << "ERROR: Mint2 environment variable not set."
-	      << "       Energy-dependent mass/width histograms cannot be found."
-	      <<std::endl;
+    std::cout
+      << "ERROR: Mint2 environment variable not set."
+      << "       Energy-dependent mass/width histograms cannot be found."
+      << std::endl;
     exit(1);
   }
   _dirList.push_back(static_cast<std::string>(getenv("MINT2"))+"/share/");

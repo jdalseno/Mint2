@@ -28,9 +28,10 @@ class Histo_BW  : public BW_BW, virtual public ILineshape
     , _runningWidthHist(0)
   {
     if( !std::getenv("MINT2") ){
-      std::cout << "ERROR: Mint2 environment variable not set."
-		<< "       Energy-dependent mass/width histograms cannot be found."
-		<<std::endl;
+      std::cout
+	<< "ERROR: Mint2 environment variable not set."
+	<< "       Energy-dependent mass/width histograms cannot be found."
+	<< std::endl;
       exit(1);
     }
 
