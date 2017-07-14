@@ -169,7 +169,7 @@ double MINT::generalisedPareto_estimateMaximum(std::vector<double> input_a
   mini.doFit();
   if( mini.minOK() == false ){
     std::cout << "GeneralisedPareto: Maximum estimator fit failed" << std::endl;
-    exit(1);
+    //exit(1);
   }
   xi = ll.getXi();
   sg = ll.getSigma();

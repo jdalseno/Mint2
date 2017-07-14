@@ -284,6 +284,10 @@ bool Minimiser::doFit()
   if(dbThis)
     cout << "... called MIGRAD" << success << endl;
 
+  /*success &= CallImprove();
+  if(dbThis)
+  cout << "... called IMPROVE" << success << endl;*/
+
   success &= this->endOfFit();
   if(dbThis)
     cout << "... called endOfFit" << success << endl;

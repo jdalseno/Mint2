@@ -40,4 +40,5 @@ if install != None:
        os.makedirs(install)
    os.system('cp -r Mint ' + install)
    os.system('cp -r lib ' + install)
+   os.system('cp -r share ' + install)
    print 'Installation complete'
