@@ -2,9 +2,10 @@ Mint2
  - Amplitude analysis based on covariant spin tensor formalism and MC integration
 
 Requirements
- - ROOT built with Minuit2 enabled
+ - ROOT built with Minuit2 enabled (https://root.cern.ch/building-root)
  - qft++ (https://github.com/jdalseno/qft)
- - [Mac users] llvm (https://llvm.org) and libomp
+ - [Mac users] llvm (https://llvm.org),libomp (https://openmp.llvm.org), openssl (https://www.openssl.org)
+   - All available through HomeBrew (https://brew.sh)
 
 Build Instructions
  - Ensure root-config is in your path
