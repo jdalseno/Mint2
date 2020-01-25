@@ -22,7 +22,8 @@ namespace MINT{
      return new PdfBase(*this);     
    } 
     
-    virtual double getVal(EVENT_TYPE & evt)=0;
+//    virtual double getVal(EVENT_TYPE & evt)=0;
+    virtual double getVal(EVENT_TYPE & evt){};
     virtual double RealVal(EVENT_TYPE & evt){
       return getVal(evt);
     }
