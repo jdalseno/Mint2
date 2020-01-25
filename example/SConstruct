@@ -1,6 +1,10 @@
 import os
+from sys import platform
 
-env = Environment(ENV=os.environ)
+if platform == "darwin": # OS X
+  env = Environment(ENV=os.environ, CC='llvm-gcc', CXX="llvm-g++")
+else:
+  env = Environment(ENV=os.environ)
 
 QFT_INC = os.environ['QFT_PATH'] + '/include'
 QFT_LIB = os.environ['QFT_PATH'] + '/lib'
@@ -9,15 +13,29 @@ MINT = os.environ['MINT2'] + '/'
 MINT_LIB = MINT + 'lib/'
 
 env.Append(CPPPATH = ['.', QFT_INC, MINT])
-env.Append(CXXFLAGS = ['-O3', '-Wall', '-Wextra', '-Werror', '-pedantic', '-std=c++11', '-fopenmp'])
-#env.Append(CXXFLAGS = ['-g', '-Wall', '-Wextra', '-Werror', '-pedantic', '-std=c++11', '-fopenmp'])
-env.ParseConfig("root-config --libs --cflags --ldflags")
-env.Append(LIBPATH = [QFT_LIB, MINT_LIB])
-env.Append(LIBS = ['Minuit2', 'MathMore', 'qft++', 'Mint2'])
-env.Append(LINKFLAGS = ['-fopenmp'])
+if platform == "darwin": # OS X
+  env.Append(CXXFLAGS = ['-g', '-O0', '-Wall', '-Wextra', '-Wno-deprecated', '-pedantic', '-Xpreprocessor', '-fopenmp'])
+  env.ParseConfig("root-config --libs --cflags --ldflags")
+  env.Append(LIBPATH = [QFT_LIB, MINT_LIB])
+  env.Append(LIBS = ['Minuit2', 'MathMore', 'qft++', 'omp', 'Mint2'])
+else:
+  env.Append(CXXFLAGS = ['-O3', '-Wall', '-Wextra', '-Werror', '-pedantic', '-std=c++11', '-fopenmp'])
+  #env.Append(CXXFLAGS = ['-g', '-Wall', '-Wextra', '-Werror', '-pedantic', '-std=c++11', '-fopenmp'])
+  env.ParseConfig("root-config --libs --cflags --ldflags")
+  env.Append(LIBPATH = [QFT_LIB, MINT_LIB])
+  env.Append(LIBS = ['Minuit2', 'MathMore', 'qft++', 'Mint2'])
+  env.Append(LINKFLAGS = ['-fopenmp'])
 
 #Export environment
 Export('env')
+
+print ("QFT_LIB is:", QFT_LIB)
+print ("MINT_LIB is:", MINT_LIB)
+print ("CC is:", env['CC'])
+print ("CXX is:", env['CXX'])
+print ("CCFLAGS is:", env['CCFLAGS'])
+print ("CXXFLAGS is:", env['CXXFLAGS'])
+print ("LINKFLAGS is:", env['LINKFLAGS'])
 
 #Run SConscript files
 SConscript('SConscript')

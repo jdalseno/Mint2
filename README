@@ -4,6 +4,7 @@ Mint2
 Requirements
  - ROOT built with Minuit2 enabled
  - qft++ (https://github.com/jdalseno/qft)
+ - [Mac users] llvm (https://llvm.org) and libomp
 
 Build Instructions
  - Ensure root-config is in your path
@@ -14,6 +15,11 @@ System-wide Installation Instruction (optional)
  - Type '(sudo -E "PATH=$PATH") scons --install=<install dir>'
 
 Example Directory
+ - Correctly set the QFT_PATH variable in your environment
  - Create MINT2 environment variable pointing to <install dir>
  - Type 'scons' in the example directory
  - Type './ampFit < two.txt' to run example
+
+Notes
+ - Tested on linux (compiled with gcc, C++17)
+ - Tested on Mac OSX 10.14.6 (compiled with llvm, C++17)
